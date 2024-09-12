@@ -1,2 +1,5 @@
 # Team7_BE
-7조 백엔드
+
+## Project Version
+- Spring Boots 3.3.3
+- Java 17 LTS
