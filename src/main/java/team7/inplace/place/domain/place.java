@@ -55,7 +55,7 @@ public class place {
     @Column(nullable = false, columnDefinition = "varchar(50)")
     private String address3;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String menuImgUrl;
 
     @Enumerated(EnumType.STRING)
