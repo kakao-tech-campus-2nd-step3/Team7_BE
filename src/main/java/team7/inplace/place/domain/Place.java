@@ -7,6 +7,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -67,4 +68,28 @@ public class Place {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String latitude;
+
+    //Constructor
+    protected Place() {
+    }
+
+    @Builder
+    public Place(String name, boolean pet, boolean wifi, boolean parking, boolean fordisabled,
+        boolean nursery, boolean smokingroom, String address1, String address2,
+        String address3, String menuImgUrl, Category category, String longitude, String latitude) {
+        this.name = name;
+        this.pet = pet;
+        this.wifi = wifi;
+        this.parking = parking;
+        this.fordisabled = fordisabled;
+        this.nursery = nursery;
+        this.smokingroom = smokingroom;
+        this.address1 = address1;
+        this.address2 = address2;
+        this.address3 = address3;
+        this.menuImgUrl = menuImgUrl;
+        this.category = category;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
 }
