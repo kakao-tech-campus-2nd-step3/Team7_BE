@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.place.domain.Category;
+import team7.inplace.place.domain.CategoryListDTO;
 import team7.inplace.place.service.PlaceService;
 
 @RestController
@@ -25,7 +26,7 @@ public class PlaceController {
     }
     @GetMapping("/categories")
     public ResponseEntity<Map<String, List<String>>> getCategories() {
-        List<String> categories = placeService.getCategories();
+        CategoryListDTO categories = placeService.getCategories();
 
         Map<String, List<String>> response = new HashMap<>();
         response.put("categories", categories);
