@@ -25,11 +25,8 @@ public class PlaceController {
         this.placeService = placeService;
     }
     @GetMapping("/categories")
-    public ResponseEntity<Map<String, CategoryListDTO>> getCategories() {
-        CategoryListDTO categories = placeService.getCategories();
-
-        Map<String, CategoryListDTO> response = new HashMap<>();
-        response.put("categories", categories);
+    public ResponseEntity<CategoryListDTO> getCategories() {
+        CategoryListDTO response = placeService.getCategories();
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
