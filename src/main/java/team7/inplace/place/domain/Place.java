@@ -12,7 +12,7 @@ import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
-public class place {
+public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
