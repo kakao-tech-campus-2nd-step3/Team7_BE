@@ -1,13 +1,13 @@
-package Inplace.Team7_BE;
+package team7.inplace;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class Team7BeApplication {
+public class InplaceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(Team7BeApplication.class, args);
+		SpringApplication.run(InplaceApplication.class, args);
 	}
 
 }
