@@ -8,21 +8,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Table(name = "places")
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, columnDefinition = "BIGINT(20)")
+    @Column(nullable = false)
     private Long placeId;
 
-    @Column(nullable = false, columnDefinition = "varchar(50)")
+    @Column(nullable = false, length = 50)
     private String name;
 
     @ColumnDefault("false")
@@ -49,13 +54,13 @@ public class Place {
     @Column(nullable = false)
     private boolean smokingroom;
 
-    @Column(nullable = false, columnDefinition = "varchar(50)")
+    @Column(nullable = false, length = 50)
     private String address1;
 
-    @Column(nullable = false, columnDefinition = "varchar(50)")
+    @Column(nullable = false, length = 50)
     private String address2;
 
-    @Column(nullable = false, columnDefinition = "varchar(50)")
+    @Column(nullable = false, length = 50)
     private String address3;
 
     @Column(columnDefinition = "TEXT")
@@ -71,27 +76,4 @@ public class Place {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String latitude;
 
-    //Constructor
-    protected Place() {
-    }
-
-    @Builder
-    public Place(String name, boolean pet, boolean wifi, boolean parking, boolean fordisabled,
-        boolean nursery, boolean smokingroom, String address1, String address2,
-        String address3, String menuImgUrl, Category category, String longitude, String latitude) {
-        this.name = name;
-        this.pet = pet;
-        this.wifi = wifi;
-        this.parking = parking;
-        this.fordisabled = fordisabled;
-        this.nursery = nursery;
-        this.smokingroom = smokingroom;
-        this.address1 = address1;
-        this.address2 = address2;
-        this.address3 = address3;
-        this.menuImgUrl = menuImgUrl;
-        this.category = category;
-        this.longitude = longitude;
-        this.latitude = latitude;
-    }
 }
