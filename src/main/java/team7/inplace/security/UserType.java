@@ -1,5 +1,8 @@
 package team7.inplace.security;
 
+import lombok.Getter;
+
+@Getter
 public enum UserType {
     KAKAO("kakao");
 
