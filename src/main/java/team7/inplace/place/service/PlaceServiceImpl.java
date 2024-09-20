@@ -12,9 +12,7 @@ public class PlaceServiceImpl implements PlaceService{
 
     @Override
     public CategoryListDTO getCategories() {
-        List<String>  categories = Arrays.stream(Category.values())
-                                        .map(Enum::name)
-                                        .toList();
+        List<Category>  categories = Arrays.stream(Category.values()).toList();
         return new CategoryListDTO(categories);
     }
 }
