@@ -1,4 +1,4 @@
-package team7.inplace.video.entity;
+package team7.inplace.influencer.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

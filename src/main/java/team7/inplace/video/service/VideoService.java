@@ -1,11 +1,11 @@
 package team7.inplace.video.service;
 
 import org.springframework.stereotype.Service;
-import team7.inplace.video.DTO.PlaceForVideo;
+import team7.inplace.place.dto.PlaceForVideo;
 import team7.inplace.video.DTO.VideoData;
-import team7.inplace.video.entity.Influencer;
+import team7.inplace.influencer.entity.Influencer;
 import team7.inplace.video.entity.Video;
-import team7.inplace.video.repository.InfluencerRepository;
+import team7.inplace.influencer.repository.InfluencerRepository;
 import team7.inplace.video.repository.VideoRepository;
 
 import java.util.ArrayList;
