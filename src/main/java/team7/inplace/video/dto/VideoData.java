@@ -1,4 +1,4 @@
-package team7.inplace.video.DTO;
+package team7.inplace.video.dto;
 
 import team7.inplace.place.dto.PlaceForVideo;
 

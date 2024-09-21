@@ -5,12 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import team7.inplace.video.DTO.VideoData;
-import team7.inplace.video.DTO.VideoResponse;
+import team7.inplace.video.dto.VideoData;
+import team7.inplace.video.dto.VideoResponse;
 import team7.inplace.video.service.VideoService;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 public class VideoController {
