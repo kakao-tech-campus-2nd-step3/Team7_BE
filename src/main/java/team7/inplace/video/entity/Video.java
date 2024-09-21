@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team7.inplace.influencer.entity.Influencer;
-import team7.inplace.place.entity.Place;
+import team7.inplace.place.domain.Place;
 
 @Entity
 @Getter
@@ -13,12 +13,12 @@ public class Video {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="video_url")
+    @Column(name="video_url", nullable = false, columnDefinition = "TEXT")
     private String videoUrl;
     @ManyToOne
-    @JoinColumn(name = "influencer_id")
+    @JoinColumn(name = "influencer_id", nullable = false)
     private Influencer influencer;
     @ManyToOne
-    @JoinColumn(name = "place_id")
+    @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 }
