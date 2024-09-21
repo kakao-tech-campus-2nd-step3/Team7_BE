@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import team7.inplace.place.domain.Category;
-import team7.inplace.place.domain.CategoryListDTO;
+import team7.inplace.place.domain.CategoryListResponse;
 import team7.inplace.place.service.PlaceService;
 
 import static org.assertj.core.api.Assertions.*;
@@ -46,8 +46,7 @@ class PlaceControllerTest {
     public void testGetCategories() throws Exception {
         // given
         List<Category> expectedCategories = List.of(Category.CAFE, Category.WESTERN, Category.JAPANESE, Category.KOREAN);
-        CategoryListDTO expectedResponse = new CategoryListDTO(expectedCategories);
-        when(placeService.getCategories()).thenReturn(expectedResponse);
+        when(placeService.getCategories()).thenReturn(expectedCategories);
 
         // when & then
         mockMvc.perform(MockMvcRequestBuilders
@@ -56,7 +55,7 @@ class PlaceControllerTest {
             .andExpect(status().isOk())
             .andExpect(result -> {
                 String jsonResponse = result.getResponse().getContentAsString();
-                CategoryListDTO responseDTO = objectMapper.readValue(jsonResponse, CategoryListDTO.class);
+                CategoryListResponse responseDTO = objectMapper.readValue(jsonResponse, CategoryListResponse.class);
                 assertThat(responseDTO.categories()).isEqualTo(expectedCategories);
             });
     }
