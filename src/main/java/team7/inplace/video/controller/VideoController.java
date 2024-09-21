@@ -1,5 +1,6 @@
 package team7.inplace.video.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,15 +13,12 @@ import team7.inplace.video.service.VideoService;
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 public class VideoController {
     private final VideoService videoService;
 
-    public VideoController(VideoService videoService) {
-        this.videoService = videoService;
-    }
-
     // 내 인플루언서가 방문한 그 곳
-    @GetMapping("video")
+    @GetMapping("/video")
     public ResponseEntity<List<VideoResponse>> readByInfluencer(
             @RequestParam(name="influencer", required = false) List<String> influencers
     ){

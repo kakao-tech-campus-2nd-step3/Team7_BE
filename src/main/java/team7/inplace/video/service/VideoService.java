@@ -1,5 +1,6 @@
 package team7.inplace.video.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team7.inplace.place.dto.PlaceForVideo;
 import team7.inplace.video.dto.VideoData;
@@ -12,14 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class VideoService {
     private final VideoRepository videoRepository;
     private final InfluencerRepository influencerRepository;
-
-    public VideoService(VideoRepository videoRepository, InfluencerRepository influencerRepository) {
-        this.videoRepository = videoRepository;
-        this.influencerRepository = influencerRepository;
-    }
 
     public List<VideoData> findByInfluencer(List<String> influencers){
         // 변수명 변경 가능
