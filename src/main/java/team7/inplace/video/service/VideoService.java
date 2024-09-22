@@ -47,9 +47,6 @@ public class VideoService {
     }
 
     public List<VideoData> findByInfluencer(List<String> influencers){
-        // 변수명 변경 가능
-        List<VideoData> returnValue = new ArrayList<>();
-
         // 인플루언서 정보 처리
         List<Influencer> savedInfluencers = influencerRepository.findByNameIn(influencers);
         List<Long> influencerIds = savedInfluencers.stream()
@@ -58,6 +55,9 @@ public class VideoService {
 
         // 인플루언서 정보로 필터링한 비디오 정보 불러오기
         List<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(influencerIds);
+
+        // 변수명 변경 가능
+        List<VideoData> returnValue = new ArrayList<>();
 
         // DTO 형식에 맞게 대입
         for (Video savedVideo : savedVideos) {
