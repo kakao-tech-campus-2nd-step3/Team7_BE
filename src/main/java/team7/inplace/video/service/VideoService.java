@@ -48,8 +48,7 @@ public class VideoService {
 
     public List<VideoData> findByInfluencer(List<String> influencers){
         // 인플루언서 정보 처리
-        List<Influencer> savedInfluencers = influencerRepository.findByNameIn(influencers);
-        List<Long> influencerIds = savedInfluencers.stream()
+        List<Long> influencerIds = influencerRepository.findByNameIn(influencers).stream()
                 .map(Influencer::getId)
                 .toList();
 
