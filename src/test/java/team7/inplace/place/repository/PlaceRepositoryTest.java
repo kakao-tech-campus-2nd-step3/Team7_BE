@@ -2,13 +2,16 @@ package team7.inplace.place.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Arrays;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import team7.inplace.place.domain.Category;
+import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
+import team7.inplace.place.domain.PlaceTime;
 
 @DataJpaTest
 class PlaceRepositoryTest {
@@ -18,7 +21,7 @@ class PlaceRepositoryTest {
     @Test
     @DisplayName("Save and Find Test")
     public void 장소_저장_및_조회_테스트 () {
-        // Given: Place 객체를 생성하고 저장
+        // Given
         Place place = Place.builder()
             .name("Test Place")
             .pet(false)
@@ -34,17 +37,27 @@ class PlaceRepositoryTest {
             .category(Category.CAFE)
             .longitude("127.0")
             .latitude("37.0")
+            .timeList(Arrays.asList(
+                new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceTime("Closing Hours", "10:00 PM", "Monday")
+            ))
+            .menuList(Arrays.asList(
+                new Menu(5000L, true, "Coffee"),
+                new Menu(7000L, false, "Cake")
+            ))
             .build();
 
         Place savedPlace = placeRepository.save(place);
 
-        // When: 저장된 ID로 조회
+        // When
         Optional<Place> foundPlace = placeRepository.findById(savedPlace.getPlaceId());
 
-        // Then: 조회된 Place가 저장된 Place와 일치하는지 확인
+        // Then
         assertThat(foundPlace).isPresent();
         assertThat(foundPlace.get().getName()).isEqualTo(savedPlace.getName());
         assertThat(foundPlace.get().getCategory()).isEqualTo(savedPlace.getCategory());
         assertThat(foundPlace.get().getLongitude()).isEqualTo(savedPlace.getLongitude());
+        assertThat(foundPlace.get().getMenuList()).isEqualTo(savedPlace.getMenuList());
+        assertThat(foundPlace.get().getTimeList()).isEqualTo(savedPlace.getTimeList());
     }
 }
