@@ -33,6 +33,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             return new CustomOAuth2User(kakaoOAuthResponse.getEmail(),
                 kakaoOAuthResponse.getNickname(), UserType.KAKAO);
         }
+        User newUser = new User(kakaoOAuthResponse.getEmail(), null, kakaoOAuthResponse.getNickname(), UserType.KAKAO);
+        userRepository.save(newUser);
         return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), kakaoOAuthResponse.getNickname(),
             UserType.KAKAO);
     }
