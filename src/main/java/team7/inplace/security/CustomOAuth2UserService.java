@@ -1,6 +1,6 @@
 package team7.inplace.security;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -8,7 +8,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
@@ -20,12 +20,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (!provider.equals(UserType.KAKAO.getProvider())) {
             return null;
         }
-
         OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
         KakaoOAuthResponse kakaoOAuthResponse = new KakaoOAuthResponse(oAuth2User.getAttributes());
-
-        CustomOAuth2User customOAuth2User = updateUser(kakaoOAuthResponse);
-        return customOAuth2User;
+        return updateUser(kakaoOAuthResponse);
     }
 
     private CustomOAuth2User updateUser(KakaoOAuthResponse kakaoOAuthResponse) {
@@ -33,7 +30,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (existUser != null) {
             existUser.updateInfo(kakaoOAuthResponse.getNickname());
             userRepository.save(existUser);
+            return new CustomOAuth2User(kakaoOAuthResponse.getEmail(),
+                kakaoOAuthResponse.getNickname(), UserType.KAKAO);
         }
-        return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), kakaoOAuthResponse.getNickname(), UserType.KAKAO);
+        return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), kakaoOAuthResponse.getNickname(),
+            UserType.KAKAO);
     }
 }

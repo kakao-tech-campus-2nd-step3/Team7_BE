@@ -1,6 +1,6 @@
 package team7.inplace.security;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,30 +12,31 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOauth2UserService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         //h2-console 접속 가능
-        http.headers((headers)->headers.frameOptions(FrameOptionsConfig::sameOrigin))
+        http.headers((headers) -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
             .authorizeHttpRequests((auth) -> auth
-            .requestMatchers("/h2-console/**").permitAll());
+                .requestMatchers("/h2-console/**").permitAll());
 
         //http 설정
         http.csrf(AbstractHttpConfigurer::disable)
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
-            .oauth2Login((oauth2)->oauth2
-                .userInfoEndpoint((userInfoEndPointConfig)->userInfoEndPointConfig
-                    .userService(customOauth2UserService)))
-            .authorizeHttpRequests((auth)-> auth
-                .requestMatchers("/").authenticated()
+            .oauth2Login((oauth2) -> oauth2
+                .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
+                    .userService(customOauth2UserService)).defaultSuccessUrl("/"))
+            .authorizeHttpRequests((auth) -> auth
+                .requestMatchers("/login").permitAll()
+                .requestMatchers("/hello").authenticated()
                 .anyRequest().permitAll())
-            .sessionManagement((session)->session
+            .sessionManagement((session) -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();

@@ -21,10 +21,6 @@ public record CustomOAuth2User(String username,
 
     @Override
     public String getName() {
-        return "";
-    }
-
-    public String username() {
-        return this.username;
+        return username;
     }
 }

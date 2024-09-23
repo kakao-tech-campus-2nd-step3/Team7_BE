@@ -8,15 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Entity
 @Table(name = "\"USER\"")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,6 +31,16 @@ public class User {
     @Column(name = "user_type")
     @Enumerated(EnumType.STRING)
     private UserType userType;
+
+    public User(String username, String password, String nickname, UserType userType) {
+        this.username = username;
+        this.password = password;
+        this.nickname = nickname;
+        this.userType = userType;
+    }
+
+    protected User() {
+    }
 
     public void updateInfo(String nickname) {
         this.nickname = nickname;
