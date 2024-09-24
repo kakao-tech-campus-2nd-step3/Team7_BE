@@ -1,4 +1,4 @@
-package team7.inplace.place.repository;
+package team7.inplace.place.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

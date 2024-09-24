@@ -1,6 +1,11 @@
 package team7.inplace.place.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,17 +19,16 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import team7.inplace.place.application.PlaceService;
+import team7.inplace.place.application.dto.CategoryInfo;
 import team7.inplace.place.domain.Category;
-import team7.inplace.place.domain.CategoryListResponse;
-import team7.inplace.place.service.PlaceService;
+import team7.inplace.place.presentation.PlaceController;
+import team7.inplace.place.presentation.dto.CategoriesResponse;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-@SpringBootTest(webEnvironment =  WebEnvironment.MOCK)
+@SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 class PlaceControllerTest {
+
     @Mock
     private PlaceService placeService;
 
@@ -45,7 +49,9 @@ class PlaceControllerTest {
     @Test
     public void testGetCategories() throws Exception {
         // given
-        List<Category> expectedCategories = List.of(Category.CAFE, Category.WESTERN, Category.JAPANESE, Category.KOREAN);
+        List<CategoryInfo> expectedCategories = Arrays.stream(Category.values())
+            .map(category -> new CategoryInfo(category.name()))
+            .toList();
         when(placeService.getCategories()).thenReturn(expectedCategories);
 
         // when & then
@@ -55,8 +61,9 @@ class PlaceControllerTest {
             .andExpect(status().isOk())
             .andExpect(result -> {
                 String jsonResponse = result.getResponse().getContentAsString();
-                CategoryListResponse responseDTO = objectMapper.readValue(jsonResponse, CategoryListResponse.class);
-                assertThat(responseDTO.categories()).isEqualTo(expectedCategories);
+                CategoriesResponse response = objectMapper.readValue(jsonResponse,
+                    CategoriesResponse.class);
+                assertThat(response.categories()).isEqualTo(expectedCategories);
             });
     }
 }
