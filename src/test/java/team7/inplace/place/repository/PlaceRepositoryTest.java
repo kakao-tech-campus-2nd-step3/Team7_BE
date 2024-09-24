@@ -1,6 +1,6 @@
 package team7.inplace.place.repository;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Optional;
@@ -12,15 +12,17 @@ import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.domain.PlaceTime;
+import team7.inplace.place.persistence.PlaceRepository;
 
 @DataJpaTest
 class PlaceRepositoryTest {
 
     @Autowired
     private PlaceRepository placeRepository;
+
     @Test
     @DisplayName("Save and Find Test")
-    public void 장소_저장_및_조회_테스트 () {
+    public void 장소_저장_및_조회_테스트() {
         // Given
         Place place = Place.builder()
             .name("Test Place")
