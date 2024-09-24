@@ -12,10 +12,10 @@ import team7.inplace.influencer.entity.Influencer;
 import team7.inplace.influencer.repository.InfluencerRepository;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
-import team7.inplace.video.dto.VideoData;
-import team7.inplace.video.entity.Video;
-import team7.inplace.video.repository.VideoRepository;
-import team7.inplace.video.service.VideoService;
+import team7.inplace.video.application.dto.VideoInfo;
+import team7.inplace.video.domain.Video;
+import team7.inplace.video.persistence.VideoRepository;
+import team7.inplace.video.application.VideoService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class VideoServiceTest {
 
     @Test
     @DisplayName("findByInfluencer Test")
-    void test1(){
+    void test1() {
         // given
         ArgumentCaptor<List<String>> captor_s = ArgumentCaptor.forClass((Class) List.class);
         ArgumentCaptor<List<Long>> captor_i = ArgumentCaptor.forClass((Class) List.class);
@@ -73,7 +73,7 @@ public class VideoServiceTest {
         given(videoRepository.findVideosByInfluencerIdIn(captor_i.capture())).willAnswer(invocation -> savedVideos);
 
         // when
-        List<VideoData> savedVideoData = videoService.findByInfluencer(names);
+        List<VideoInfo> savedVideoData = videoService.findByInfluencer(names);
         // then
         Assertions.assertThat(savedVideoData.get(0).place().placeName()).isEqualTo(place.getName());
         Assertions.assertThat(savedVideoData.get(0).videoUrl()).isEqualTo("url");

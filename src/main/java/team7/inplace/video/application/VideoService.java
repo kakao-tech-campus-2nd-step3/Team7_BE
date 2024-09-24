@@ -1,21 +1,21 @@
-package team7.inplace.video.service;
+package team7.inplace.video.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.dto.PlaceForVideo;
-import team7.inplace.video.dto.VideoData;
+import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.influencer.entity.Influencer;
-import team7.inplace.video.entity.Video;
+import team7.inplace.video.domain.Video;
 import team7.inplace.influencer.repository.InfluencerRepository;
-import team7.inplace.video.repository.VideoRepository;
+import team7.inplace.video.persistence.VideoRepository;
 
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class VideoService {
-    private static Map<Category, List<String>> template = new HashMap<>();
+    private static final Map<Category, List<String>> template = new HashMap<>();
     private final VideoRepository videoRepository;
     private final InfluencerRepository influencerRepository;
 
@@ -46,7 +46,7 @@ public class VideoService {
         ));
     }
 
-    public List<VideoData> findByInfluencer(List<String> influencers){
+    public List<VideoInfo> findByInfluencer(List<String> influencers) {
         // 인플루언서 정보 처리
         List<Long> influencerIds = influencerRepository.findByNameIn(influencers).stream()
                 .map(Influencer::getId)
@@ -56,19 +56,19 @@ public class VideoService {
         List<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(influencerIds);
 
         // 변수명 변경 가능
-        List<VideoData> returnValue = new ArrayList<>();
+        List<VideoInfo> videoInfos = new ArrayList<>();
 
         // DTO 형식에 맞게 대입
         for (Video savedVideo : savedVideos) {
             PlaceForVideo placeForVideo = new PlaceForVideo(savedVideo.getPlace().getPlaceId(), savedVideo.getPlace().getName());
             String alias = makeAlias(savedVideo.getInfluencer().getName(), savedVideo.getPlace().getCategory());
-            returnValue.add(new VideoData(savedVideo.getId(), alias, savedVideo.getVideoUrl(), placeForVideo));
+            videoInfos.add(new VideoInfo(savedVideo.getId(), alias, savedVideo.getVideoUrl(), placeForVideo));
         }
 
-        return returnValue;
+        return videoInfos;
     }
 
-    private String makeAlias(String influencerName, Category category){
+    private String makeAlias(String influencerName, Category category) {
         List<String> syntax = template.get(category);
 
         Random random = new Random();

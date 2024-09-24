@@ -13,8 +13,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import team7.inplace.influencer.entity.Influencer;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
-import team7.inplace.video.entity.Video;
-import team7.inplace.video.repository.VideoRepository;
+import team7.inplace.video.domain.Video;
+import team7.inplace.video.persistence.VideoRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class VideoRepositoryTest {
 
     @BeforeEach
     @Transactional
-    void init(){
+    void init() {
         Place place = Place.builder()
                 .name("Test Place")
                 .pet(false)
@@ -54,11 +54,11 @@ public class VideoRepositoryTest {
         entityManager.persist(influencer2);
 
 
-        Video video1 = new Video( "url1", influencer1, place);
-        Video video2 = new Video( "url2", influencer1, place);
-        Video video3 = new Video( "url3", influencer1, place);
-        Video video4 = new Video( "url4", influencer2, place);
-        Video video5 = new Video( "url5", influencer2, place);
+        Video video1 = new Video("url1", influencer1, place);
+        Video video2 = new Video("url2", influencer1, place);
+        Video video3 = new Video("url3", influencer1, place);
+        Video video4 = new Video("url4", influencer2, place);
+        Video video5 = new Video("url5", influencer2, place);
         entityManager.persist(video1);
         entityManager.persist(video2);
         entityManager.persist(video3);
@@ -68,7 +68,7 @@ public class VideoRepositoryTest {
 
     @Test
     @DisplayName("findVideosByInfluencerIdIn Test")
-    void test1(){
+    void test1() {
         // given
         /* Before Each */
         // when

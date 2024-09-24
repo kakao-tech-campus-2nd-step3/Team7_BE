@@ -1,4 +1,4 @@
-package team7.inplace.video.entity;
+package team7.inplace.video.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,7 +16,7 @@ public class Video {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name="video_url", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "video_url", nullable = false, columnDefinition = "TEXT")
     @NonNull
     private String videoUrl;
     @ManyToOne
