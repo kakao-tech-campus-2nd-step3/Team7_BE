@@ -1,4 +1,4 @@
-package team7.inplace.security;
+package team7.inplace.security.application.dto;
 
 import java.util.Map;
 

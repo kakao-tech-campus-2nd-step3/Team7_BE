@@ -1,9 +1,10 @@
-package team7.inplace.security;
+package team7.inplace.security.application.dto;
 
 import java.util.Collection;
 import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import team7.inplace.security.domain.UserType;
 
 public record CustomOAuth2User(String username,
                                String nickname,

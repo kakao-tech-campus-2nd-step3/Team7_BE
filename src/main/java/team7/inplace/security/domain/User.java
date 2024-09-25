@@ -1,4 +1,4 @@
-package team7.inplace.security;
+package team7.inplace.security.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

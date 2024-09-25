@@ -1,4 +1,4 @@
-package team7.inplace.security;
+package team7.inplace.security.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import team7.inplace.security.application.CustomOAuth2UserService;
 
 @Configuration
 @EnableWebSecurity
