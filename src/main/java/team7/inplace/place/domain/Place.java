@@ -18,8 +18,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
-import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.application.dto.PlaceInfo.AddressInfo;
 
 @Entity
 @Table(name = "places")
@@ -81,19 +79,6 @@ public class Place {
     @CollectionTable(name = "menus", joinColumns = @JoinColumn(name = "place_id"))
     private List<Menu> menuList;
 
-    public PlaceInfo getPlaceInfo() {
-        AddressInfo addressInfo = address.getAddressInfo();
-
-        return new PlaceInfo(
-            id,
-            name,
-            addressInfo,
-            category.toString(),
-            null,
-            coordinate.getLongitude(),
-            coordinate.getLatitude(),
-            null);
-    }
     // influencerName, likes 기능은 추후 추가 예정
 
 }
