@@ -51,7 +51,7 @@ class PlaceRepositoryTest {
         Place savedPlace = placeRepository.save(place);
 
         // When
-        Optional<Place> foundPlace = placeRepository.findById(savedPlace.getPlaceId());
+        Optional<Place> foundPlace = placeRepository.findById(savedPlace.getId());
 
         // Then
         assertThat(foundPlace).isPresent();

@@ -31,7 +31,7 @@ public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long placeId;
+    private Long id;
 
     @Column(nullable = false, length = 50)
     private String name;
@@ -85,7 +85,7 @@ public class Place {
         AddressInfo addressInfo = address.getAddressInfo();
 
         return new PlaceInfo(
-            placeId,
+            id,
             name,
             addressInfo,
             category.toString(),
