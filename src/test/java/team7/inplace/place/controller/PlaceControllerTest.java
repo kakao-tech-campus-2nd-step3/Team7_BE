@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import team7.inplace.place.application.CategoryService;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.place.application.dto.CategoryInfo;
 import team7.inplace.place.domain.Category;
@@ -31,6 +32,9 @@ class PlaceControllerTest {
 
     @Mock
     private PlaceService placeService;
+
+    @Mock
+    private CategoryService categoryService;
 
     @InjectMocks
     private PlaceController placeController;
@@ -52,7 +56,7 @@ class PlaceControllerTest {
         List<CategoryInfo> expectedCategories = Arrays.stream(Category.values())
             .map(category -> new CategoryInfo(category.name()))
             .toList();
-        when(placeService.getCategories()).thenReturn(expectedCategories);
+        when(categoryService.getCategories()).thenReturn(expectedCategories);
 
         // when & then
         mockMvc.perform(MockMvcRequestBuilders

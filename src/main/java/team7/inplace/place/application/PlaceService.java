@@ -1,25 +1,20 @@
 package team7.inplace.place.application;
 
-import java.util.Arrays;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
-import team7.inplace.place.application.dto.CategoryInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 
 @Service
+@RequiredArgsConstructor
 public class PlaceService {
 
     private final PlaceRepository placeRepository;
-
-    public PlaceService(PlaceRepository placeRepository) {
-        this.placeRepository = placeRepository;
-    }
 
     public Page<PlaceInfo> getPlacesWithinRadius(
         PlacesCoordinateCommand placesCoordinateCommand) {
@@ -64,11 +59,6 @@ public class PlaceService {
             comm.latitude(),
             comm.longitude(),
             comm.pageable());
-    }
-
-    public List<CategoryInfo> getCategories() {
-        return Arrays.stream(Category.values()).map(category -> new CategoryInfo(category.name()))
-            .toList();
     }
 
 }
