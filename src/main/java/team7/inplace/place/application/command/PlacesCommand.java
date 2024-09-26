@@ -4,9 +4,11 @@ import org.springframework.data.domain.Pageable;
 
 public record PlacesCommand() {
 
-    public record PlacesCoordinateCommand(String longitude,
-                                          String latitude,
-                                          Pageable pageable) {
+    public record PlacesCoordinateCommand(
+        String longitude,
+        String latitude,
+        Pageable pageable
+    ) {
 
     }
 }
