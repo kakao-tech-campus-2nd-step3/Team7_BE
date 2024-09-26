@@ -10,7 +10,12 @@ public record VideoResponse(
         String videoUrl,
         PlaceForVideo place
 ) {
-    public VideoResponse(VideoInfo videoData) {
-        this(videoData.videoId(), videoData.videoAlias(), videoData.videoUrl(), videoData.place());
+    public static VideoResponse of(VideoInfo videoInfo) {
+        return new VideoResponse(
+                videoInfo.videoId(),
+                videoInfo.videoAlias(),
+                videoInfo.videoUrl(),
+                videoInfo.place()
+        );
     }
 }
