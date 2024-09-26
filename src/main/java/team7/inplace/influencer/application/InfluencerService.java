@@ -17,7 +17,7 @@ public class InfluencerService {
     public List<InfluencerDto> getAllInfluencers() {
         return influencerRepository.findAll().stream()
             .map(influencer -> new InfluencerDto(
-                influencer.getInfluencerId(),
+                influencer.getId(),
                 influencer.getName(),
                 influencer.getImgUrl(),
                 influencer.getJob(),
