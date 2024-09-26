@@ -22,29 +22,7 @@ public class PlaceService {
 
         return placesPage.map(PlaceInfo::of);
     }
-/*
-    private List<PlaceInfo> getPlaceInfos(List<Long> placeIds) {
-        List<PlaceInfo> placeInfos = new ArrayList<>();
-
-        for (Long placeId : placeIds) {
-            Place place = placeRepository.findById(placeId)
-                .orElseThrow(() -> new IllegalArgumentException("placeId 없음."));
-
-            AddressInfo addressInfo = place.getAddress().getAddressInfo();
-
-            CoordinateInfo coordinateInfo = place.getCoordinate().getCoordinateInfo();
-
-            PlaceInfo placeInfo = new PlaceInfo(placeId,
-                place.getName(),
-                addressInfo,
-                place.getCategory().toString(),
-                coordinateInfo);
-            placeInfos.add(placeInfo);
-        }
-        return placeInfos;
-    }
-*/
-
+    
     private Page<Place> getPlacesByDistance(PlacesCoordinateCommand comm) {
         return placeRepository.getPlacesByDistance(
             comm.latitude(),
