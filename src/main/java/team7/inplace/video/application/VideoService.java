@@ -1,6 +1,7 @@
 package team7.inplace.video.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import team7.inplace.influencer.entity.Influencer;
 import team7.inplace.influencer.repository.InfluencerRepository;
@@ -27,6 +28,14 @@ public class VideoService {
 
         // 인플루언서 정보로 필터링한 비디오 정보 불러오기
         List<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(influencerIds);
+
+        // DTO 형식에 맞게 대입
+        return videoToInfo(savedVideos);
+    }
+
+    public List<VideoInfo> findAllDESC() {
+        // id를 기준으로 내림차순 정렬하여 비디오 정보 불러오기
+        List<Video> savedVideos = videoRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
 
         // DTO 형식에 맞게 대입
         return videoToInfo(savedVideos);
