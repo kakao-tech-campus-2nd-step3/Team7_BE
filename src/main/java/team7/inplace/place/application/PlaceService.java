@@ -1,9 +1,7 @@
 package team7.inplace.place.application;
 
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.dto.PlaceInfo;
@@ -22,14 +20,7 @@ public class PlaceService {
         // 주어진 좌표로 장소를 찾고, 해당 페이지의 결과를 가져옵니다.
         Page<Place> placesPage = getPlacesByDistance(placesCoordinateCommand);
 
-        // Place 객체를 PlaceInfo로 변환합니다.
-        List<PlaceInfo> placeInfoList = placesPage.getContent().stream()
-            .map(Place::getPlaceInfo)
-            .toList();
-
-        // PageImpl을 사용하여 Page<PlaceInfo>로 감쌉니다.
-        return new PageImpl<>(placeInfoList, placesPage.getPageable(),
-            placesPage.getTotalElements());
+        return placesPage.map(PlaceInfo::new);
     }
 /*
     private List<PlaceInfo> getPlaceInfos(List<Long> placeIds) {
