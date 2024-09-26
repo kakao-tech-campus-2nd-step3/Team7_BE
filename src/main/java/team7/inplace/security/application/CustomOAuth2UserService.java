@@ -1,47 +1,46 @@
 package team7.inplace.security.application;
 
-import lombok.RequiredArgsConstructor;
+import jakarta.transaction.Transactional;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.security.application.dto.KakaoOAuthResponse;
 import team7.inplace.security.domain.User;
-import team7.inplace.security.domain.UserType;
 import team7.inplace.security.persistence.UserRepository;
 
-@Service
-@RequiredArgsConstructor
-public class CustomOAuth2UserService extends DefaultOAuth2UserService {
+@Component
+public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
+    private final DefaultOAuth2UserService defaultOAuth2UserService;
     private final UserRepository userRepository;
 
+    public CustomOAuth2UserService(DefaultOAuth2UserService defaultOAuth2UserService,
+        UserRepository userRepository) {
+        this.defaultOAuth2UserService = defaultOAuth2UserService;
+        this.userRepository = userRepository;
+    }
+
+    @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest oAuth2UserRequest)
         throws OAuth2AuthenticationException {
-        String provider = oAuth2UserRequest.getClientRegistration().getRegistrationId();
-        if (!provider.equals(UserType.KAKAO.getProvider())) {
-            return null;
-        }
-        OAuth2User oAuth2User = super.loadUser(oAuth2UserRequest);
+        OAuth2User oAuth2User = defaultOAuth2UserService.loadUser(oAuth2UserRequest);
         KakaoOAuthResponse kakaoOAuthResponse = new KakaoOAuthResponse(oAuth2User.getAttributes());
-        return updateUser(kakaoOAuthResponse);
+
+        return getUser(kakaoOAuthResponse);
     }
 
-    private CustomOAuth2User updateUser(KakaoOAuthResponse kakaoOAuthResponse) {
-        User existUser = userRepository.findByUsername(kakaoOAuthResponse.getEmail());
-        if (existUser != null) {
-            existUser.updateInfo(kakaoOAuthResponse.getNickname());
-            userRepository.save(existUser);
-            return new CustomOAuth2User(kakaoOAuthResponse.getEmail(),
-                kakaoOAuthResponse.getNickname(), UserType.KAKAO);
-        }
-        User newUser = new User(kakaoOAuthResponse.getEmail(), null,
-            kakaoOAuthResponse.getNickname(), UserType.KAKAO);
-        userRepository.save(newUser);
-        return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), kakaoOAuthResponse.getNickname(),
-            UserType.KAKAO);
+    private CustomOAuth2User getUser(KakaoOAuthResponse kakaoOAuthResponse) {
+        User user = userRepository.findByUsername(kakaoOAuthResponse.getEmail())
+            .map((existUser) -> {
+                existUser.updateInfo(kakaoOAuthResponse.getNickname());
+                return existUser;
+            })
+            .orElseGet(kakaoOAuthResponse::toUser);
+        return CustomOAuth2User.of(user);
     }
 }

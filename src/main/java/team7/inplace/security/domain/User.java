@@ -8,10 +8,13 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "\"USER\"")
 public class User {
 
@@ -37,9 +40,6 @@ public class User {
         this.password = password;
         this.nickname = nickname;
         this.userType = userType;
-    }
-
-    protected User() {
     }
 
     public void updateInfo(String nickname) {
