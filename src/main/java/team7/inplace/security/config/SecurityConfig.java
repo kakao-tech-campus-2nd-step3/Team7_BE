@@ -1,6 +1,5 @@
 package team7.inplace.security.config;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,13 +9,20 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import team7.inplace.security.application.CustomOAuth2UserService;
+import team7.inplace.security.handler.CustomSuccessHandler;
 
 @Configuration
 @EnableWebSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOauth2UserService;
+    private final CustomSuccessHandler customSuccessHandler;
+
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
+        CustomSuccessHandler customSuccessHandler) {
+        this.customOauth2UserService = customOAuth2UserService;
+        this.customSuccessHandler = customSuccessHandler;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -32,7 +38,7 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)
             .oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
-                    .userService(customOauth2UserService)).defaultSuccessUrl("/"))
+                    .userService(customOauth2UserService)).successHandler(customSuccessHandler))
             .authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/login").permitAll()
                 .requestMatchers("/hello").authenticated()

@@ -7,23 +7,32 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import team7.inplace.security.config.JwtProperties;
 
-@Component
-public class JWTUtil {
+public class JwtUtil {
 
     private final SecretKey secretKey;
     private final JwtParser jwtParser;
-    private static final Long expiredTime = 300L;
+    private final Long accessTokenExpiredTime;
+    private final Long refreshTokenExpiredTime;
 
-    public JWTUtil(@Value("${spring.jwt.secret}") String secretKey) {
-        this.secretKey = new SecretKeySpec(secretKey.getBytes(StandardCharsets.UTF_8),
+    public JwtUtil(JwtProperties jwtProperties) {
+        this.secretKey = new SecretKeySpec(jwtProperties.secret().getBytes(StandardCharsets.UTF_8),
             SIG.HS256.key().build().getAlgorithm());
         this.jwtParser = Jwts.parser().verifyWith(this.secretKey).build();
+        this.accessTokenExpiredTime = jwtProperties.accessTokenExpiredTime();
+        this.refreshTokenExpiredTime = jwtProperties.refreshTokenExpiredTime();
     }
 
-    public String createToken(String username) {
+    public String createAccessToken(String username) {
+        return createToken(username, accessTokenExpiredTime);
+    }
+
+    public String createRefreshToken(String username) {
+        return createToken(username, refreshTokenExpiredTime);
+    }
+
+    private String createToken(String username, Long expiredTime) {
         return Jwts.builder()
             .claim("username", username)
             .issuedAt(new Date(System.currentTimeMillis()))
