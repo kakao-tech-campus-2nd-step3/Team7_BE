@@ -2,14 +2,23 @@ package team7.inplace.place.presentation;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.place.application.PlaceService;
+import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.dto.CategoryInfo;
+import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
+import team7.inplace.place.presentation.dto.PlacesResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,6 +26,24 @@ import team7.inplace.place.presentation.dto.CategoriesResponse;
 public class PlaceController {
 
     private final PlaceService placeService;
+
+    @GetMapping
+    public ResponseEntity<PlacesResponse> getPlaces(
+        @RequestParam String longitude,
+        @RequestParam String latitude,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @SortDefault.SortDefaults({
+            @SortDefault(sort = "id", direction = Sort.Direction.ASC)
+        }) Pageable pageable,
+        @RequestParam(required = false) String categories,
+        @RequestParam(required = false) String influencers
+    ) {
+        pageable = PageRequest.of(page, size);
+        Page<PlaceInfo> placeInfos = placeService.getPlacesWithinRadius(
+            new PlacesCoordinateCommand(longitude, latitude, pageable));
+        return new ResponseEntity<>(new PlacesResponse(placeInfos), HttpStatus.OK);
+    }
 
     @GetMapping("/categories")
     public ResponseEntity<CategoriesResponse> getCategories() {

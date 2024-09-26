@@ -203,6 +203,7 @@ gradle-app.setting
 *.hprof
 *.yaml
 
-# End of https://www.toptal.com/developers/gitignore/api/macos,java,intellij,gradle
+# CommandLineRunner for loading dummy data
+src/main/java/team7/inplace/place/config/DataLoader.java
 
-application-security.yml
+# End of https://www.toptal.com/developers/gitignore/api/macos,java,intellij,gradle
