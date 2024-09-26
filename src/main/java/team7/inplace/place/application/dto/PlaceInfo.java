@@ -1,8 +1,6 @@
 package team7.inplace.place.application.dto;
 
 
-import team7.inplace.place.domain.Place;
-
 public record PlaceInfo(Long placeId,
                         String placeName,
                         AddressInfo address,
@@ -20,16 +18,5 @@ public record PlaceInfo(Long placeId,
         String address3
     ) {
 
-    }
-
-    public PlaceInfo(Place place) {
-        this(place.getId(),
-            place.getName(),
-            place.getAddress().getAddressInfo(),
-            place.getCategory().toString(),
-            null,
-            place.getCoordinate().getLongitude(),
-            place.getCoordinate().getLatitude(),
-            null);
     }
 }

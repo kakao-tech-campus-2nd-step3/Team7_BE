@@ -20,7 +20,7 @@ public class PlaceService {
         // 주어진 좌표로 장소를 찾고, 해당 페이지의 결과를 가져옵니다.
         Page<Place> placesPage = getPlacesByDistance(placesCoordinateCommand);
 
-        return placesPage.map(PlaceInfo::new);
+        return placesPage.map(Place::getPlaceInfo);
     }
 /*
     private List<PlaceInfo> getPlaceInfos(List<Long> placeIds) {
