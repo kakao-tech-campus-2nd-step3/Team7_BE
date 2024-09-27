@@ -1,5 +1,7 @@
 package team7.inplace.video.application;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team7.inplace.influencer.entity.Influencer;
@@ -9,9 +11,6 @@ import team7.inplace.place.dto.PlaceForVideo;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +44,7 @@ public class VideoService {
                             savedVideo.getId(),
                             alias,
                             savedVideo.getVideoUrl(),
-                            PlaceForVideo.of(place.getPlaceId(), place.getName())
+                            PlaceForVideo.of(place.getId(), place.getName())
                     )
             );
         }
