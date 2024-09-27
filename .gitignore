@@ -201,7 +201,8 @@ gradle-app.setting
 ### Gradle Patch ###
 # Java heap dump
 *.hprof
-*.yaml
+
+.env
 
 # CommandLineRunner for loading dummy data
 src/main/java/team7/inplace/place/config/DataLoader.java
