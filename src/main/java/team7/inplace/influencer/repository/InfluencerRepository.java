@@ -1,7 +1,7 @@
-package team7.inplace.video.repository;
+package team7.inplace.influencer.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import team7.inplace.video.entity.Influencer;
+import team7.inplace.influencer.entity.Influencer;
 
 import java.util.List;
 
