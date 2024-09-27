@@ -1,0 +1,3 @@
+[submodule "src/main/resources/InplaceSecurity"]
+	path = src/main/resources/InplaceSecurity
+	url = https://github.com/suhyeon7497/InplaceSecurity.git
