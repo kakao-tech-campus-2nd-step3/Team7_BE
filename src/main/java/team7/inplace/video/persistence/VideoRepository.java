@@ -1,7 +1,7 @@
-package team7.inplace.video.repository;
+package team7.inplace.video.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import team7.inplace.video.entity.Video;
+import team7.inplace.video.domain.Video;
 
 import java.util.List;
 
