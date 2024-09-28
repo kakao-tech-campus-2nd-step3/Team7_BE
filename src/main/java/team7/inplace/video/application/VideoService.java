@@ -35,7 +35,7 @@ public class VideoService {
 
     public List<VideoInfo> findAllDESC() {
         // id를 기준으로 내림차순 정렬하여 비디오 정보 불러오기
-        List<Video> savedVideos = videoRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+        List<Video> savedVideos = videoRepository.findAllByOrderById();
 
         // DTO 형식에 맞게 대입
         return videoToInfo(savedVideos);
