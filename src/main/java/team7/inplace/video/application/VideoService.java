@@ -1,14 +1,18 @@
 package team7.inplace.video.application;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.application.dto.PlaceForVideo;
+import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
+import team7.inplace.video.presentation.dto.VideoSearchParams;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +22,7 @@ import java.util.List;
 public class VideoService {
     private final VideoRepository videoRepository;
     private final InfluencerRepository influencerRepository;
+    private final PlaceRepository placeRepository;
 
     public List<VideoInfo> findByInfluencer(List<String> influencers) {
         // 인플루언서 정보 처리
@@ -38,6 +43,18 @@ public class VideoService {
 
         // DTO 형식에 맞게 대입
         return videoToInfo(savedVideos);
+    }
+
+    public List<VideoInfo> findBySurround(VideoSearchParams videoSearchParams, Pageable pageable){
+        Page<Place> placesByDistance = placeRepository.getPlacesByDistance(
+                videoSearchParams.longitude(),
+                videoSearchParams.latitude(),
+                pageable
+        );
+
+        List<Place> places = placesByDistance.getContent();
+        List<Video> videos = videoRepository.findDistinctByPlaceIn(places);
+        return videoToInfo(videos);
     }
 
     private List<VideoInfo> videoToInfo(List<Video> savedVideos) {
