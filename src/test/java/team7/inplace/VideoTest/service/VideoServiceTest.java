@@ -1,5 +1,9 @@
 package team7.inplace.VideoTest.service;
 
+import static org.mockito.BDDMockito.given;
+
+import java.util.ArrayList;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,20 +12,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import team7.inplace.influencer.entity.Influencer;
-import team7.inplace.influencer.repository.InfluencerRepository;
+import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
+import team7.inplace.video.application.VideoService;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
-import team7.inplace.video.application.VideoService;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 public class VideoServiceTest {
