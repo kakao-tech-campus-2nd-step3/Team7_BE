@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface VideoRepository extends JpaRepository<Video, Long> {
     List<Video> findVideosByInfluencerIdIn(List<Long> influencerIds);
-    List<Video> findAllByOrderById();
+    List<Video> findAllByOrderByIdDesc();
 }
