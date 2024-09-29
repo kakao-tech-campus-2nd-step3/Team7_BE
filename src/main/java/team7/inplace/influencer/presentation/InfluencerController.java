@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerDto;
 import team7.inplace.influencer.presentation.dto.InfluencerListResponse;
+import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 
 @RequiredArgsConstructor
 @RestController
@@ -17,12 +18,14 @@ public class InfluencerController {
     private final InfluencerService influencerService;
 
     @GetMapping("/influencers")
-    public ResponseEntity<List<InfluencerListResponse>> getAllInfluencers() {
+    public ResponseEntity<InfluencerListResponse> getAllInfluencers() {
         List<InfluencerDto> influencersDtoList = influencerService.getAllInfluencers();
-        List<InfluencerListResponse> influencers = influencersDtoList.stream()
-            .map(InfluencerListResponse::convertToResponse)
+        List<InfluencerResponse> influencers = influencersDtoList.stream()
+            .map(InfluencerResponse::convertToResponse)
             .toList();
-        return new ResponseEntity<>(influencers, HttpStatus.OK);
+        InfluencerListResponse response = new InfluencerListResponse(influencers);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

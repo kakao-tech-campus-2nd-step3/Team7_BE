@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,6 +23,7 @@ import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerDto;
 import team7.inplace.influencer.presentation.InfluencerController;
 import team7.inplace.influencer.presentation.dto.InfluencerListResponse;
+import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class InfluencerControllerTest {
@@ -36,9 +36,12 @@ public class InfluencerControllerTest {
     @InjectMocks
     private InfluencerController influencerController;
 
+    private ObjectMapper objectMapper;
+
     @BeforeEach
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(influencerController).build();
+        objectMapper = new ObjectMapper();
     }
 
     @Test
@@ -47,24 +50,21 @@ public class InfluencerControllerTest {
             false);
         InfluencerDto influencerDto2 = new InfluencerDto(2L, "influencer2", "imgUrl2", "job2",
             false);
-        List<InfluencerDto> influencerDtoList = Arrays.asList(influencerDto1, influencerDto2);
-
-        InfluencerListResponse response1 = InfluencerListResponse.convertToResponse(influencerDto1);
-        InfluencerListResponse response2 = InfluencerListResponse.convertToResponse(influencerDto2);
-        List<InfluencerListResponse> responseList = List.of(response1, response2);
-
+        List<InfluencerDto> influencerDtoList = List.of(influencerDto1, influencerDto2);
         given(influencerService.getAllInfluencers()).willReturn(influencerDtoList);
 
-        // response를 json으로 변경
-        ObjectMapper objectMapper = new ObjectMapper();
-        String expectedJson = objectMapper.writeValueAsString(responseList);
+        // 예상 json 값
+        List<InfluencerResponse> responseList = influencerDtoList.stream()
+            .map(InfluencerResponse::convertToResponse)
+            .toList();
+        InfluencerListResponse expectedResponse = new InfluencerListResponse(responseList);
+        String expectedJson = objectMapper.writeValueAsString(expectedResponse);
 
         mockMvc.perform(get("/influencers")
                 .contentType(MediaType.APPLICATION_JSON))
             .andDo(print())
             .andExpect(status().isOk())
             .andExpect(content().json(expectedJson));
-
         verify(influencerService, times(1)).getAllInfluencers(); // 서비스 호출 확인
     }
 }
