@@ -1,6 +1,6 @@
 package team7.inplace.video.presentation.dto;
 
-import team7.inplace.place.dto.PlaceForVideo;
+import team7.inplace.place.application.dto.PlaceForVideo;
 import team7.inplace.video.application.dto.VideoInfo;
 
 // Video 엔티티의 Controller Response 정보 전달을 담당하는 클래스
