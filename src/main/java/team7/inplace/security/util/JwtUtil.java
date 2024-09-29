@@ -25,16 +25,17 @@ public class JwtUtil {
     }
 
     public String createAccessToken(String username) {
-        return createToken(username, accessTokenExpiredTime);
+        return createToken(username, accessTokenExpiredTime, "accessToken");
     }
 
     public String createRefreshToken(String username) {
-        return createToken(username, refreshTokenExpiredTime);
+        return createToken(username, refreshTokenExpiredTime, "refreshToken");
     }
 
-    private String createToken(String username, Long expiredTime) {
+    private String createToken(String username, Long expiredTime, String tokenType) {
         return Jwts.builder()
             .claim("username", username)
+            .claim("tokenType", tokenType)
             .issuedAt(new Date(System.currentTimeMillis()))
             .expiration(new Date(System.currentTimeMillis() + expiredTime))
             .signWith(secretKey)
@@ -43,6 +44,10 @@ public class JwtUtil {
 
     public String getUsername(String token) {
         return jwtParser.parseSignedClaims(token).getPayload().get("username", String.class);
+    }
+
+    public String getTokenType(String token) {
+        return jwtParser.parseSignedClaims(token).getPayload().get("tokenType", String.class);
     }
 
     public Boolean isExpired(String token) {

@@ -32,7 +32,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
-        response.sendRedirect("http://localhost:8080/successCookie");
+        response.sendRedirect("http://localhost:8080/auth");
     }
 
     private Cookie createCookie(String key, String value) {
