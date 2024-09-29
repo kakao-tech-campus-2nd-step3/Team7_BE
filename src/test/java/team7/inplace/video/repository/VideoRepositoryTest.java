@@ -1,4 +1,4 @@
-package team7.inplace.VideoTest.repository;
+package team7.inplace.video.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
