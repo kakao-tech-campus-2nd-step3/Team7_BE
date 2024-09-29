@@ -3,6 +3,8 @@ package team7.inplace.VideoTest.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -10,14 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
-import team7.inplace.influencer.entity.Influencer;
+import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // 각 메서드 실행마다 이전 결과 초기화
@@ -52,7 +51,6 @@ public class VideoRepositoryTest {
         Influencer influencer2 = new Influencer("name2", "job2", "imgUrl");
         entityManager.persist(influencer1);
         entityManager.persist(influencer2);
-
 
         Video video1 = new Video("url1", influencer1, place);
         Video video2 = new Video("url2", influencer1, place);

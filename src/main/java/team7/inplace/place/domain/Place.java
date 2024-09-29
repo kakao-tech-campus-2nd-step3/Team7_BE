@@ -1,13 +1,18 @@
 package team7.inplace.place.domain;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,8 +29,7 @@ public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
-    private Long placeId;
+    private Long id;
 
     @Column(nullable = false, length = 50)
     private String name;
@@ -54,15 +58,6 @@ public class Place {
     @Column(nullable = false)
     private boolean smokingroom;
 
-    @Column(nullable = false, length = 50)
-    private String address1;
-
-    @Column(nullable = false, length = 50)
-    private String address2;
-
-    @Column(nullable = false, length = 50)
-    private String address3;
-
     @Column(columnDefinition = "TEXT")
     private String menuImgUrl;
 
@@ -70,10 +65,20 @@ public class Place {
     @Column(nullable = false)
     private Category category;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String longitude;
+    @Embedded
+    private Address address;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String latitude;
+    @Embedded
+    private Coordinate coordinate;
+
+    @ElementCollection
+    @CollectionTable(name = "place_times", joinColumns = @JoinColumn(name = "place_id"))
+    private List<PlaceTime> timeList;
+
+    @ElementCollection
+    @CollectionTable(name = "menus", joinColumns = @JoinColumn(name = "place_id"))
+    private List<Menu> menuList;
+
+    // influencerName, likes 기능은 추후 추가 예정
 
 }

@@ -3,7 +3,7 @@ package team7.inplace.VideoTest.domain;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import team7.inplace.influencer.entity.Influencer;
+import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.domain.Video;
 

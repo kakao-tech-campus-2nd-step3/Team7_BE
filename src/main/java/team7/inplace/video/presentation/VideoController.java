@@ -14,16 +14,15 @@ import team7.inplace.video.presentation.dto.VideoResponse;
 @RestController
 @RequiredArgsConstructor
 public class VideoController {
-
     private final VideoService videoService;
 
     // 내 인플루언서가 방문한 그 곳 ( 토큰 0 )
     @GetMapping("/video")
     public ResponseEntity<List<VideoResponse>> readByInfluencer(
-        @RequestParam(name = "influencer", required = false) List<String> influencers
+            @RequestParam(name = "influencer", required = false) List<String> influencers
     ) {
         List<VideoInfo> videoInfos = videoService.findByInfluencer(influencers);
-        List<VideoResponse> videoResponses = videoInfos.stream().map(VideoResponse::of).toList();
+        List<VideoResponse> videoResponses = videoInfos.stream().map(VideoResponse::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 }

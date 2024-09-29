@@ -1,9 +1,8 @@
-package team7.inplace.influencer.repository;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-import team7.inplace.influencer.entity.Influencer;
+package team7.inplace.influencer.persistence;
 
 import java.util.List;
+import org.springframework.data.jpa.repository.JpaRepository;
+import team7.inplace.influencer.domain.Influencer;
 
 public interface InfluencerRepository extends JpaRepository<Influencer, Long> {
     // 더미 데이터 입니다!!

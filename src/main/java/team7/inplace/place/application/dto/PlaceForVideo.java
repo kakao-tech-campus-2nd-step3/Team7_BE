@@ -1,4 +1,4 @@
-package team7.inplace.place.dto;
+package team7.inplace.place.application.dto;
 
 public record PlaceForVideo(
         Long placeId,
