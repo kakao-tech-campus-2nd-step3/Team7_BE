@@ -27,7 +27,7 @@ public class JwtFilter extends OncePerRequestFilter {
         FilterChain filterChain) throws ServletException, IOException {
         Cookie authorizationCookie = getAuthorizationCookie(request);
 
-        if (isCookieValidated(authorizationCookie)) {
+        if (isCookieInvalid(authorizationCookie)) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -41,12 +41,16 @@ public class JwtFilter extends OncePerRequestFilter {
     }
 
     private Cookie getAuthorizationCookie(HttpServletRequest request) {
-        return Arrays.stream(request.getCookies())
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
+        }
+        return Arrays.stream(cookies)
             .filter(cookie -> cookie.getName().equals("Authorization"))
             .findFirst().orElse(null);
     }
 
-    private boolean isCookieValidated(Cookie authorizationCookie) {
+    private boolean isCookieInvalid(Cookie authorizationCookie) {
         return isCookieEmpty(authorizationCookie) || jwtUtil.isExpired(
             authorizationCookie.getValue());
     }
