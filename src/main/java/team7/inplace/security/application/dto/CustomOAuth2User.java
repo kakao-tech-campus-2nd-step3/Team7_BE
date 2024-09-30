@@ -9,6 +9,7 @@ import team7.inplace.security.domain.UserType;
 
 public record CustomOAuth2User(
     String username,
+    Long id,
     String nickname,
     UserType userType
 ) implements OAuth2User {
@@ -29,6 +30,7 @@ public record CustomOAuth2User(
     }
 
     public static CustomOAuth2User of(User user) {
-        return new CustomOAuth2User(user.getUsername(), user.getNickname(), user.getUserType());
+        return new CustomOAuth2User(user.getUsername(), user.getId(), user.getNickname(),
+            user.getUserType());
     }
 }

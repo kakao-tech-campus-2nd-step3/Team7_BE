@@ -24,16 +24,18 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         throws IOException, ServletException {
 
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        String username = customOAuth2User.getName();
-        addAccessAndRefreshTokenToResponse(response, username);
+        addAccessAndRefreshTokenToResponse(response, customOAuth2User);
     }
 
-    private void addAccessAndRefreshTokenToResponse(HttpServletResponse response, String username)
+    private void addAccessAndRefreshTokenToResponse(HttpServletResponse response,
+        CustomOAuth2User customOAuth2User)
         throws IOException {
+        String username = customOAuth2User.getName();
+        Long userId = customOAuth2User.id();
         Cookie accessTokenCookie = createCookie("access_token",
-            jwtUtil.createAccessToken(username));
+            jwtUtil.createAccessToken(username, userId));
         Cookie refreshTokenCookie = createCookie("refresh_token",
-            jwtUtil.createRefreshToken(username));
+            jwtUtil.createRefreshToken(username, userId));
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);

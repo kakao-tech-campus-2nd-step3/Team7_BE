@@ -26,18 +26,21 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
         FilterChain filterChain) throws ServletException, IOException {
         Cookie authorizationCookie = getAuthorizationCookie(request);
-
         if (isCookieInvalid(authorizationCookie)) {
             filterChain.doFilter(request, response);
             return;
         }
-
         String token = authorizationCookie.getValue();
+        addUserToAuthentication(token);
+        filterChain.doFilter(request, response);
+    }
+
+    private void addUserToAuthentication(String token) {
         String username = jwtUtil.getUsername(token);
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, null, null);
+        Long id = jwtUtil.getId(token);
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, id, null, null);
         Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null);
         SecurityContextHolder.getContext().setAuthentication(authToken);
-        filterChain.doFilter(request, response);
     }
 
     private Cookie getAuthorizationCookie(HttpServletRequest request) {
