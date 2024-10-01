@@ -8,8 +8,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team7.inplace.influencer.domain.Influencer;
-import team7.inplace.security.util.JwtUtil;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.presentation.dto.VideoResponse;
 import team7.inplace.video.application.VideoService;
@@ -67,7 +65,7 @@ public class VideoController {
     @GetMapping("/new")
     @Operation(summary = "새로 등록된 그 곳", description = "id를 기준으로 내림차순 정렬한 Video 정보를 조회합니다.")
     public ResponseEntity<List<VideoResponse>> readByNew() {
-        List<VideoInfo> videoInfos = videoService.findAllDESC();
+        List<VideoInfo> videoInfos = videoService.findAllDesc();
         List<VideoResponse> videoResponses = videoInfos.stream().map(VideoResponse::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }

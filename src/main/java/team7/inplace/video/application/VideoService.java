@@ -37,7 +37,7 @@ public class VideoService {
         return videoToInfo(savedVideos);
     }
 
-    public List<VideoInfo> findAllDESC() {
+    public List<VideoInfo> findAllDesc() {
         // id를 기준으로 내림차순 정렬하여 비디오 정보 불러오기
         List<Video> savedVideos = videoRepository.findAllByOrderByIdDesc();
 
