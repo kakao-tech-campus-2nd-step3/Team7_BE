@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/video")
+@RequestMapping("/videos")
 public class VideoController {
     private final VideoService videoService;
 
