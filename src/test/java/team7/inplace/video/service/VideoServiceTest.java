@@ -3,6 +3,7 @@ package team7.inplace.video.service;
 import static org.mockito.BDDMockito.given;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -14,8 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
-import team7.inplace.place.domain.Category;
-import team7.inplace.place.domain.Place;
+import team7.inplace.place.domain.*;
 import team7.inplace.video.application.VideoService;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
@@ -45,13 +45,18 @@ public class VideoServiceTest {
                 .fordisabled(true)
                 .nursery(false)
                 .smokingroom(false)
-                .address1("Address 1")
-                .address2("Address 2")
-                .address3("Address 3")
+                .address(new Address("Address 1", "Address 2", "Address 3"))
                 .menuImgUrl("menu.jpg")
                 .category(Category.CAFE)
-                .longitude("127.0")
-                .latitude("37.0")
+                .coordinate(new Coordinate("127.0", "37.0"))
+                .timeList(Arrays.asList(
+                        new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
+                        new PlaceTime("Closing Hours", "10:00 PM", "Monday")
+                ))
+                .menuList(Arrays.asList(
+                        new Menu(5000L, true, "Coffee"),
+                        new Menu(7000L, false, "Cake")
+                ))
                 .build();
         Influencer influencer = new Influencer("성시경", "가수", "imgUrl");
         Video video = new Video("url", influencer, place);
