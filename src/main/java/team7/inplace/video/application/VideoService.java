@@ -53,7 +53,12 @@ public class VideoService {
         );
 
         List<Place> places = placesByDistance.getContent();
-        List<Video> videos = videoRepository.findDistinctByPlaceIn(places);
+        List<Video> videos = new ArrayList<>();
+        for (Place place : places) {
+            if(videos.size() == places.size())
+                break;
+            videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place));
+        }
         return videoToInfo(videos);
     }
 
