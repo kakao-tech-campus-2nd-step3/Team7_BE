@@ -45,7 +45,7 @@ public class VideoService {
         return videoToInfo(savedVideos);
     }
 
-    public List<VideoInfo> findBySurround(VideoSearchParams videoSearchParams, Pageable pageable){
+    public List<VideoInfo> findBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
         Page<Place> placesByDistance = placeRepository.getPlacesByDistance(
                 videoSearchParams.longitude(),
                 videoSearchParams.latitude(),
