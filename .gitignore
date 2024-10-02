@@ -203,6 +203,7 @@ gradle-app.setting
 *.hprof
 
 .env
+/src/test/resources/application-test.yaml
 
 # CommandLineRunner for loading dummy data
 src/main/java/team7/inplace/place/config/DataLoader.java
