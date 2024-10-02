@@ -14,6 +14,7 @@ import team7.inplace.crawling.application.dto.RawVideoInfo;
 @Component
 public class YoutubeClient {
     private static final String PLAY_LIST_ITEMS_BASE_URL = "https://www.googleapis.com/youtube/v3/playlistItems";
+    private static final String PLAY_LIST_PARAMS = "?part=snippet&playlistId=%s&key=%s&maxResults=50";
     private final RestTemplate restTemplate = new RestTemplate();
     private final String apiKey;
 
@@ -26,7 +27,7 @@ public class YoutubeClient {
         List<RawVideoInfo> videoInfos = new ArrayList<>();
         String nextPageToken = null;
         while (true) {
-            String url = PLAY_LIST_ITEMS_BASE_URL + "?part=snippet&playlistId=" + playListId + "&key=" + apiKey;
+            String url = PLAY_LIST_ITEMS_BASE_URL + String.format(PLAY_LIST_PARAMS, playListId, apiKey);
 
             JsonNode response = null;
             if (Objects.nonNull(nextPageToken)) {
@@ -44,17 +45,21 @@ public class YoutubeClient {
                 break;
             }
 
-            var stop = extractRawVideoInfo(videoInfos, response.path("items"), finalVideoUUID);
-            if (stop) {
+            var containsLastVideo = extractRawVideoInfo(videoInfos, response.path("items"), finalVideoUUID);
+            if (containsLastVideo) {
                 break;
             }
             nextPageToken = response.path("nextPageToken").asText();
-            if (Objects.isNull(nextPageToken)) {
+            if (isLastPage(nextPageToken)) {
                 break;
             }
         }
 
         return videoInfos;
+    }
+
+    private boolean isLastPage(String nextPageToken) {
+        return Objects.isNull(nextPageToken) || nextPageToken.isEmpty();
     }
 
     private boolean extractRawVideoInfo(List<RawVideoInfo> videoInfos, JsonNode items, String finalVideoUUID) {
