@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -15,11 +17,13 @@ import team7.inplace.crawling.application.dto.RawVideoInfo;
 public class YoutubeClient {
     private static final String PLAY_LIST_ITEMS_BASE_URL = "https://www.googleapis.com/youtube/v3/playlistItems";
     private static final String PLAY_LIST_PARAMS = "?part=snippet&playlistId=%s&key=%s&maxResults=50";
-    private final RestTemplate restTemplate = new RestTemplate();
+    private static final String ADDRESS_REGEX = "[가-힣0-9]+(?:도|시|구|군|읍|면|동|리|로|길)[^#,\\n()]+(?:동|읍|면|리|로|길|호|층|번지)[^#,\\n()]+";
+    private final RestTemplate restTemplate;
     private final String apiKey;
 
-    public YoutubeClient(@Value("${youtube.api.key}") String apiKey) {
+    public YoutubeClient(@Value("${youtube.api.key}") String apiKey, RestTemplate restTemplate) {
         log.info("Youtube API Key: {}", apiKey);
+        this.restTemplate = restTemplate;
         this.apiKey = apiKey;
     }
 
@@ -54,7 +58,6 @@ public class YoutubeClient {
                 break;
             }
         }
-
         return videoInfos;
     }
 
@@ -71,8 +74,23 @@ public class YoutubeClient {
             if (videoId.equals(finalVideoUUID)) {
                 return true;
             }
-            videoInfos.add(new RawVideoInfo(videoId, videoTitle, videoDescription));
+
+            var address = extractAddress(videoDescription);
+            if (Objects.nonNull(address)) {
+                videoInfos.add(new RawVideoInfo(videoId, videoTitle, address));
+                continue;
+            }
+            log.info("주소를 찾을 수 없습니다. {}", videoDescription);
         }
         return false;
+    }
+
+    private String extractAddress(String description) {
+        Pattern pattern = Pattern.compile(ADDRESS_REGEX);
+        Matcher matcher = pattern.matcher(description);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
     }
 }
