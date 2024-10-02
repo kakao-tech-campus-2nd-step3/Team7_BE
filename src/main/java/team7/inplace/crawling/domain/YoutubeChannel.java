@@ -21,4 +21,8 @@ public class YoutubeChannel {
     private String channelUUID;
     private String playListUUID;
     private String lastVideoUUID;
+
+    public void updateLastVideoUUID(String lastVideoUUID) {
+        this.lastVideoUUID = lastVideoUUID;
+    }
 }
