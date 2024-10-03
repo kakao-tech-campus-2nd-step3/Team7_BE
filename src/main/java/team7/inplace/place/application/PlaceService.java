@@ -2,20 +2,25 @@ package team7.inplace.place.application;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.video.persistence.VideoRepository;
 
 @Service
 @RequiredArgsConstructor
 public class PlaceService {
 
     private final PlaceRepository placeRepository;
+
+    private final VideoRepository videoRepository;
 
     public Page<PlaceInfo> getPlacesWithinRadius(
         PlacesCoordinateCommand placesCoordinateCommand,
@@ -37,11 +42,22 @@ public class PlaceService {
             influencerFilters = Arrays.stream(placesFilterParamsCommand.influencers().split(","))
                 .toList();
         }
+
         // 주어진 좌표로 장소를 찾고, 해당 페이지의 결과를 가져옵니다.
         Page<Place> placesPage = getPlacesByDistance(placesCoordinateCommand, categoryFilters,
             influencerFilters);
 
-        return placesPage.map(PlaceInfo::of);
+        // influencer 조회와 PlaceInfo 변환
+        List<PlaceInfo> placeInfos = placesPage.getContent().stream().map(place -> {
+            // 각 장소에 해당하는 인플루언서 이름 조회
+            String influencerName = videoRepository.findByPlaceId(place.getId()).getInfluencer()
+                .getName();
+            // PlaceInfo 객체 생성
+            return PlaceInfo.of(place, influencerName);
+        }).collect(Collectors.toList());
+
+        // PlaceInfo 리스트를 Page로 변환하여 반환
+        return new PageImpl<>(placeInfos, placesPage.getPageable(), placesPage.getTotalElements());
     }
 
     private Page<Place> getPlacesByDistance(

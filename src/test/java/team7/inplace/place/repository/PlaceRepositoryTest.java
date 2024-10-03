@@ -16,7 +16,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.influencer.domain.Influencer;
-import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.domain.Address;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Coordinate;
@@ -25,7 +24,6 @@ import team7.inplace.place.domain.Place;
 import team7.inplace.place.domain.PlaceTime;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.video.domain.Video;
-import team7.inplace.video.persistence.VideoRepository;
 
 @DataJpaTest
 @Transactional
@@ -36,12 +34,6 @@ class PlaceRepositoryTest {
 
     @Autowired
     private PlaceRepository placeRepository;
-
-    @Autowired
-    private InfluencerRepository influencerRepository;
-
-    @Autowired
-    private VideoRepository videoRepository;
 
     @BeforeEach
     public void init() {
