@@ -1,4 +1,4 @@
-package team7.inplace.video.service;
+package team7.inplace.video.application;
 
 import static org.mockito.BDDMockito.given;
 
@@ -16,7 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.domain.*;
-import team7.inplace.video.application.VideoService;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
