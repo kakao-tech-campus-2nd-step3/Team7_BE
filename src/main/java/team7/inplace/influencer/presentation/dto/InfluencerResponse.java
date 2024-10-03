@@ -1,6 +1,6 @@
 package team7.inplace.influencer.presentation.dto;
 
-import team7.inplace.influencer.application.dto.InfluencerDto;
+import team7.inplace.influencer.application.dto.InfluencerInfo;
 
 public record InfluencerResponse(
     Long influencerId,
@@ -10,13 +10,13 @@ public record InfluencerResponse(
     boolean likes
 ) {
 
-    public static InfluencerResponse convertToResponse(InfluencerDto influencerDto) {
+    public static InfluencerResponse from(InfluencerInfo influencerInfo) {
         return new InfluencerResponse(
-            influencerDto.influencerId(),
-            influencerDto.influencerName(),
-            influencerDto.influencerImgUrl(),
-            influencerDto.influencerJob(),
-            influencerDto.likes()
+            influencerInfo.influencerId(),
+            influencerInfo.influencerName(),
+            influencerInfo.influencerImgUrl(),
+            influencerInfo.influencerJob(),
+            influencerInfo.likes()
         );
     }
 }

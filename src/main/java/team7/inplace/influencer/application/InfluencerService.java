@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.influencer.application.dto.InfluencerDto;
+import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 
 @RequiredArgsConstructor
@@ -14,15 +14,9 @@ public class InfluencerService {
     private final InfluencerRepository influencerRepository;
 
     @Transactional(readOnly = true)
-    public List<InfluencerDto> getAllInfluencers() {
+    public List<InfluencerInfo> getAllInfluencers() {
         return influencerRepository.findAll().stream()
-            .map(influencer -> new InfluencerDto(
-                influencer.getId(),
-                influencer.getName(),
-                influencer.getImgUrl(),
-                influencer.getJob(),
-                false)
-            )
+            .map(InfluencerInfo::from)
             .toList();
     }
 }

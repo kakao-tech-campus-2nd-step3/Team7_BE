@@ -20,7 +20,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import team7.inplace.influencer.application.InfluencerService;
-import team7.inplace.influencer.application.dto.InfluencerDto;
+import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.presentation.InfluencerController;
 import team7.inplace.influencer.presentation.dto.InfluencerListResponse;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
@@ -46,16 +46,16 @@ public class InfluencerControllerTest {
 
     @Test
     public void getAllInfluencersTest() throws Exception {
-        InfluencerDto influencerDto1 = new InfluencerDto(1L, "influencer1", "imgUrl1", "job1",
+        InfluencerInfo influencerInfo1 = new InfluencerInfo(1L, "influencer1", "imgUrl1", "job1",
             false);
-        InfluencerDto influencerDto2 = new InfluencerDto(2L, "influencer2", "imgUrl2", "job2",
+        InfluencerInfo influencerInfo2 = new InfluencerInfo(2L, "influencer2", "imgUrl2", "job2",
             false);
-        List<InfluencerDto> influencerDtoList = List.of(influencerDto1, influencerDto2);
-        given(influencerService.getAllInfluencers()).willReturn(influencerDtoList);
+        List<InfluencerInfo> influencerInfoList = List.of(influencerInfo1, influencerInfo2);
+        given(influencerService.getAllInfluencers()).willReturn(influencerInfoList);
 
         // 예상 json 값
-        List<InfluencerResponse> responseList = influencerDtoList.stream()
-            .map(InfluencerResponse::convertToResponse)
+        List<InfluencerResponse> responseList = influencerInfoList.stream()
+            .map(InfluencerResponse::from)
             .toList();
         InfluencerListResponse expectedResponse = new InfluencerListResponse(responseList);
         String expectedJson = objectMapper.writeValueAsString(expectedResponse);

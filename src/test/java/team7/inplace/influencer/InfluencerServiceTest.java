@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import team7.inplace.influencer.application.InfluencerService;
-import team7.inplace.influencer.application.dto.InfluencerDto;
+import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 
@@ -39,12 +39,12 @@ public class InfluencerServiceTest {
             .build();
         given(influencerRepository.findAll()).willReturn(Arrays.asList(influencer1, influencer2));
 
-        List<InfluencerDto> influencerDtoList = influencerService.getAllInfluencers();
+        List<InfluencerInfo> influencerInfoList = influencerService.getAllInfluencers();
 
-        assertThat(influencerDtoList).hasSize(2);
-        assertThat(influencerDtoList.get(0).influencerName()).isEqualTo("influencer1");
-        assertThat(influencerDtoList.get(0).likes()).isFalse();
-        assertThat(influencerDtoList.get(1).influencerName()).isEqualTo("influencer2");
-        assertThat(influencerDtoList.get(1).likes()).isFalse();
+        assertThat(influencerInfoList).hasSize(2);
+        assertThat(influencerInfoList.get(0).influencerName()).isEqualTo("influencer1");
+        assertThat(influencerInfoList.get(0).likes()).isFalse();
+        assertThat(influencerInfoList.get(1).influencerName()).isEqualTo("influencer2");
+        assertThat(influencerInfoList.get(1).likes()).isFalse();
     }
 }
