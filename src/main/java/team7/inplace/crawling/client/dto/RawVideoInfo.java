@@ -1,4 +1,4 @@
-package team7.inplace.crawling.application.dto;
+package team7.inplace.crawling.client.dto;
 
 public record RawVideoInfo(
         String videoId,

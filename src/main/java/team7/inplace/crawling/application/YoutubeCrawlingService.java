@@ -5,8 +5,8 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import team7.inplace.crawling.application.dto.RawVideoInfo;
 import team7.inplace.crawling.client.YoutubeClient;
+import team7.inplace.crawling.client.dto.RawVideoInfo;
 import team7.inplace.crawling.persistence.YoutubeChannelRepository;
 
 @Slf4j

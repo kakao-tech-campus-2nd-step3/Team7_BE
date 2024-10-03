@@ -10,7 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import team7.inplace.crawling.application.dto.RawVideoInfo;
+import team7.inplace.crawling.client.dto.RawVideoInfo;
 import team7.inplace.global.kakao.config.KakaoApiProperties;
 
 @Component
