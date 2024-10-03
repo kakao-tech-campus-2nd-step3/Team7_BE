@@ -1,6 +1,5 @@
 package team7.inplace.security.handler;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,10 +20,10 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
         Authentication authentication)
-        throws IOException, ServletException {
-
+        throws IOException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         addAccessAndRefreshTokenToResponse(response, customOAuth2User);
+        setRedirectUrlToResponse(response);
     }
 
     private void addAccessAndRefreshTokenToResponse(HttpServletResponse response,
@@ -39,6 +38,9 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
+    }
+
+    private void setRedirectUrlToResponse(HttpServletResponse response) throws IOException {
         response.sendRedirect("http://localhost:8080/auth");
     }
 

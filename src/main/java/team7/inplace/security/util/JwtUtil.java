@@ -1,5 +1,6 @@
 package team7.inplace.security.util;
 
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.Jwts.SIG;
@@ -7,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import team7.inplace.security.AuthorizationErrorCode;
+import team7.inplace.security.AuthorizationException;
 import team7.inplace.security.config.JwtProperties;
 
 public class JwtUtil {
@@ -43,16 +46,28 @@ public class JwtUtil {
             .compact();
     }
 
-    public String getUsername(String token) {
-        return jwtParser.parseSignedClaims(token).getPayload().get("username", String.class);
+    public String getUsername(String token) throws AuthorizationException {
+        try {
+            return jwtParser.parseSignedClaims(token).getPayload().get("username", String.class);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthorizationException(AuthorizationErrorCode.INVALID_TOKEN);
+        }
     }
 
-    public String getTokenType(String token) {
-        return jwtParser.parseSignedClaims(token).getPayload().get("tokenType", String.class);
+    public String getTokenType(String token) throws AuthorizationException {
+        try {
+            return jwtParser.parseSignedClaims(token).getPayload().get("tokenType", String.class);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthorizationException(AuthorizationErrorCode.INVALID_TOKEN);
+        }
     }
 
-    public Long getId(String token) {
-        return jwtParser.parseSignedClaims(token).getPayload().get("id", Long.class);
+    public Long getId(String token) throws AuthorizationException {
+        try {
+            return jwtParser.parseSignedClaims(token).getPayload().get("id", Long.class);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthorizationException(AuthorizationErrorCode.INVALID_TOKEN);
+        }
     }
 
     public Boolean isExpired(String token) {

@@ -10,7 +10,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import team7.inplace.security.application.CustomOAuth2UserService;
-import team7.inplace.security.filter.JwtFilter;
+import team7.inplace.security.filter.AuthorizationFilter;
+import team7.inplace.security.filter.ExceptionHandlingFilter;
 import team7.inplace.security.handler.CustomSuccessHandler;
 
 @Configuration
@@ -19,13 +20,16 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOauth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
-    private final JwtFilter jwtFilter;
+    private final AuthorizationFilter authorizationFilter;
+    private final ExceptionHandlingFilter exceptionHandlingFilter;
 
     public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
-        CustomSuccessHandler customSuccessHandler, JwtFilter jwtFilter) {
+        CustomSuccessHandler customSuccessHandler, AuthorizationFilter authorizationFilter,
+        ExceptionHandlingFilter exceptionHandlingFilter) {
         this.customOauth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
-        this.jwtFilter = jwtFilter;
+        this.authorizationFilter = authorizationFilter;
+        this.exceptionHandlingFilter = exceptionHandlingFilter;
     }
 
     @Bean
@@ -48,8 +52,8 @@ public class SecurityConfig {
                     .userService(customOauth2UserService)).successHandler(customSuccessHandler))
 
             //authentication Filter 설정
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-
+            .addFilterBefore(authorizationFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(exceptionHandlingFilter, AuthorizationFilter.class)
             //authentication 경로 설정
             .authorizeHttpRequests((auth) -> auth
                 .requestMatchers("/login").permitAll()
