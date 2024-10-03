@@ -2,6 +2,7 @@ package team7.inplace.place.application;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,7 @@ import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsC
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 
 @Service
@@ -31,14 +33,12 @@ public class PlaceService {
         List<String> influencerFilters = null;
 
         // 필터 값이 있을 경우에만 split 처리
-        if (placesFilterParamsCommand.categories() != null
-            && !placesFilterParamsCommand.categories().isEmpty()) {
+        if (placesFilterParamsCommand.isCategoryFilterExists()) {
             categoryFilters = Arrays.stream(placesFilterParamsCommand.categories().split(","))
                 .toList();
         }
 
-        if (placesFilterParamsCommand.influencers() != null
-            && !placesFilterParamsCommand.influencers().isEmpty()) {
+        if (placesFilterParamsCommand.isInfluencerFilterExists()) {
             influencerFilters = Arrays.stream(placesFilterParamsCommand.influencers().split(","))
                 .toList();
         }
@@ -47,14 +47,23 @@ public class PlaceService {
         Page<Place> placesPage = getPlacesByDistance(placesCoordinateCommand, categoryFilters,
             influencerFilters);
 
+        // Place ID 목록 추출
+        List<Long> placeIds = placesPage.getContent().stream()
+            .map(Place::getId)
+            .toList();
+
         // influencer 조회와 PlaceInfo 변환
-        List<PlaceInfo> placeInfos = placesPage.getContent().stream().map(place -> {
-            // 각 장소에 해당하는 인플루언서 이름 조회
-            String influencerName = videoRepository.findByPlaceId(place.getId()).getInfluencer()
-                .getName();
-            // PlaceInfo 객체 생성
-            return PlaceInfo.of(place, influencerName);
-        }).collect(Collectors.toList());
+        List<Video> videos = videoRepository.findByPlaceIds(placeIds);
+        Map<Long, String> placeIdToInfluencerName = videos.stream()
+            .collect(Collectors.toMap(video -> video.getPlace().getId(),
+                video -> video.getInfluencer().getName()));
+
+        // PlaceInfo 생성
+        List<PlaceInfo> placeInfos = placesPage.getContent().stream()
+            .map(place -> {
+                String influencerName = placeIdToInfluencerName.get(place.getId());
+                return PlaceInfo.of(place, influencerName);
+            }).collect(Collectors.toList());
 
         // PlaceInfo 리스트를 Page로 변환하여 반환
         return new PageImpl<>(placeInfos, placesPage.getPageable(), placesPage.getTotalElements());
@@ -68,8 +77,8 @@ public class PlaceService {
         return placeRepository.getPlacesByDistanceAndFilters(
             placesCoordinateCommand.latitude(),
             placesCoordinateCommand.longitude(),
-            categoryFilters != null && !categoryFilters.isEmpty() ? categoryFilters : null,
-            influencerFilters != null && !influencerFilters.isEmpty() ? influencerFilters : null,
+            categoryFilters,
+            influencerFilters,
             placesCoordinateCommand.pageable());
     }
 

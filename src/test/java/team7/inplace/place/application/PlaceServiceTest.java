@@ -124,7 +124,9 @@ class PlaceServiceTest {
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3, place1), pageable, 3);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
             .thenReturn(placesPage);
-        when(videoRepository.findByPlaceId(place1.getId())).thenReturn(video1);
+        when(videoRepository.findByPlaceIds(
+            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+            Arrays.asList(video1));
 
         // Prepare filter params
         PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
@@ -149,7 +151,9 @@ class PlaceServiceTest {
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3, place1), pageable, 3);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
             .thenReturn(placesPage);
-        when(videoRepository.findByPlaceId(place1.getId())).thenReturn(video1);
+        when(videoRepository.findByPlaceIds(
+            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+            Arrays.asList(video1));
 
         // Prepare filter params
         PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
@@ -175,7 +179,9 @@ class PlaceServiceTest {
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3), pageable, 2);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
             .thenReturn(placesPage);
-        when(videoRepository.findByPlaceId(place1.getId())).thenReturn(video1);
+        when(videoRepository.findByPlaceIds(
+            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+            Arrays.asList(video1));
 
         // Prepare filter params
         PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
@@ -200,8 +206,9 @@ class PlaceServiceTest {
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place1), pageable, 1);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
             .thenReturn(placesPage);
-        when(videoRepository.findByPlaceId(place1.getId())).thenReturn(video1);
-
+        when(videoRepository.findByPlaceIds(
+            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+            Arrays.asList(video1));
         // Prepare filter params
         PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
             pageable);
@@ -216,4 +223,5 @@ class PlaceServiceTest {
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 1");
         assertThat(result.getContent().get(0).influencerName()).isEqualTo("성시경");
     }
+
 }

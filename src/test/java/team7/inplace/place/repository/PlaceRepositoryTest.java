@@ -8,13 +8,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Address;
 import team7.inplace.place.domain.Category;
@@ -26,7 +26,6 @@ import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.video.domain.Video;
 
 @DataJpaTest
-@Transactional
 class PlaceRepositoryTest {
 
     @PersistenceContext
@@ -117,7 +116,8 @@ class PlaceRepositoryTest {
     }
 
     @Test
-    public void 거리기반_장소조회_테스트() {
+    @DisplayName("거리 기반 장소 조회")
+    public void test1() {
         // given
         /* Before Each */
         String longitude = "1.0";
@@ -138,7 +138,8 @@ class PlaceRepositoryTest {
     }
 
     @Test
-    public void 필터링_NULL인_거리기반_장소조회_테스트() {
+    @DisplayName("필터링 NULL인 거리기반 장소조회")
+    public void test2() {
         // given
         /* Before Each */
         String longitude = "1.0";
@@ -163,7 +164,8 @@ class PlaceRepositoryTest {
     }
 
     @Test
-    public void 카테고리_필터링_거리기반_장소조회_테스트() {
+    @DisplayName("카테고리 필터링 거리기반 장소조회")
+    public void test3() {
         // given
         /* Before Each */
         String longitude = "1.0";
@@ -187,7 +189,8 @@ class PlaceRepositoryTest {
     }
 
     @Test
-    public void 인플루언서_필터링() {
+    @DisplayName("인플루언서 필터링")
+    public void test4() {
         // given
         /* Before Each */
         String longitude = "1.0";

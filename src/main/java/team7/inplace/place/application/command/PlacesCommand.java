@@ -17,5 +17,14 @@ public record PlacesCommand() {
         String influencers
     ) {
 
+        public boolean isCategoryFilterExists() {
+            return categories != null
+                && !categories.isEmpty();
+        }
+
+        public boolean isInfluencerFilterExists() {
+            return influencers != null
+                && !influencers.isEmpty();
+        }
     }
 }
