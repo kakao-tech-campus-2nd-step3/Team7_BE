@@ -1,4 +1,4 @@
-package team7.inplace.place.controller;
+package team7.inplace.place.presentation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.web.servlet.MockMvc;
 import team7.inplace.place.application.CategoryService;
 import team7.inplace.place.application.PlaceService;
-import team7.inplace.place.presentation.PlaceController;
 
 @SpringBootTest(webEnvironment = WebEnvironment.MOCK)
 @AutoConfigureMockMvc

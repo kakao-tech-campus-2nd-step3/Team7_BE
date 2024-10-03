@@ -1,4 +1,4 @@
-package team7.inplace.place.repository;
+package team7.inplace.place.persistence;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,7 +22,6 @@ import team7.inplace.place.domain.Coordinate;
 import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.domain.PlaceTime;
-import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.video.domain.Video;
 
 @DataJpaTest
