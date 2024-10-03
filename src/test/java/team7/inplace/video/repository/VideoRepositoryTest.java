@@ -1,8 +1,7 @@
-package team7.inplace.VideoTest.repository;
+package team7.inplace.video.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,12 +30,12 @@ public class VideoRepositoryTest {
     EntityManager entityManager;
     @Autowired
     private VideoRepository videoRepository;
+    private Place place;
 
     @BeforeEach
-    @Transactional
     void init() {
-        Place place = Place.builder()
-            .name("Place 1")
+        place = Place.builder()
+            .name("Test Place")
             .pet(false)
             .wifi(true)
             .parking(false)
@@ -56,6 +55,7 @@ public class VideoRepositoryTest {
                 new Menu(7000L, false, "Cake")
             ))
             .build();
+
         entityManager.persist(place);
 
         Influencer influencer1 = new Influencer("name1", "job1", "imgUrl");
@@ -80,6 +80,7 @@ public class VideoRepositoryTest {
     void test1() {
         // given
         /* Before Each */
+
         // when
         List<Long> influencerIds = new ArrayList<>();
         influencerIds.add(1L);
@@ -87,5 +88,34 @@ public class VideoRepositoryTest {
         List<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(influencerIds);
         // then
         Assertions.assertThat(savedVideos.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("findAllByOrderByIdDesc Test")
+    void test2() {
+        // given
+        /* Before Each */
+
+        // when
+        List<Video> videos = videoRepository.findAllByOrderByIdDesc();
+
+        // then
+        Long number = 5L;
+        for (Video video : videos) {
+            Assertions.assertThat(video.getId()).isEqualTo(number);
+            number -= 1L;
+        }
+    }
+
+    @Test
+    @DisplayName("findTopByPlaceOrderByIdDesc Test")
+    void test3() {
+        // given
+
+        // when
+        Video video = videoRepository.findTopByPlaceOrderByIdDesc(place);
+
+        // then
+        Assertions.assertThat(video.getId()).isEqualTo(5L);
     }
 }

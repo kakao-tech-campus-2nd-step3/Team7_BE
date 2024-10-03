@@ -1,4 +1,4 @@
-package team7.inplace.VideoTest.service;
+package team7.inplace.video.service;
 
 import static org.mockito.BDDMockito.given;
 
@@ -44,7 +44,7 @@ public class VideoServiceTest {
         ArgumentCaptor<List<Long>> captor_i = ArgumentCaptor.forClass((Class) List.class);
 
         Place place = Place.builder()
-            .name("Place 1")
+            .name("Test Place")
             .pet(false)
             .wifi(true)
             .parking(false)
@@ -64,6 +64,7 @@ public class VideoServiceTest {
                 new Menu(7000L, false, "Cake")
             ))
             .build();
+
         Influencer influencer = new Influencer("성시경", "가수", "imgUrl");
         Video video = new Video("url", influencer, place);
 
