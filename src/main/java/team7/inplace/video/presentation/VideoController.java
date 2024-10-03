@@ -45,21 +45,21 @@ public class VideoController implements VideoControllerApiSpec{
     }
 
     private ResponseEntity<List<VideoResponse>> readByInfluencer(List<String> influencers){
-        List<VideoInfo> videoInfos = videoService.findByInfluencer(influencers);
+        List<VideoInfo> videoInfos = videoService.getByVideosInfluencer(influencers);
         List<VideoResponse> videoResponses = videoInfos.stream().map(VideoResponse::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
     private ResponseEntity<List<VideoResponse>> readBySurround(VideoSearchParams searchParams, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        List<VideoInfo> videoInfos = videoService.findBySurround(searchParams, pageable);
+        List<VideoInfo> videoInfos = videoService.getVideosBySurround(searchParams, pageable);
         List<VideoResponse> videoResponses = videoInfos.stream().map(VideoResponse::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
     @GetMapping("/new")
     public ResponseEntity<List<VideoResponse>> readByNew() {
-        List<VideoInfo> videoInfos = videoService.findAllDesc();
+        List<VideoInfo> videoInfos = videoService.getAllVideosDesc();
         List<VideoResponse> videoResponses = videoInfos.stream().map(VideoResponse::from).toList();
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
