@@ -1,3 +1,8 @@
 spring:
   config:
-    import: classpath:application-security.yaml, classpath:application-youtube.yaml, classpath:application-kakao.yaml, optional:file:.env[.properties]
+    import:
+      - classpath:application-security.yaml
+      - classpath:application-youtube.yaml
+      - classpath:application-kakao.yaml
+      - classpath:application-db.yaml
+      - optional:file:.env[.properties]
