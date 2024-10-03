@@ -25,7 +25,7 @@ import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Coordinate;
 import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
-import team7.inplace.place.domain.PlaceTime;
+import team7.inplace.place.domain.PlaceOpenTime;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
@@ -59,8 +59,8 @@ class PlaceServiceTest {
             .category(Category.CAFE)
             .coordinate(new Coordinate("1.0", "1.0"))
             .timeList(Arrays.asList(
-                new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceTime("Closing Hours", "10:00 PM", "Monday")
+                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
             ))
             .menuList(Arrays.asList(
                 new Menu(5000L, true, "Coffee"),
@@ -81,8 +81,8 @@ class PlaceServiceTest {
             .category(Category.JAPANESE)
             .coordinate(new Coordinate("1.0", "50.0"))
             .timeList(Arrays.asList(
-                new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceTime("Closing Hours", "10:00 PM", "Monday")
+                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
             ))
             .menuList(Arrays.asList(
                 new Menu(5000L, true, "Coffee"),
@@ -103,8 +103,8 @@ class PlaceServiceTest {
             .category(Category.JAPANESE)
             .coordinate(new Coordinate("1.0", "100.0"))
             .timeList(Arrays.asList(
-                new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceTime("Closing Hours", "10:00 PM", "Monday")
+                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
             ))
             .menuList(Arrays.asList(
                 new Menu(5000L, true, "Coffee"),
@@ -124,7 +124,7 @@ class PlaceServiceTest {
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3, place1), pageable, 3);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
             .thenReturn(placesPage);
-        when(videoRepository.findByPlaceIds(
+        when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
             Arrays.asList(video1));
 
@@ -151,7 +151,7 @@ class PlaceServiceTest {
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3, place1), pageable, 3);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
             .thenReturn(placesPage);
-        when(videoRepository.findByPlaceIds(
+        when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
             Arrays.asList(video1));
 
@@ -179,7 +179,7 @@ class PlaceServiceTest {
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3), pageable, 2);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
             .thenReturn(placesPage);
-        when(videoRepository.findByPlaceIds(
+        when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
             Arrays.asList(video1));
 
@@ -206,7 +206,7 @@ class PlaceServiceTest {
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place1), pageable, 1);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
             .thenReturn(placesPage);
-        when(videoRepository.findByPlaceIds(
+        when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
             Arrays.asList(video1));
         // Prepare filter params

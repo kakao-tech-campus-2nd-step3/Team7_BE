@@ -53,7 +53,7 @@ public class PlaceService {
             .toList();
 
         // influencer 조회와 PlaceInfo 변환
-        List<Video> videos = videoRepository.findByPlaceIds(placeIds);
+        List<Video> videos = videoRepository.findByPlaceIdIn(placeIds);
         Map<Long, String> placeIdToInfluencerName = videos.stream()
             .collect(Collectors.toMap(video -> video.getPlace().getId(),
                 video -> video.getInfluencer().getName()));
