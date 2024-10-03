@@ -1,5 +1,6 @@
 package team7.inplace.security.util;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -70,7 +71,13 @@ public class JwtUtil {
         }
     }
 
-    public Boolean isExpired(String token) {
-        return jwtParser.parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+    public void validateExpired(String token) throws ExpiredJwtException {
+        try {
+            jwtParser.parseSignedClaims(token).getPayload().getExpiration();
+        } catch (ExpiredJwtException e) {
+            throw new AuthorizationException(AuthorizationErrorCode.TOKEN_IS_EXPIRED);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AuthorizationException(AuthorizationErrorCode.INVALID_TOKEN);
+        }
     }
 }

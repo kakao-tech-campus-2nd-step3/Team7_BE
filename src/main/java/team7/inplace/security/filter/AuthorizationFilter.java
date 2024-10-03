@@ -57,16 +57,14 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     }
 
     private void validateToken(Cookie authorizationCookie) throws AuthorizationException {
-        if (isTokenEmpty(authorizationCookie)) {
-            throw new AuthorizationException(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
-        if (jwtUtil.isExpired(authorizationCookie.getValue())) {
-            throw new AuthorizationException(AuthorizationErrorCode.TOKEN_IS_EXPIRED);
-        }
+        validateTokenEmpty(authorizationCookie);
+        jwtUtil.validateExpired(authorizationCookie.getValue());
     }
 
-    private boolean isTokenEmpty(Cookie authorizationCookie) {
-        return authorizationCookie.getValue() == null;
+    private void validateTokenEmpty(Cookie authorizationCookie) {
+        if (authorizationCookie.getValue() == null) {
+            throw new AuthorizationException(AuthorizationErrorCode.TOKEN_IS_EMPTY);
+        }
     }
 
 }
