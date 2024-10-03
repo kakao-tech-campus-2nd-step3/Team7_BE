@@ -2,24 +2,22 @@ package team7.inplace.place.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-@Embeddable
-@NoArgsConstructor
-@AllArgsConstructor
-@EqualsAndHashCode
 @Getter
+@Embeddable
+@EqualsAndHashCode
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Menu {
-
-    @Column(columnDefinition = "NUMBER")
+    
     private Long price;
 
-    @ColumnDefault("false")
     @Column
+    @ColumnDefault("false")
     private boolean recommend;
 
     @Column(length = 50)
