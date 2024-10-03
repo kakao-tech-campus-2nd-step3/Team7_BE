@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.place.application.CategoryService;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
+import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
 import team7.inplace.place.application.dto.CategoryInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
@@ -35,10 +36,15 @@ public class PlaceController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
+        // , 기준 필터링
+
+        // 위치기반 조회
         Pageable pageable = PageRequest.of(page, size);
         Page<PlaceInfo> placeInfos = placeService.getPlacesWithinRadius(
             new PlacesCoordinateCommand(searchParams.getLongitude(), searchParams.getLatitude(),
-                pageable));
+                pageable),
+            new PlacesFilterParamsCommand(searchParams.getCategories(),
+                searchParams.getInfluencers()));
         return new ResponseEntity<>(new PlacesResponse(placeInfos), HttpStatus.OK);
     }
 

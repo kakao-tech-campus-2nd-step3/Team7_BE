@@ -11,4 +11,11 @@ public record PlacesCommand() {
     ) {
 
     }
+
+    public record PlacesFilterParamsCommand(
+        String categories,
+        String influencers
+    ) {
+
+    }
 }
