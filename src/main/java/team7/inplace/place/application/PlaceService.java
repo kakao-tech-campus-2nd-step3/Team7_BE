@@ -55,15 +55,19 @@ public class PlaceService {
         // influencer 조회와 PlaceInfo 변환
         List<Video> videos = videoRepository.findByPlaceIdIn(placeIds);
         Map<Long, String> placeIdToInfluencerName = videos.stream()
-            .collect(Collectors.toMap(video -> video.getPlace().getId(),
-                video -> video.getInfluencer().getName()));
+            .collect(Collectors.toMap(
+                video -> video.getPlace().getId(),
+                video -> video.getInfluencer().getName()
+            ));
 
         // PlaceInfo 생성
         List<PlaceInfo> placeInfos = placesPage.getContent().stream()
             .map(place -> {
-                String influencerName = placeIdToInfluencerName.get(place.getId());
+                // map에서 조회되지 않은 placeId는 null로 처리
+                String influencerName = placeIdToInfluencerName.getOrDefault(place.getId(), null);
                 return PlaceInfo.of(place, influencerName);
-            }).collect(Collectors.toList());
+            })
+            .toList();
 
         // PlaceInfo 리스트를 Page로 변환하여 반환
         return new PageImpl<>(placeInfos, placesPage.getPageable(), placesPage.getTotalElements());

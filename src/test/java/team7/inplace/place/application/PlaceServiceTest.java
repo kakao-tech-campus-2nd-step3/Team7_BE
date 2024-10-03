@@ -25,6 +25,7 @@ import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Coordinate;
 import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
+import team7.inplace.place.domain.PlaceCloseTime;
 import team7.inplace.place.domain.PlaceOpenTime;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.video.domain.Video;
@@ -47,6 +48,7 @@ class PlaceServiceTest {
     @BeforeEach
     public void init() {
         place1 = Place.builder()
+            .id(1L)
             .name("Place 1")
             .pet(false)
             .wifi(true)
@@ -62,6 +64,9 @@ class PlaceServiceTest {
                 new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
             ))
+            .offdayList(Arrays.asList(
+                new PlaceCloseTime("한글날", "월~금", false)
+            ))
             .menuList(Arrays.asList(
                 new Menu(5000L, true, "Coffee"),
                 new Menu(7000L, false, "Cake")
@@ -69,6 +74,7 @@ class PlaceServiceTest {
             .build();
 
         place2 = Place.builder()
+            .id(2L)
             .name("Place 2")
             .pet(false)
             .wifi(true)
@@ -84,6 +90,9 @@ class PlaceServiceTest {
                 new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
             ))
+            .offdayList(Arrays.asList(
+                new PlaceCloseTime("한글날", "월~금", false)
+            ))
             .menuList(Arrays.asList(
                 new Menu(5000L, true, "Coffee"),
                 new Menu(7000L, false, "Cake")
@@ -91,6 +100,7 @@ class PlaceServiceTest {
             .build();
 
         place3 = Place.builder()
+            .id(3L)
             .name("Place 3")
             .pet(false)
             .wifi(true)
@@ -105,6 +115,9 @@ class PlaceServiceTest {
             .timeList(Arrays.asList(
                 new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+            ))
+            .offdayList(Arrays.asList(
+                new PlaceCloseTime("한글날", "월~금", false)
             ))
             .menuList(Arrays.asList(
                 new Menu(5000L, true, "Coffee"),
@@ -140,8 +153,11 @@ class PlaceServiceTest {
         // Assert results
         assertThat(result).hasSize(3);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 2");
+        assertThat(result.getContent().get(0).influencerName()).isEqualTo(null);
         assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 3");
+        assertThat(result.getContent().get(1).influencerName()).isEqualTo(null);
         assertThat(result.getContent().get(2).placeName()).isEqualTo("Place 1");
+        assertThat(result.getContent().get(2).influencerName()).isEqualTo("성시경");
     }
 
     @Test
@@ -168,8 +184,11 @@ class PlaceServiceTest {
         // Assert results
         assertThat(result).hasSize(3);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 2");
+        assertThat(result.getContent().get(0).influencerName()).isEqualTo(null);
         assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 3");
+        assertThat(result.getContent().get(1).influencerName()).isEqualTo(null);
         assertThat(result.getContent().get(2).placeName()).isEqualTo("Place 1");
+        assertThat(result.getContent().get(2).influencerName()).isEqualTo("성시경");
     }
 
     @Test
@@ -196,7 +215,9 @@ class PlaceServiceTest {
         // Assert results
         assertThat(result).hasSize(2);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 2");
+        assertThat(result.getContent().get(0).influencerName()).isEqualTo(null);
         assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 3");
+        assertThat(result.getContent().get(1).influencerName()).isEqualTo(null);
     }
 
     @Test

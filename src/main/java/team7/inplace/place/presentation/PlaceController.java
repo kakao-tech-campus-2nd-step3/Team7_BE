@@ -36,8 +36,6 @@ public class PlaceController {
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "10") int size
     ) {
-        // , 기준 필터링
-
         // 위치기반 조회
         Pageable pageable = PageRequest.of(page, size);
         Page<PlaceInfo> placeInfos = placeService.getPlacesWithinRadius(

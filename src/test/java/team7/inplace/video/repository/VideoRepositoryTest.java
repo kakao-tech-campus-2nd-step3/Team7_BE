@@ -18,7 +18,7 @@ import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Coordinate;
 import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
-import team7.inplace.place.domain.PlaceTime;
+import team7.inplace.place.domain.PlaceOpenTime;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 
@@ -47,8 +47,8 @@ public class VideoRepositoryTest {
             .category(Category.CAFE)
             .coordinate(new Coordinate("127.0", "37.0"))
             .timeList(Arrays.asList(
-                new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceTime("Closing Hours", "10:00 PM", "Monday")
+                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
             ))
             .menuList(Arrays.asList(
                 new Menu(5000L, true, "Coffee"),
