@@ -1,9 +1,9 @@
-package team7.inplace.VideoTest.repository;
+package team7.inplace.video.repository;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +16,9 @@ import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Address;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Coordinate;
+import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
+import team7.inplace.place.domain.PlaceTime;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 
@@ -28,11 +30,11 @@ public class VideoRepositoryTest {
     EntityManager entityManager;
     @Autowired
     private VideoRepository videoRepository;
+    private Place place;
 
     @BeforeEach
-    @Transactional
     void init() {
-        Place place = Place.builder()
+        place = Place.builder()
             .name("Test Place")
             .pet(false)
             .wifi(true)
@@ -44,6 +46,14 @@ public class VideoRepositoryTest {
             .menuImgUrl("menu.jpg")
             .category(Category.CAFE)
             .coordinate(new Coordinate("127.0", "37.0"))
+            .timeList(Arrays.asList(
+                new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceTime("Closing Hours", "10:00 PM", "Monday")
+            ))
+            .menuList(Arrays.asList(
+                new Menu(5000L, true, "Coffee"),
+                new Menu(7000L, false, "Cake")
+            ))
             .build();
         entityManager.persist(place);
 
@@ -69,6 +79,7 @@ public class VideoRepositoryTest {
     void test1() {
         // given
         /* Before Each */
+
         // when
         List<Long> influencerIds = new ArrayList<>();
         influencerIds.add(1L);
@@ -76,5 +87,34 @@ public class VideoRepositoryTest {
         List<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(influencerIds);
         // then
         Assertions.assertThat(savedVideos.size()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("findAllByOrderByIdDesc Test")
+    void test2() {
+        // given
+        /* Before Each */
+
+        // when
+        List<Video> videos = videoRepository.findAllByOrderByIdDesc();
+
+        // then
+        Long number = 5L;
+        for (Video video : videos) {
+            Assertions.assertThat(video.getId()).isEqualTo(number);
+            number -= 1L;
+        }
+    }
+
+    @Test
+    @DisplayName("findTopByPlaceOrderByIdDesc Test")
+    void test3() {
+        // given
+
+        // when
+        Video video = videoRepository.findTopByPlaceOrderByIdDesc(place);
+
+        // then
+        Assertions.assertThat(video.getId()).isEqualTo(5L);
     }
 }
