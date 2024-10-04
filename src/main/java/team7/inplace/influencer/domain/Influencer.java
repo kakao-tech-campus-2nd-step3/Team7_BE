@@ -1,34 +1,38 @@
 package team7.inplace.influencer.domain;
 
+import static lombok.AccessLevel.PROTECTED;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-@Entity
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@RequiredArgsConstructor // 테스팅을 위한 부분 추가, 협의 하에 다른 방식 채택 가능
+@NoArgsConstructor(access = PROTECTED)
+@Entity
 public class Influencer {
-    /*
-     * 더미 데이터 입니다 !!!
-     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    @NonNull
+
+    @Column(nullable = false, length = 30)
     private String name;
-    @Column
-    @NonNull
+
+    @Column(nullable = false, length = 20)
     private String job;
-    @Column
-    @NonNull
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String imgUrl;
+
+    @Builder
+    public Influencer(String name, String job, String imgUrl) {
+        this.name = name;
+        this.job = job;
+        this.imgUrl = imgUrl;
+    }
 }
