@@ -10,7 +10,10 @@ import team7.inplace.user.application.UserService;
 public class SecurityHandlerConfig {
 
     @Bean
-    public CustomSuccessHandler customSuccessHandler(JwtUtil jwtUtil, UserService userService) {
+    public CustomSuccessHandler customSuccessHandler(
+        JwtUtil jwtUtil,
+        UserService userService
+    ) {
         return new CustomSuccessHandler(jwtUtil, userService);
     }
 }

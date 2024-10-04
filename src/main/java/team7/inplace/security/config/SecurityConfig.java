@@ -23,9 +23,12 @@ public class SecurityConfig {
     private final AuthorizationFilter authorizationFilter;
     private final ExceptionHandlingFilter exceptionHandlingFilter;
 
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService,
-        CustomSuccessHandler customSuccessHandler, AuthorizationFilter authorizationFilter,
-        ExceptionHandlingFilter exceptionHandlingFilter) {
+    public SecurityConfig(
+        CustomOAuth2UserService customOAuth2UserService,
+        CustomSuccessHandler customSuccessHandler,
+        AuthorizationFilter authorizationFilter,
+        ExceptionHandlingFilter exceptionHandlingFilter
+    ) {
         this.customOauth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
         this.authorizationFilter = authorizationFilter;

@@ -16,8 +16,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     private final DefaultOAuth2UserService defaultOAuth2UserService;
     private final UserService userService;
 
-    public CustomOAuth2UserService(DefaultOAuth2UserService defaultOAuth2UserService,
-        UserService userService) {
+    public CustomOAuth2UserService(
+        DefaultOAuth2UserService defaultOAuth2UserService,
+        UserService userService
+    ) {
         this.defaultOAuth2UserService = defaultOAuth2UserService;
         this.userService = userService;
     }
