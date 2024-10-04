@@ -1,5 +1,7 @@
 package team7.inplace.video.domain;
 
+import static lombok.AccessLevel.PROTECTED;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,7 +18,7 @@ import team7.inplace.place.domain.Place;
 
 @Entity
 @Getter
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @RequiredArgsConstructor // 테스팅을 위한 부분 추가, 협의 하에 다른 방식 채택 가능
 public class Video {
 
