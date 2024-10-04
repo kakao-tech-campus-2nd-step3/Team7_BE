@@ -62,22 +62,32 @@ jobs:
     if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/develop')
 
     steps:
-      # 1. 최신 이미지를 pull 
+      # 최신 이미지를 pull 
       - name: docker pull
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/inplace
       
-      # 2. 기존의 컨테이너를 중지
+      # 기존의 컨테이너를 중지
       - name: docker stop container
         run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
-      # 3. 브랜치에 따라 다른 환경 변수를 설정하여 컨테이너 실행
+      # .env 파일 생성
+      - name: Create .env file
+        run: |
+          echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
+          echo "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" >> .env
+          echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "JWT_ACCESS_TOKEN_EXPIRED_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRED_TIME }}" >> .env
+          echo "JWT_REFRESH_TOKEN_EXPIRED_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRED_TIME }}" >> .env
+
+      # 브랜치에 따라 다른 환경 변수를 설정하여 컨테이너 실행
       - name: docker run new container
         run: |
           if [ "${{ github.ref }}" == "refs/heads/master" ]; then
-            sudo docker run --name inplace --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/inplace
+            sudo docker run --name inplace --rm -d -p 8080:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
           elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
-            sudo docker run --name inplace-dev --rm -d -p 8081:8080 ${{ secrets.DOCKERHUB_USERNAME }}/inplace
+            sudo docker run --name inplace-dev --rm -d -p 8081:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
       
-      # 4. 미사용 이미지를 정리
+      # 미사용 이미지를 정리
       - name: delete old docker image
         run: sudo docker system prune -f
