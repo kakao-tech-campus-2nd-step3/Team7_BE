@@ -14,13 +14,16 @@ import lombok.RequiredArgsConstructor;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Place;
 
+import static lombok.AccessLevel.PROTECTED;
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Getter
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@NoArgsConstructor(access = PROTECTED)
 @RequiredArgsConstructor // 테스팅을 위한 부분 추가, 협의 하에 다른 방식 채택 가능
 public class Video {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @Column(name = "video_url", nullable = false, columnDefinition = "TEXT")
     @NonNull
