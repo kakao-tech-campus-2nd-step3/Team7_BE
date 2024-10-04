@@ -1,15 +1,13 @@
 name: Java CI with Gradle
 
-# Master, develop 브랜치에 push 혹은 pull request가 발생할 경우 동작한다.
+# Master, develop, weekly/* 브랜치에 push가 발생할 경우 동작한다.
 on:
   push:
-    branches: [ "Master", "develop" ]
-  pull_request:
-    branches: [ "Master", "develop" ]
+    branches: [ "Master", "develop", "weekly/*" ]
 
 permissions:
       contents: read
-      
+
 jobs:
   # Spring Boot 애플리케이션을 빌드하여 도커허브에 푸시하는 과정
   build-docker-image:
@@ -17,34 +15,39 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    # 1. Java 17 세팅
+    # Java 17 세팅
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
+    # Gradle Wrapper 파일 실행 권한 주기
     - name: Run chmod to make gradlew executable
       run: chmod +x ./gradlew
 
-    # 2. Spring Boot 애플리케이션 빌드
+    # Spring Boot 애플리케이션 빌드
     - name: Build with Gradle
       uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
       with:
         arguments: clean bootJar
 
-    # 3. Docker 이미지 빌드
+    # 테스트 실행
+#    - name: Run tests
+#      run: ./gradlew test
+
+    # Docker 이미지 빌드
     - name: docker image build
       run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/inplace .
 
-    # 4. DockerHub 로그인
+    # DockerHub 로그인
     - name: docker login
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-    # 5. Docker Hub 이미지 푸시
+    # Docker Hub 이미지 푸시
     - name: docker Hub push
       run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/inplace
 
@@ -55,23 +58,36 @@ jobs:
     needs: build-docker-image
     runs-on: self-hosted
 
+    # weekly/* 브랜치에서는 실행되지 않도록 조건 추가
+    if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/develop')
+
     steps:
-      # 1. 최신 이미지를 pull 
+      # 최신 이미지를 pull 
       - name: docker pull
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/inplace
       
-      # 2. 기존의 컨테이너를 중지
+      # 기존의 컨테이너를 중지
       - name: docker stop container
         run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
 
-      # 3. 브랜치에 따라 다른 환경 변수를 설정하여 컨테이너 실행
+      # .env 파일 생성
+      - name: Create .env file
+        run: |
+          echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
+          echo "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" >> .env
+          echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "JWT_ACCESS_TOKEN_EXPIRED_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRED_TIME }}" >> .env
+          echo "JWT_REFRESH_TOKEN_EXPIRED_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRED_TIME }}" >> .env
+
+      # 브랜치에 따라 다른 환경 변수를 설정하여 컨테이너 실행
       - name: docker run new container
         run: |
           if [ "${{ github.ref }}" == "refs/heads/master" ]; then
-            sudo docker run --name inplace --rm -d -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/inplace
+            sudo docker run --name inplace --rm -d -p 8080:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
           elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
-            sudo docker run --name inplace-dev --rm -d -p 8081:8080 ${{ secrets.DOCKERHUB_USERNAME }}/inplace
+            sudo docker run --name inplace-dev --rm -d -p 8081:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
       
-      # 4. 미사용 이미지를 정리
+      # 미사용 이미지를 정리
       - name: delete old docker image
         run: sudo docker system prune -f
