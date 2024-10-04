@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.filter.OncePerRequestFilter;
-import team7.inplace.security.AuthorizationException;
+import team7.inplace.global.exception.InplaceException;
 
 @NoArgsConstructor
 public class ExceptionHandlingFilter extends OncePerRequestFilter {
@@ -21,19 +21,18 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
         throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (AuthorizationException authorizationException) {
-            setErrorResponse(response, authorizationException);
+        } catch (InplaceException inplaceException) {
+            setErrorResponse(response, inplaceException);
         }
     }
 
-    private void setErrorResponse(HttpServletResponse response,
-        AuthorizationException authorizationException)
+    private void setErrorResponse(HttpServletResponse response, InplaceException inplaceException)
         throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        response.setStatus(authorizationException.getHttpStatus().value());
+        response.setStatus(inplaceException.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-            authorizationException.getHttpStatus(), authorizationException.getMessage());
+            inplaceException.getHttpStatus(), inplaceException.getMessage());
         response.getWriter().write(objectMapper.writeValueAsString(problemDetail));
     }
 }

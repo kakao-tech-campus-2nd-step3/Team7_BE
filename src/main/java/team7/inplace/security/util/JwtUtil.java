@@ -9,8 +9,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import team7.inplace.security.AuthorizationErrorCode;
-import team7.inplace.security.AuthorizationException;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.security.config.JwtProperties;
 
 public class JwtUtil {
@@ -47,37 +47,37 @@ public class JwtUtil {
             .compact();
     }
 
-    public String getUsername(String token) throws AuthorizationException {
+    public String getUsername(String token) throws InplaceException {
         try {
             return jwtParser.parseSignedClaims(token).getPayload().get("username", String.class);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new AuthorizationException(AuthorizationErrorCode.INVALID_TOKEN);
+            throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }
     }
 
-    public String getTokenType(String token) throws AuthorizationException {
+    public String getTokenType(String token) throws InplaceException {
         try {
             return jwtParser.parseSignedClaims(token).getPayload().get("tokenType", String.class);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new AuthorizationException(AuthorizationErrorCode.INVALID_TOKEN);
+            throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }
     }
 
-    public Long getId(String token) throws AuthorizationException {
+    public Long getId(String token) throws InplaceException {
         try {
             return jwtParser.parseSignedClaims(token).getPayload().get("id", Long.class);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new AuthorizationException(AuthorizationErrorCode.INVALID_TOKEN);
+            throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }
     }
 
-    public void validateExpired(String token) throws ExpiredJwtException {
+    public void validateExpired(String token) throws InplaceException {
         try {
             jwtParser.parseSignedClaims(token).getPayload().getExpiration();
         } catch (ExpiredJwtException e) {
-            throw new AuthorizationException(AuthorizationErrorCode.TOKEN_IS_EXPIRED);
+            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EXPIRED);
         } catch (JwtException | IllegalArgumentException e) {
-            throw new AuthorizationException(AuthorizationErrorCode.INVALID_TOKEN);
+            throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }
     }
 }

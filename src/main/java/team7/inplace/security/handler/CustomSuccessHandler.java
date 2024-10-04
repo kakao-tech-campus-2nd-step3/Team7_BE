@@ -8,13 +8,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.security.util.JwtUtil;
+import team7.inplace.user.application.UserService;
+import team7.inplace.user.application.dto.UserCommand;
 
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
+    private final UserService userService;
 
-    public CustomSuccessHandler(JwtUtil jwtUtil) {
+    public CustomSuccessHandler(JwtUtil jwtUtil, UserService userService) {
         this.jwtUtil = jwtUtil;
+        this.userService = userService;
     }
 
     @Override
@@ -22,26 +26,29 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         Authentication authentication)
         throws IOException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        addAccessAndRefreshTokenToResponse(response, customOAuth2User);
-        setRedirectUrlToResponse(response);
+        addTokenToResponse(response, customOAuth2User);
+        setRedirectUrlToResponse(response, customOAuth2User);
     }
 
-    private void addAccessAndRefreshTokenToResponse(HttpServletResponse response,
-        CustomOAuth2User customOAuth2User)
-        throws IOException {
-        String username = customOAuth2User.getName();
-        Long userId = customOAuth2User.id();
+    private void addTokenToResponse(HttpServletResponse response,
+        CustomOAuth2User customOAuth2User) {
+        UserCommand.Info user = userService.getUserByUsername(customOAuth2User.username());
         Cookie accessTokenCookie = createCookie("access_token",
-            jwtUtil.createAccessToken(username, userId));
+            jwtUtil.createAccessToken(user.username(), user.id()));
         Cookie refreshTokenCookie = createCookie("refresh_token",
-            jwtUtil.createRefreshToken(username, userId));
+            jwtUtil.createRefreshToken(user.username(), user.id()));
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
     }
 
-    private void setRedirectUrlToResponse(HttpServletResponse response) throws IOException {
-        response.sendRedirect("http://localhost:8080/auth");
+    private void setRedirectUrlToResponse(HttpServletResponse response,
+        CustomOAuth2User customOAuth2User) throws IOException {
+        if (customOAuth2User.isFirstUser()) {
+            response.sendRedirect("localhost:8080/choice");
+            return;
+        }
+        response.sendRedirect("localhost:8080/auth");
     }
 
     private Cookie createCookie(String key, String value) {
@@ -49,7 +56,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         cookie.setMaxAge(60 * 60);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-
         return cookie;
     }
 

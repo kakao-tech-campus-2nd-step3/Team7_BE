@@ -12,7 +12,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import team7.inplace.security.AuthorizationException;
+import team7.inplace.global.exception.InplaceException;
 import team7.inplace.security.config.JwtProperties;
 
 class JwtUtilTest {
@@ -72,7 +72,7 @@ class JwtUtilTest {
             .signWith(secretKey)
             .compact();
 
-        assertThatExceptionOfType(AuthorizationException.class).isThrownBy(
+        assertThatExceptionOfType(InplaceException.class).isThrownBy(
             () -> jwtUtil.validateExpired(expiredToken)
         );
     }
