@@ -5,7 +5,6 @@ import static lombok.AccessLevel.PROTECTED;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -16,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Place;
 
+import static lombok.AccessLevel.PROTECTED;
+import static jakarta.persistence.GenerationType.IDENTITY;
+
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
@@ -23,7 +25,7 @@ import team7.inplace.place.domain.Place;
 public class Video {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
     @Column(name = "video_url", nullable = false, columnDefinition = "TEXT")
     @NonNull

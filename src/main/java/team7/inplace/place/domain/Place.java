@@ -72,13 +72,14 @@ public class Place {
     private Coordinate coordinate;
 
     @ElementCollection
-    @CollectionTable(name = "place_times", joinColumns = @JoinColumn(name = "place_id"))
-    private List<PlaceTime> timeList;
+    @CollectionTable(name = "place_open_times", joinColumns = @JoinColumn(name = "place_id", nullable = false))
+    private List<PlaceOpenTime> timeList;
 
     @ElementCollection
-    @CollectionTable(name = "menus", joinColumns = @JoinColumn(name = "place_id"))
+    @CollectionTable(name = "place_close_times", joinColumns = @JoinColumn(name = "place_id", nullable = false))
+    private List<PlaceCloseTime> offdayList;
+
+    @ElementCollection
+    @CollectionTable(name = "menus", joinColumns = @JoinColumn(name = "place_id", nullable = false))
     private List<Menu> menuList;
-
-    // influencerName, likes 기능은 추후 추가 예정
-
 }

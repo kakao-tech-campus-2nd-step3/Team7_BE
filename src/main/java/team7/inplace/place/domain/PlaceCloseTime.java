@@ -11,16 +11,15 @@ import org.hibernate.annotations.ColumnDefault;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-public class Menu {
+public class PlaceCloseTime {
 
-    @Column(columnDefinition = "NUMBER", nullable = false)
-    private Long price;
+    @Column(length = 50, nullable = false)
+    private String holidayName;
+
+    @Column(length = 50, nullable = false)
+    private String weekAndDay;
 
     @ColumnDefault("false")
     @Column(nullable = false)
-    private boolean recommend;
-
-    @Column(length = 50, nullable = false)
-    private String menuName;
-
+    private boolean temporaryHolidays;
 }

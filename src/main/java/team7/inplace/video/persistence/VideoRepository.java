@@ -12,4 +12,6 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     List<Video> findAllByOrderByIdDesc();
 
     Video findTopByPlaceOrderByIdDesc(Place place);
+
+    List<Video> findByPlaceIdIn(List<Long> placeIds);
 }
