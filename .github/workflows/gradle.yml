@@ -87,7 +87,8 @@ jobs:
             sudo docker run --name inplace --rm -d -p 8080:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
           elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
             sudo docker run --name inplace-dev --rm -d -p 8081:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
-      
+          fi
+          
       # 미사용 이미지를 정리
       - name: delete old docker image
         run: sudo docker system prune -f
