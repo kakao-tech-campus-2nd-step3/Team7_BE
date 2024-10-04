@@ -20,6 +20,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class VideoService {
+
     private final VideoRepository videoRepository;
     private final InfluencerRepository influencerRepository;
     private final PlaceRepository placeRepository;
@@ -27,8 +28,8 @@ public class VideoService {
     public List<VideoInfo> getByVideosInfluencer(List<String> influencers) {
         // 인플루언서 정보 처리
         List<Long> influencerIds = influencerRepository.findByNameIn(influencers).stream()
-                .map(Influencer::getId)
-                .toList();
+            .map(Influencer::getId)
+            .toList();
 
         // 인플루언서 정보로 필터링한 비디오 정보 불러오기
         List<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(influencerIds);
@@ -67,16 +68,16 @@ public class VideoService {
         for (Video savedVideo : savedVideos) {
             Place place = savedVideo.getPlace();
             String alias = AliasUtil.makeAlias(
-                    savedVideo.getInfluencer().getName(),
-                    place.getCategory()
+                savedVideo.getInfluencer().getName(),
+                place.getCategory()
             );
             videoInfos.add(
-                    new VideoInfo(
-                            savedVideo.getId(),
-                            alias,
-                            savedVideo.getVideoUrl(),
-                            PlaceForVideo.of(place.getId(), place.getName())
-                    )
+                new VideoInfo(
+                    savedVideo.getId(),
+                    alias,
+                    savedVideo.getVideoUrl(),
+                    PlaceForVideo.of(place.getId(), place.getName())
+                )
             );
         }
         return videoInfos;

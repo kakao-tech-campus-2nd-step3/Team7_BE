@@ -7,6 +7,7 @@ import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Place;
 
 public class VideoTest {
+
     @Test
     @DisplayName("Video Entity Test")
     void test1() {
