@@ -22,6 +22,12 @@ public class YoutubeChannel {
     private String playListUUID;
     private String lastVideoUUID;
 
+    private ChannelType channelType;
+
+    public String getChannelTypeCode() {
+        return channelType.getCode();
+    }
+
     public void updateLastVideoUUID(String lastVideoUUID) {
         this.lastVideoUUID = lastVideoUUID;
     }
