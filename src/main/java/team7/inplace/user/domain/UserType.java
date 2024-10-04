@@ -1,4 +1,4 @@
-package team7.inplace.security.domain;
+package team7.inplace.user.domain;
 
 import lombok.Getter;
 
