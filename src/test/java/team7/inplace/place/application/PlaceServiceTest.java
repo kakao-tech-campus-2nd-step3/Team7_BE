@@ -14,19 +14,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
 import team7.inplace.place.application.dto.PlaceInfo;
-import team7.inplace.place.domain.Address;
-import team7.inplace.place.domain.Category;
-import team7.inplace.place.domain.Coordinate;
-import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
-import team7.inplace.place.domain.PlaceCloseTime;
-import team7.inplace.place.domain.PlaceOpenTime;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
@@ -47,87 +39,87 @@ class PlaceServiceTest {
 
     @BeforeEach
     public void init() {
-        place1 = Place.builder()
-            .id(1L)
-            .name("Place 1")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.CAFE)
-            .coordinate(new Coordinate("1.0", "1.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
-            ))
-            .build();
-
-        place2 = Place.builder()
-            .id(2L)
-            .name("Place 2")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("1.0", "50.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
-            ))
-            .build();
-
-        place3 = Place.builder()
-            .id(3L)
-            .name("Place 3")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("1.0", "100.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
-            ))
-            .build();
-
-        video1 = new Video("video.url", new Influencer("성시경", "가수", "img.url"), place1);
-
-        pageable = PageRequest.of(0, 10);
+//        place1 = Place.builder()
+//            .id(1L)
+//            .name("Place 1")
+//            .pet(false)
+//            .wifi(true)
+//            .parking(false)
+//            .fordisabled(true)
+//            .nursery(false)
+//            .smokingroom(false)
+//            .address(new Address("Address 1", "Address 2", "Address 3"))
+//            .menuImgUrl("menu.jpg")
+//            .category(Category.CAFE)
+//            .coordinate(new Coordinate("1.0", "1.0"))
+//            .timeList(Arrays.asList(
+//                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+//                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+//            ))
+//            .offdayList(Arrays.asList(
+//                new PlaceCloseTime("한글날", "월~금", false)
+//            ))
+//            .menuList(Arrays.asList(
+//                new Menu(5000L, true, "Coffee"),
+//                new Menu(7000L, false, "Cake")
+//            ))
+//            .build();
+//
+//        place2 = Place.builder()
+//            .id(2L)
+//            .name("Place 2")
+//            .pet(false)
+//            .wifi(true)
+//            .parking(false)
+//            .fordisabled(true)
+//            .nursery(false)
+//            .smokingroom(false)
+//            .address(new Address("Address 1", "Address 2", "Address 3"))
+//            .menuImgUrl("menu.jpg")
+//            .category(Category.JAPANESE)
+//            .coordinate(new Coordinate("1.0", "50.0"))
+//            .timeList(Arrays.asList(
+//                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+//                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+//            ))
+//            .offdayList(Arrays.asList(
+//                new PlaceCloseTime("한글날", "월~금", false)
+//            ))
+//            .menuList(Arrays.asList(
+//                new Menu(5000L, true, "Coffee"),
+//                new Menu(7000L, false, "Cake")
+//            ))
+//            .build();
+//
+//        place3 = Place.builder()
+//            .id(3L)
+//            .name("Place 3")
+//            .pet(false)
+//            .wifi(true)
+//            .parking(false)
+//            .fordisabled(true)
+//            .nursery(false)
+//            .smokingroom(false)
+//            .address(new Address("Address 1", "Address 2", "Address 3"))
+//            .menuImgUrl("menu.jpg")
+//            .category(Category.JAPANESE)
+//            .coordinate(new Coordinate("1.0", "100.0"))
+//            .timeList(Arrays.asList(
+//                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+//                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+//            ))
+//            .offdayList(Arrays.asList(
+//                new PlaceCloseTime("한글날", "월~금", false)
+//            ))
+//            .menuList(Arrays.asList(
+//                new Menu(5000L, true, "Coffee"),
+//                new Menu(7000L, false, "Cake")
+//            ))
+//            .build();
+//
+//        video1 = new Video("video.url", new Influencer("성시경", "가수", "img.url"), place1);
+//
+//        pageable = PageRequest.of(0, 10);
     }
 
     @Test
@@ -136,19 +128,19 @@ class PlaceServiceTest {
         // Mock repository responses
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3, place1), pageable, 3);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
-            .thenReturn(placesPage);
+                .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
-            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1));
+                placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+                Arrays.asList(video1));
 
         // Prepare filter params
         PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
-            pageable);
+                pageable);
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null, null);
 
         // Call the service
         Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
-            filterParams);
+                filterParams);
 
         // Assert results
         assertThat(result).hasSize(3);
@@ -166,20 +158,20 @@ class PlaceServiceTest {
         // Mock repository responses
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3, place1), pageable, 3);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
-            .thenReturn(placesPage);
+                .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
-            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1));
+                placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+                Arrays.asList(video1));
 
         // Prepare filter params
         PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
-            pageable);
+                pageable);
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand("JAPANESE, CAFE",
-            null);
+                null);
 
         // Call the service
         Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
-            filterParams);
+                filterParams);
 
         // Assert results
         assertThat(result).hasSize(3);
@@ -197,20 +189,20 @@ class PlaceServiceTest {
         // Mock repository responses
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3), pageable, 2);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
-            .thenReturn(placesPage);
+                .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
-            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1));
+                placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+                Arrays.asList(video1));
 
         // Prepare filter params
         PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
-            pageable);
+                pageable);
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand("JAPANESE",
-            null);
+                null);
 
         // Call the service
         Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
-            filterParams);
+                filterParams);
 
         // Assert results
         assertThat(result).hasSize(2);
@@ -226,18 +218,18 @@ class PlaceServiceTest {
         // Mock repository responses
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place1), pageable, 1);
         when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
-            .thenReturn(placesPage);
+                .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
-            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1));
+                placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+                Arrays.asList(video1));
         // Prepare filter params
         PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
-            pageable);
+                pageable);
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null, "성시경");
 
         // Call the service
         Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
-            filterParams);
+                filterParams);
 
         // Assert results
         assertThat(result).hasSize(1);

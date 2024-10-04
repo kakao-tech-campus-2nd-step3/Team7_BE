@@ -17,22 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.application.CategoryService;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.place.application.dto.CategoryInfo;
-import team7.inplace.place.domain.Address;
 import team7.inplace.place.domain.Category;
-import team7.inplace.place.domain.Coordinate;
-import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
-import team7.inplace.place.domain.PlaceCloseTime;
-import team7.inplace.place.domain.PlaceOpenTime;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.video.domain.Video;
 
@@ -66,84 +59,84 @@ class PlaceControllerTest {
 
     @BeforeEach
     public void init() {
-        place1 = Place.builder()
-            .name("Place 1")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.CAFE)
-            .coordinate(new Coordinate("1.0", "1.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
-            ))
-            .build();
-
-        place2 = Place.builder()
-            .name("Place 2")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("1.0", "50.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
-            ))
-            .build();
-
-        place3 = Place.builder()
-            .name("Place 3")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("1.0", "100.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
-            ))
-            .build();
-
-        video1 = new Video("video.url", new Influencer("성시경", "가수", "img.url"), place1);
-
-        pageable = PageRequest.of(0, 10);
+//        place1 = Place.builder()
+//            .name("Place 1")
+//            .pet(false)
+//            .wifi(true)
+//            .parking(false)
+//            .fordisabled(true)
+//            .nursery(false)
+//            .smokingroom(false)
+//            .address(new Address("Address 1", "Address 2", "Address 3"))
+//            .menuImgUrl("menu.jpg")
+//            .category(Category.CAFE)
+//            .coordinate(new Coordinate("1.0", "1.0"))
+//            .timeList(Arrays.asList(
+//                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+//                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+//            ))
+//            .offdayList(Arrays.asList(
+//                new PlaceCloseTime("한글날", "월~금", false)
+//            ))
+//            .menuList(Arrays.asList(
+//                new Menu(5000L, true, "Coffee"),
+//                new Menu(7000L, false, "Cake")
+//            ))
+//            .build();
+//
+//        place2 = Place.builder()
+//            .name("Place 2")
+//            .pet(false)
+//            .wifi(true)
+//            .parking(false)
+//            .fordisabled(true)
+//            .nursery(false)
+//            .smokingroom(false)
+//            .address(new Address("Address 1", "Address 2", "Address 3"))
+//            .menuImgUrl("menu.jpg")
+//            .category(Category.JAPANESE)
+//            .coordinate(new Coordinate("1.0", "50.0"))
+//            .timeList(Arrays.asList(
+//                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+//                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+//            ))
+//            .offdayList(Arrays.asList(
+//                new PlaceCloseTime("한글날", "월~금", false)
+//            ))
+//            .menuList(Arrays.asList(
+//                new Menu(5000L, true, "Coffee"),
+//                new Menu(7000L, false, "Cake")
+//            ))
+//            .build();
+//
+//        place3 = Place.builder()
+//            .name("Place 3")
+//            .pet(false)
+//            .wifi(true)
+//            .parking(false)
+//            .fordisabled(true)
+//            .nursery(false)
+//            .smokingroom(false)
+//            .address(new Address("Address 1", "Address 2", "Address 3"))
+//            .menuImgUrl("menu.jpg")
+//            .category(Category.JAPANESE)
+//            .coordinate(new Coordinate("1.0", "100.0"))
+//            .timeList(Arrays.asList(
+//                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+//                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+//            ))
+//            .offdayList(Arrays.asList(
+//                new PlaceCloseTime("한글날", "월~금", false)
+//            ))
+//            .menuList(Arrays.asList(
+//                new Menu(5000L, true, "Coffee"),
+//                new Menu(7000L, false, "Cake")
+//            ))
+//            .build();
+//
+//        video1 = new Video("video.url", new Influencer("성시경", "가수", "img.url"), place1);
+//
+//        pageable = PageRequest.of(0, 10);
     }
 
     @Test
@@ -151,21 +144,21 @@ class PlaceControllerTest {
     public void testGetCategories() throws Exception {
         // given
         List<CategoryInfo> expectedCategories = Arrays.stream(Category.values())
-            .map(category -> new CategoryInfo(category.name()))
-            .toList();
+                .map(category -> new CategoryInfo(category.name()))
+                .toList();
         when(categoryService.getCategories()).thenReturn(expectedCategories);
 
         // when & then
         mockMvc.perform(MockMvcRequestBuilders
-                .get("/places/categories")
-                .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(result -> {
-                String jsonResponse = result.getResponse().getContentAsString();
-                CategoriesResponse response = objectMapper.readValue(jsonResponse,
-                    CategoriesResponse.class);
-                assertThat(response.categories()).isEqualTo(expectedCategories);
-            });
+                        .get("/places/categories")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(result -> {
+                    String jsonResponse = result.getResponse().getContentAsString();
+                    CategoriesResponse response = objectMapper.readValue(jsonResponse,
+                            CategoriesResponse.class);
+                    assertThat(response.categories()).isEqualTo(expectedCategories);
+                });
     }
 /*
     @Test
