@@ -24,7 +24,7 @@ public class VideoService {
     private final InfluencerRepository influencerRepository;
     private final PlaceRepository placeRepository;
 
-    public List<VideoInfo> findByInfluencer(List<String> influencers) {
+    public List<VideoInfo> getByVideosInfluencer(List<String> influencers) {
         // 인플루언서 정보 처리
         List<Long> influencerIds = influencerRepository.findByNameIn(influencers).stream()
                 .map(Influencer::getId)
@@ -37,7 +37,7 @@ public class VideoService {
         return videoToInfo(savedVideos);
     }
 
-    public List<VideoInfo> findAllDesc() {
+    public List<VideoInfo> getAllVideosDesc() {
         // id를 기준으로 내림차순 정렬하여 비디오 정보 불러오기
         List<Video> savedVideos = videoRepository.findAllByOrderByIdDesc();
 
@@ -45,7 +45,7 @@ public class VideoService {
         return videoToInfo(savedVideos);
     }
 
-    public List<VideoInfo> findBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
+    public List<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
         Page<Place> placesByDistance = placeRepository.getPlacesByDistance(
                 videoSearchParams.longitude(),
                 videoSearchParams.latitude(),

@@ -1,4 +1,4 @@
-package team7.inplace.video.service;
+package team7.inplace.video.application;
 
 import static org.mockito.BDDMockito.given;
 
@@ -21,7 +21,6 @@ import team7.inplace.place.domain.Coordinate;
 import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.domain.PlaceOpenTime;
-import team7.inplace.video.application.VideoService;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
@@ -85,7 +84,7 @@ public class VideoServiceTest {
             invocation -> savedVideos);
 
         // when
-        List<VideoInfo> savedVideoData = videoService.findByInfluencer(names);
+        List<VideoInfo> savedVideoData = videoService.getByVideosInfluencer(names);
         // then
         Assertions.assertThat(savedVideoData.get(0).place().placeName()).isEqualTo(place.getName());
         Assertions.assertThat(savedVideoData.get(0).videoUrl()).isEqualTo("url");

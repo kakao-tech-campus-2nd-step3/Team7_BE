@@ -1,4 +1,4 @@
-package team7.inplace.video.repository;
+package team7.inplace.video.persistence;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -20,7 +20,6 @@ import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.domain.PlaceOpenTime;
 import team7.inplace.video.domain.Video;
-import team7.inplace.video.persistence.VideoRepository;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // 각 메서드 실행마다 이전 결과 초기화
