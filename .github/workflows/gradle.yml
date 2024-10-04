@@ -59,7 +59,7 @@ jobs:
     runs-on: self-hosted
 
     # weekly/* 브랜치에서는 실행되지 않도록 조건 추가
-    if: startsWith(github.ref, 'refs/heads/master') || startsWith(github.ref, 'refs/heads/develop')
+    if: startsWith(github.ref, 'refs/heads/Master') || startsWith(github.ref, 'refs/heads/develop')
 
     steps:
       # 최신 이미지를 pull 
@@ -83,7 +83,7 @@ jobs:
       # 브랜치에 따라 다른 환경 변수를 설정하여 컨테이너 실행
       - name: docker run new container
         run: |
-          if [ "${{ github.ref }}" == "refs/heads/master" ]; then
+          if [ "${{ github.ref }}" == "refs/heads/Master" ]; then
             sudo docker run --name inplace --rm -d -p 8080:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
           elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
             sudo docker run --name inplace-dev --rm -d -p 8081:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
