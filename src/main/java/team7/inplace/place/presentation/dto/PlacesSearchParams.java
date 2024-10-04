@@ -17,4 +17,12 @@ public class PlacesSearchParams {
 
     private String influencers;
 
+    private String topLeftLongitude;
+
+    private String topLeftLatitude;
+
+    private String bottomRightLongitude;
+
+    private String bottomRightLatitude;
+
 }

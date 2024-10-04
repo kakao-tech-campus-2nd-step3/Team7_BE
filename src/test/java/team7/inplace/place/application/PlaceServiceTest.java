@@ -41,9 +41,41 @@ class PlaceServiceTest {
     @InjectMocks
     private PlaceService placeService;
 
-    private Place place1, place2, place3;
-    private Video video1;
-    private Pageable pageable;
+    private Place place1, place2, place3, place4;
+    private Video video1, video2;
+    private Influencer influencer1, influencer2;
+
+    /*
+     * 테스트 Place 좌표 (longitude, latitude)
+     * (10.0, 10.0) -> video1 -> 성시경
+     * (10.0, 50.0)
+     * (10.0, 100.0)
+     * (50.0, 50.0) -> video2 -> 아이유
+     *
+     * 테스트 좌표
+     * (10.0, 51.0)
+     *
+     * boundary 좌표
+     * 좌상단: (10.0, 60.0)
+     * 우하단: (50.0, 10.0)
+     *
+     */
+    String topLeftLongitude = "10.0";
+    String topLeftLatitude = "60.0";
+    String bottomRightLongitude = "50.0";
+    String bottomRightLatitude = "10.0";
+    String longitude = "10.0";
+    String latitude = "51.0";
+    Pageable pageable = PageRequest.of(0, 10);
+    PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand(
+        topLeftLongitude,
+        topLeftLatitude,
+        bottomRightLongitude,
+        bottomRightLatitude,
+        longitude,
+        latitude,
+        pageable
+    );
 
     @BeforeEach
     public void init() {
@@ -59,7 +91,7 @@ class PlaceServiceTest {
             .address(new Address("Address 1", "Address 2", "Address 3"))
             .menuImgUrl("menu.jpg")
             .category(Category.CAFE)
-            .coordinate(new Coordinate("1.0", "1.0"))
+            .coordinate(new Coordinate("10.0", "10.0"))
             .timeList(Arrays.asList(
                 new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
@@ -85,7 +117,7 @@ class PlaceServiceTest {
             .address(new Address("Address 1", "Address 2", "Address 3"))
             .menuImgUrl("menu.jpg")
             .category(Category.JAPANESE)
-            .coordinate(new Coordinate("1.0", "50.0"))
+            .coordinate(new Coordinate("10.0", "50.0"))
             .timeList(Arrays.asList(
                 new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
@@ -110,8 +142,8 @@ class PlaceServiceTest {
             .smokingroom(false)
             .address(new Address("Address 1", "Address 2", "Address 3"))
             .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("1.0", "100.0"))
+            .category(Category.CAFE)
+            .coordinate(new Coordinate("10.0", "100.0"))
             .timeList(Arrays.asList(
                 new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
@@ -125,124 +157,199 @@ class PlaceServiceTest {
             ))
             .build();
 
-        video1 = new Video("video.url", new Influencer("성시경", "가수", "img.url"), place1);
+        place4 = Place.builder()
+            .id(4L)
+            .name("Place 4")
+            .pet(false)
+            .wifi(true)
+            .parking(false)
+            .fordisabled(true)
+            .nursery(false)
+            .smokingroom(false)
+            .address(new Address("Address 1", "Address 2", "Address 3"))
+            .menuImgUrl("menu.jpg")
+            .category(Category.JAPANESE)
+            .coordinate(new Coordinate("50.0", "50.0"))
+            .timeList(Arrays.asList(
+                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+            ))
+            .offdayList(Arrays.asList(
+                new PlaceCloseTime("한글날", "월~금", false)
+            ))
+            .menuList(Arrays.asList(
+                new Menu(5000L, true, "Coffee"),
+                new Menu(7000L, false, "Cake")
+            ))
+            .build();
 
-        pageable = PageRequest.of(0, 10);
+        influencer1 = new Influencer("성시경", "가수", "img.url");
+        influencer2 = new Influencer("아이유", "가수", "img.rul");
+
+        video1 = new Video("video.url", influencer1, place1);
+        video2 = new Video("video.url", influencer2, place4);
     }
 
     @Test
     @DisplayName("필터링 없이 가까운 장소 조회")
-    public void getPlacesWithinRadius_NoFilter() {
-        // Mock repository responses
-        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3, place1), pageable, 3);
-        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
+    public void test1() {
+        // given
+        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place4, place1), pageable, 3);
+        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
+            any(), any(), any()))
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1));
+            Arrays.asList(video1, video2));
 
-        // Prepare filter params
-        PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
-            pageable);
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null, null);
 
-        // Call the service
+        // when
         Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
             filterParams);
 
-        // Assert results
+        // then
         assertThat(result).hasSize(3);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 2");
         assertThat(result.getContent().get(0).influencerName()).isEqualTo(null);
-        assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 3");
-        assertThat(result.getContent().get(1).influencerName()).isEqualTo(null);
+        assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 4");
+        assertThat(result.getContent().get(1).influencerName()).isEqualTo("아이유");
         assertThat(result.getContent().get(2).placeName()).isEqualTo("Place 1");
         assertThat(result.getContent().get(2).influencerName()).isEqualTo("성시경");
     }
 
     @Test
     @DisplayName("카테고리 필터링(JAPANESE, CAFE)")
-    public void getPlacesWithinRadius_FullCategoryFilter() {
-        // Mock repository responses
-        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3, place1), pageable, 3);
-        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
+    public void test2() {
+        // given
+        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place4, place1), pageable, 3);
+        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
+            any(), any(), any()))
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1));
+            Arrays.asList(video1, video2));
 
-        // Prepare filter params
-        PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
-            pageable);
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand("JAPANESE, CAFE",
             null);
 
-        // Call the service
+        // when
         Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
             filterParams);
 
-        // Assert results
+        // then
         assertThat(result).hasSize(3);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 2");
+        assertThat(result.getContent().get(0).category()).isEqualTo(Category.JAPANESE.toString());
         assertThat(result.getContent().get(0).influencerName()).isEqualTo(null);
-        assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 3");
-        assertThat(result.getContent().get(1).influencerName()).isEqualTo(null);
+        assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 4");
+        assertThat(result.getContent().get(1).category()).isEqualTo(Category.JAPANESE.toString());
+        assertThat(result.getContent().get(1).influencerName()).isEqualTo("아이유");
         assertThat(result.getContent().get(2).placeName()).isEqualTo("Place 1");
+        assertThat(result.getContent().get(2).category()).isEqualTo(Category.CAFE.toString());
         assertThat(result.getContent().get(2).influencerName()).isEqualTo("성시경");
     }
 
     @Test
     @DisplayName("카테고리 필터링(JAPANESE)")
-    public void getPlacesWithinRadius_JapCategoryFilter() {
-        // Mock repository responses
-        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place3), pageable, 2);
-        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
+    public void test3() {
+        // given
+        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place4), pageable, 2);
+        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
+            any(), any(), any()))
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1));
+            Arrays.asList(video2));
 
-        // Prepare filter params
-        PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
-            pageable);
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand("JAPANESE",
             null);
 
-        // Call the service
+        // when
         Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
             filterParams);
 
-        // Assert results
+        // then
         assertThat(result).hasSize(2);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 2");
+        assertThat(result.getContent().get(0).category()).isEqualTo(Category.JAPANESE.toString());
         assertThat(result.getContent().get(0).influencerName()).isEqualTo(null);
-        assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 3");
-        assertThat(result.getContent().get(1).influencerName()).isEqualTo(null);
+        assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 4");
+        assertThat(result.getContent().get(1).category()).isEqualTo(Category.JAPANESE.toString());
+        assertThat(result.getContent().get(1).influencerName()).isEqualTo("아이유");
     }
 
     @Test
-    @DisplayName("인플루언서 필터링")
-    public void getPlacesWithinRadius_InfluencerFilter() {
-        // Mock repository responses
-        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place1), pageable, 1);
-        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any()))
+    @DisplayName("인플루언서(아이유, 성시경) 필터링")
+    public void test4() {
+        // given
+        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4, place1), pageable, 1);
+        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
+            any(), any(), any()))
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1));
-        // Prepare filter params
-        PlacesCoordinateCommand coordinateCommand = new PlacesCoordinateCommand("1.0", "51.0",
-            pageable);
-        PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null, "성시경");
+            Arrays.asList(video1, video2));
 
-        // Call the service
+        PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null, "성시경, 아이유");
+
+        // when
         Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
             filterParams);
 
-        // Assert results
-        assertThat(result).hasSize(1);
-        assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 1");
-        assertThat(result.getContent().get(0).influencerName()).isEqualTo("성시경");
+        // then
+        assertThat(result).hasSize(2);
+        assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 4");
+        assertThat(result.getContent().get(0).influencerName()).isEqualTo("아이유");
+        assertThat(result.getContent().get(1).placeName()).isEqualTo("Place 1");
+        assertThat(result.getContent().get(1).influencerName()).isEqualTo("성시경");
     }
 
+    @Test
+    @DisplayName("인플루언서(아이유) 필터링")
+    public void test5() {
+        // given
+        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4), pageable, 1);
+        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
+            any(), any(), any()))
+            .thenReturn(placesPage);
+        when(videoRepository.findByPlaceIdIn(
+            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+            Arrays.asList(video2));
+
+        PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null, "아이유");
+
+        // when
+        Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
+            filterParams);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 4");
+        assertThat(result.getContent().get(0).influencerName()).isEqualTo("아이유");
+    }
+
+    @Test
+    @DisplayName("카테고리(Japanese) + 인플루언서(아이유, 성시경) 필터링")
+    public void test6() {
+        // given
+        Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4), pageable, 1);
+        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
+            any(), any(), any()))
+            .thenReturn(placesPage);
+        when(videoRepository.findByPlaceIdIn(
+            placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
+            Arrays.asList(video2));
+
+        PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand("JAPANESE", "아이유");
+
+        // when
+        Page<PlaceInfo> result = placeService.getPlacesWithinRadius(coordinateCommand,
+            filterParams);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 4");
+        assertThat(result.getContent().get(0).influencerName()).isEqualTo("아이유");
+    }
 }

@@ -79,11 +79,16 @@ public class PlaceService {
         List<String> influencerFilters
     ) {
         return placeRepository.getPlacesByDistanceAndFilters(
+            placesCoordinateCommand.topLeftLongitude(),
+            placesCoordinateCommand.topLeftLatitude(),
+            placesCoordinateCommand.bottomRightLongitude(),
+            placesCoordinateCommand.bottomRightLatitude(),
             placesCoordinateCommand.latitude(),
             placesCoordinateCommand.longitude(),
             categoryFilters,
             influencerFilters,
-            placesCoordinateCommand.pageable());
+            placesCoordinateCommand.pageable()
+        );
     }
 
 }

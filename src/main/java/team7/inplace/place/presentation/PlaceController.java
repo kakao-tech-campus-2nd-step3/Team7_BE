@@ -39,10 +39,20 @@ public class PlaceController {
         // 위치기반 조회
         Pageable pageable = PageRequest.of(page, size);
         Page<PlaceInfo> placeInfos = placeService.getPlacesWithinRadius(
-            new PlacesCoordinateCommand(searchParams.getLongitude(), searchParams.getLatitude(),
-                pageable),
-            new PlacesFilterParamsCommand(searchParams.getCategories(),
-                searchParams.getInfluencers()));
+            new PlacesCoordinateCommand(
+                searchParams.getTopLeftLongitude(),
+                searchParams.getTopLeftLatitude(),
+                searchParams.getBottomRightLongitude(),
+                searchParams.getBottomRightLatitude(),
+                searchParams.getLongitude(),
+                searchParams.getLatitude(),
+                pageable
+            ),
+            new PlacesFilterParamsCommand(
+                searchParams.getCategories(),
+                searchParams.getInfluencers()
+            )
+        );
         return new ResponseEntity<>(new PlacesResponse(placeInfos), HttpStatus.OK);
     }
 
