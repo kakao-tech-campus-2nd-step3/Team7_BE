@@ -4,13 +4,11 @@ import java.util.Collection;
 import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import team7.inplace.security.domain.User;
-import team7.inplace.security.domain.UserType;
 
 public record CustomOAuth2User(
     String username,
-    String nickname,
-    UserType userType
+    Long id,
+    Boolean firstUser
 ) implements OAuth2User {
 
     @Override
@@ -28,7 +26,15 @@ public record CustomOAuth2User(
         return username;
     }
 
-    public static CustomOAuth2User of(User user) {
-        return new CustomOAuth2User(user.getUsername(), user.getNickname(), user.getUserType());
+    public static CustomOAuth2User makeExistUser(KakaoOAuthResponse kakaoOAuthResponse) {
+        return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), null, false);
+    }
+
+    public static CustomOAuth2User makeNewUser(KakaoOAuthResponse kakaoOAuthResponse) {
+        return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), null, true);
+    }
+
+    public Boolean isFirstUser() {
+        return this.firstUser;
     }
 }
