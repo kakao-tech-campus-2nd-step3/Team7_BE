@@ -15,7 +15,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
-import team7.inplace.place.domain.*;
+import team7.inplace.place.domain.Address;
+import team7.inplace.place.domain.Category;
+import team7.inplace.place.domain.Coordinate;
+import team7.inplace.place.domain.Menu;
+import team7.inplace.place.domain.Place;
+import team7.inplace.place.domain.PlaceOpenTime;
 import team7.inplace.video.application.VideoService;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
@@ -23,6 +28,7 @@ import team7.inplace.video.persistence.VideoRepository;
 
 @ExtendWith(MockitoExtension.class)
 public class VideoServiceTest {
+
     @Mock
     private VideoRepository videoRepository;
     @Mock
@@ -38,26 +44,27 @@ public class VideoServiceTest {
         ArgumentCaptor<List<Long>> captor_i = ArgumentCaptor.forClass((Class) List.class);
 
         Place place = Place.builder()
-                .name("Test Place")
-                .pet(false)
-                .wifi(true)
-                .parking(false)
-                .fordisabled(true)
-                .nursery(false)
-                .smokingroom(false)
-                .address(new Address("Address 1", "Address 2", "Address 3"))
-                .menuImgUrl("menu.jpg")
-                .category(Category.CAFE)
-                .coordinate(new Coordinate("127.0", "37.0"))
-                .timeList(Arrays.asList(
-                        new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
-                        new PlaceTime("Closing Hours", "10:00 PM", "Monday")
-                ))
-                .menuList(Arrays.asList(
-                        new Menu(5000L, true, "Coffee"),
-                        new Menu(7000L, false, "Cake")
-                ))
-                .build();
+            .name("Test Place")
+            .pet(false)
+            .wifi(true)
+            .parking(false)
+            .fordisabled(true)
+            .nursery(false)
+            .smokingroom(false)
+            .address(new Address("Address 1", "Address 2", "Address 3"))
+            .menuImgUrl("menu.jpg")
+            .category(Category.CAFE)
+            .coordinate(new Coordinate("127.0", "37.0"))
+            .timeList(Arrays.asList(
+                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+            ))
+            .menuList(Arrays.asList(
+                new Menu(5000L, true, "Coffee"),
+                new Menu(7000L, false, "Cake")
+            ))
+            .build();
+
         Influencer influencer = new Influencer("성시경", "가수", "imgUrl");
         Video video = new Video("url", influencer, place);
 
@@ -68,12 +75,14 @@ public class VideoServiceTest {
         // influencerRepository.findByNameIn의 결과
         List<Influencer> influencers = new ArrayList<>();
         influencers.add(influencer);
-        given(influencerRepository.findByNameIn(captor_s.capture())).willAnswer(invocation -> influencers);
+        given(influencerRepository.findByNameIn(captor_s.capture())).willAnswer(
+            invocation -> influencers);
 
         // videoRepository.findVideosByInfluencerIdIn의 결과
         List<Video> savedVideos = new ArrayList<>();
         savedVideos.add(video);
-        given(videoRepository.findVideosByInfluencerIdIn(captor_i.capture())).willAnswer(invocation -> savedVideos);
+        given(videoRepository.findVideosByInfluencerIdIn(captor_i.capture())).willAnswer(
+            invocation -> savedVideos);
 
         // when
         List<VideoInfo> savedVideoData = videoService.findByInfluencer(names);
