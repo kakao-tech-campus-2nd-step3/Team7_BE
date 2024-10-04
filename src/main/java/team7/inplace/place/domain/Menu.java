@@ -13,14 +13,13 @@ import org.hibernate.annotations.ColumnDefault;
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Menu {
-    
     private Long price;
 
-    @Column
     @ColumnDefault("false")
+    @Column(nullable = false)
     private boolean recommend;
 
-    @Column(length = 50)
+    @Column(length = 50, nullable = false)
     private String menuName;
 
 }

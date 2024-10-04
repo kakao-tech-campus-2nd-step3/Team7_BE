@@ -3,6 +3,7 @@ package team7.inplace.video.repository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
-import team7.inplace.place.domain.Place;
+import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.place.domain.*;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 

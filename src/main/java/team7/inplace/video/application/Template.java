@@ -1,9 +1,6 @@
 package team7.inplace.video.application;
 
 import lombok.Getter;
-import team7.inplace.place.domain.Category;
-
-import java.util.*;
 
 @Getter
 public enum Template {
