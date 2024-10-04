@@ -1,12 +1,11 @@
 package team7.inplace.crawling.application;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import team7.inplace.crawling.client.KakaoMapClient;
 import team7.inplace.crawling.client.YoutubeClient;
-import team7.inplace.crawling.client.dto.RawVideoInfo;
 import team7.inplace.crawling.persistence.YoutubeChannelRepository;
 
 @Slf4j
@@ -15,6 +14,7 @@ import team7.inplace.crawling.persistence.YoutubeChannelRepository;
 public class YoutubeCrawlingService {
     private final YoutubeChannelRepository youtubeChannelRepository;
     private final YoutubeClient youtubeClient;
+    private final KakaoMapClient kakaoMapClient;
 
     /*
         1. 유튜브 채널 정보를 모두 가져온다.
@@ -24,11 +24,14 @@ public class YoutubeCrawlingService {
      */
     public void crawlAllVideos() {
         var youtubeChannels = youtubeChannelRepository.findAll();
-        List<RawVideoInfo> rawVideoInfos = new ArrayList<>();
         for (var channel : youtubeChannels) {
-            var videos = youtubeClient.getVideos(channel.getPlayListUUID(), channel.getLastVideoUUID());
-            rawVideoInfos.addAll(videos);
-            channel.updateLastVideoUUID(videos.get(0).videoId());
+            var rawVideoInfos = youtubeClient.getVideos(channel.getPlayListUUID(), channel.getLastVideoUUID());
+            channel.updateLastVideoUUID(rawVideoInfos.get(0).videoId());
+
+            var videos = rawVideoInfos.stream()
+                    .map(rawVideoInfo -> kakaoMapClient.search(rawVideoInfo, channel.getChannelType().getCode()))
+                    .filter(Objects::nonNull)
+                    .toList();
         }
     }
 }
