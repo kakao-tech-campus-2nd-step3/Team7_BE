@@ -13,12 +13,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.annotation.DirtiesContext;
 import team7.inplace.influencer.domain.Influencer;
-import team7.inplace.place.domain.*;
+import team7.inplace.place.domain.Address;
+import team7.inplace.place.domain.Category;
+import team7.inplace.place.domain.Coordinate;
+import team7.inplace.place.domain.Menu;
+import team7.inplace.place.domain.Place;
+import team7.inplace.place.domain.PlaceOpenTime;
 import team7.inplace.video.domain.Video;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // 각 메서드 실행마다 이전 결과 초기화
 public class VideoRepositoryTest {
+
     @PersistenceContext
     EntityManager entityManager;
     @Autowired
@@ -28,26 +34,27 @@ public class VideoRepositoryTest {
     @BeforeEach
     void init() {
         place = Place.builder()
-                .name("Test Place")
-                .pet(false)
-                .wifi(true)
-                .parking(false)
-                .fordisabled(true)
-                .nursery(false)
-                .smokingroom(false)
-                .address(new Address("Address 1", "Address 2", "Address 3"))
-                .menuImgUrl("menu.jpg")
-                .category(Category.CAFE)
-                .coordinate(new Coordinate("127.0", "37.0"))
-                .timeList(Arrays.asList(
-                        new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
-                        new PlaceTime("Closing Hours", "10:00 PM", "Monday")
-                ))
-                .menuList(Arrays.asList(
-                        new Menu(5000L, true, "Coffee"),
-                        new Menu(7000L, false, "Cake")
-                ))
-                .build();
+            .name("Test Place")
+            .pet(false)
+            .wifi(true)
+            .parking(false)
+            .fordisabled(true)
+            .nursery(false)
+            .smokingroom(false)
+            .address(new Address("Address 1", "Address 2", "Address 3"))
+            .menuImgUrl("menu.jpg")
+            .category(Category.CAFE)
+            .coordinate(new Coordinate("127.0", "37.0"))
+            .timeList(Arrays.asList(
+                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+            ))
+            .menuList(Arrays.asList(
+                new Menu(5000L, true, "Coffee"),
+                new Menu(7000L, false, "Cake")
+            ))
+            .build();
+
         entityManager.persist(place);
 
         Influencer influencer1 = new Influencer("name1", "job1", "imgUrl");

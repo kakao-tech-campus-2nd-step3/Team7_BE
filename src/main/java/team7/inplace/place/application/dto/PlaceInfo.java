@@ -32,13 +32,13 @@ public record PlaceInfo(
         }
     }
 
-    public static PlaceInfo of(Place place) {
+    public static PlaceInfo of(Place place, String influencerName) {
         return new PlaceInfo(
             place.getId(),
             place.getName(),
             AddressInfo.of(place.getAddress()),
             place.getCategory().toString(),
-            null,
+            influencerName,
             place.getCoordinate().getLongitude(),
             place.getCoordinate().getLatitude(),
             null
