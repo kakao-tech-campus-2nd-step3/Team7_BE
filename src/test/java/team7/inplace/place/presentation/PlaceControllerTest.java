@@ -33,6 +33,7 @@ import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.domain.PlaceCloseTime;
 import team7.inplace.place.domain.PlaceOpenTime;
+import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.video.domain.Video;
 
@@ -40,7 +41,7 @@ import team7.inplace.video.domain.Video;
 @AutoConfigureMockMvc
 class PlaceControllerTest {
 
-    @Mock
+    @Autowired
     private PlaceService placeService;
 
     @Mock
@@ -49,14 +50,39 @@ class PlaceControllerTest {
     @InjectMocks
     private PlaceController placeController;
 
+    @Mock
+    private PlaceRepository placeRepository;
+
     @Autowired
     private MockMvc mockMvc;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private Place place1, place2, place3;
-    private Video video1;
-    private Pageable pageable;
+    /*
+     * 테스트 Place 좌표 (longitude, latitude)
+     * (10.0, 10.0) -> video1 -> 성시경
+     * (10.0, 50.0)
+     * (10.0, 100.0)
+     * (50.0, 50.0) -> video2 -> 아이유
+     *
+     * 테스트 좌표
+     * (10.0, 51.0)
+     *
+     * boundary 좌표
+     * 좌상단: (10.0, 60.0)
+     * 우하단: (50.0, 10.0)
+     *
+     */
+    String topLeftLongitude = "10.0";
+    String topLeftLatitude = "60.0";
+    String bottomRightLongitude = "50.0";
+    String bottomRightLatitude = "10.0";
+    String longitude = "10.0";
+    String latitude = "51.0";
+    Pageable pageable = PageRequest.of(0, 10);
+    private Place place1, place2, place3, place4;
+    private Video video1, video2;
+    private Influencer influencer1, influencer2;
 
     @BeforeEach
     public void setUp() {
@@ -67,6 +93,7 @@ class PlaceControllerTest {
     @BeforeEach
     public void init() {
         place1 = Place.builder()
+            .id(1L)
             .name("Place 1")
             .pet(false)
             .wifi(true)
@@ -77,7 +104,7 @@ class PlaceControllerTest {
             .address(new Address("Address 1", "Address 2", "Address 3"))
             .menuImgUrl("menu.jpg")
             .category(Category.CAFE)
-            .coordinate(new Coordinate("1.0", "1.0"))
+            .coordinate(new Coordinate("10.0", "10.0"))
             .timeList(Arrays.asList(
                 new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
@@ -92,6 +119,7 @@ class PlaceControllerTest {
             .build();
 
         place2 = Place.builder()
+            .id(2L)
             .name("Place 2")
             .pet(false)
             .wifi(true)
@@ -102,7 +130,7 @@ class PlaceControllerTest {
             .address(new Address("Address 1", "Address 2", "Address 3"))
             .menuImgUrl("menu.jpg")
             .category(Category.JAPANESE)
-            .coordinate(new Coordinate("1.0", "50.0"))
+            .coordinate(new Coordinate("10.0", "50.0"))
             .timeList(Arrays.asList(
                 new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
@@ -117,6 +145,7 @@ class PlaceControllerTest {
             .build();
 
         place3 = Place.builder()
+            .id(3L)
             .name("Place 3")
             .pet(false)
             .wifi(true)
@@ -126,8 +155,8 @@ class PlaceControllerTest {
             .smokingroom(false)
             .address(new Address("Address 1", "Address 2", "Address 3"))
             .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("1.0", "100.0"))
+            .category(Category.CAFE)
+            .coordinate(new Coordinate("10.0", "100.0"))
             .timeList(Arrays.asList(
                 new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
@@ -141,9 +170,37 @@ class PlaceControllerTest {
             ))
             .build();
 
-        video1 = new Video("video.url", new Influencer("성시경", "가수", "img.url"), place1);
+        place4 = Place.builder()
+            .id(4L)
+            .name("Place 4")
+            .pet(false)
+            .wifi(true)
+            .parking(false)
+            .fordisabled(true)
+            .nursery(false)
+            .smokingroom(false)
+            .address(new Address("Address 1", "Address 2", "Address 3"))
+            .menuImgUrl("menu.jpg")
+            .category(Category.JAPANESE)
+            .coordinate(new Coordinate("50.0", "50.0"))
+            .timeList(Arrays.asList(
+                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
+                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
+            ))
+            .offdayList(Arrays.asList(
+                new PlaceCloseTime("한글날", "월~금", false)
+            ))
+            .menuList(Arrays.asList(
+                new Menu(5000L, true, "Coffee"),
+                new Menu(7000L, false, "Cake")
+            ))
+            .build();
 
-        pageable = PageRequest.of(0, 10);
+        influencer1 = new Influencer("성시경", "가수", "img.url");
+        influencer2 = new Influencer("아이유", "가수", "img.rul");
+
+        video1 = new Video("video.url", influencer1, place1);
+        video2 = new Video("video.url", influencer2, place4);
     }
 
     @Test
@@ -170,18 +227,51 @@ class PlaceControllerTest {
 /*
     @Test
     @DisplayName("위치기반 장소 정보 조회")
-    public void getPlacesTest() {
+    public void getPlacesTest() throws Exception {
         //given
-        PlaceInfo.of(place1, )
-        PlacesCoordinateCommand coordinateComm = new PlacesCoordinateCommand("1.0", "51.0",
+        PlaceInfo info1 = PlaceInfo.of(place1, influencer1.getName());
+        PlaceInfo info2 = PlaceInfo.of(place2, null);
+        PlaceInfo info3 = PlaceInfo.of(place3, null);
+        PlaceInfo info4 = PlaceInfo.of(place4, influencer2.getName());
+
+        Page<PlaceInfo> placeInfos = new PageImpl<>(Arrays.asList(info2, info4, info1), pageable,
+            3);
+        PlacesResponse expectedResponse = PlacesResponse.of(placeInfos);
+
+        PlacesCoordinateCommand coordinateComm = new PlacesCoordinateCommand(
+            topLeftLongitude,
+            topLeftLatitude,
+            bottomRightLongitude,
+            bottomRightLatitude,
+            longitude,
+            latitude,
             pageable);
         PlacesFilterParamsCommand filterParamsComm = new PlacesFilterParamsCommand(null, null);
 
-        when(placeService.getPlacesWithinRadius(coordinateComm, filterParamsComm))
-            .thenReturn()
-        //when
+        when(placeRepository.getPlacesByDistanceAndFilters(
+            anyString(), anyString(), anyString(), anyString(), anyString(), anyString(),
+            anyList(), anyList(), any(Pageable.class))
+        ).thenReturn(new PageImpl<>(Arrays.asList(place2, place4, place1), pageable, 3));
 
+        //when
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/places")
+                .accept(MediaType.APPLICATION_JSON)
+                .param("topLeftLongitude", topLeftLongitude)
+                .param("topLeftLatitude", topLeftLatitude)
+                .param("bottomRightLongitude", bottomRightLongitude)
+                .param("bottomRightLatitude", bottomRightLatitude)
+                .param("longitude", longitude)
+                .param("latitude", latitude))
+            .andExpect(status().isOk())
+            .andExpect(result -> {
+                String jsonResponse = result.getResponse().getContentAsString();
+                PlacesResponse response = objectMapper.readValue(jsonResponse,
+                    PlacesResponse.class);
+                assertThat(response).isEqualTo(expectedResponse);
+            });
         //then
     }
-*/
+ */
+
 }

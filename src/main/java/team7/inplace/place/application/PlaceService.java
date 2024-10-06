@@ -70,7 +70,7 @@ public class PlaceService {
             .toList();
 
         // PlaceInfo 리스트를 Page로 변환하여 반환
-        return new PageImpl<>(placeInfos, placesPage.getPageable(), placesPage.getTotalElements());
+        return new PageImpl<>(placeInfos, placesPage.getPageable(), placeInfos.size());
     }
 
     private Page<Place> getPlacesByDistance(
@@ -83,12 +83,11 @@ public class PlaceService {
             placesCoordinateCommand.topLeftLatitude(),
             placesCoordinateCommand.bottomRightLongitude(),
             placesCoordinateCommand.bottomRightLatitude(),
-            placesCoordinateCommand.latitude(),
             placesCoordinateCommand.longitude(),
+            placesCoordinateCommand.latitude(),
             categoryFilters,
             influencerFilters,
             placesCoordinateCommand.pageable()
         );
     }
-
 }
