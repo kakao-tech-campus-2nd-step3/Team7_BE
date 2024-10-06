@@ -8,7 +8,7 @@ import team7.inplace.place.domain.Place;
 
 public record PlaceDetailInfo(
     PlaceInfo placeInfo,
-    String facilityInfo,
+    FacilityInfo facilityInfo,
     MenuInfos menuInfos,
     OpenHour openHour,
     PlaceLikes placeLikes,
@@ -18,7 +18,7 @@ public record PlaceDetailInfo(
     public static PlaceDetailInfo of(Place place, String influencerName, String videoUrl) {
         return new PlaceDetailInfo(
             PlaceInfo.of(place, influencerName),
-            place.getFacility(),
+            FacilityInfo.of(place),
             MenuInfos.of(place.getMenus()),
             OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
             PlaceLikes.of(null), //추후 추가 예정
@@ -26,51 +26,27 @@ public record PlaceDetailInfo(
         );
     }
 
-    /*
-        public record FacilityInfo(
-            @JsonProperty("wifi")
-            Boolean wifi,
-            @JsonProperty("pet")
-            Boolean pet,
-            @JsonProperty("parking")
-            Boolean parking,
-            @JsonProperty("forDisabled")
-            Boolean forDisabled,
-            @JsonProperty("nursery")
-            Boolean nursery,
-            @JsonProperty("smokingRoom")
-            Boolean smokingRoom
-        ) {
+    public record FacilityInfo(
+        boolean wifi,
+        boolean pet,
+        boolean parking,
+        boolean forDisabled,
+        boolean nursery,
+        boolean smokingRoom
+    ) {
 
-            @JsonCreator
-            public FacilityInfo(
-                @JsonProperty("wifi") Boolean wifi,
-                @JsonProperty("pet") Boolean pet,
-                @JsonProperty("parking") Boolean parking,
-                @JsonProperty("forDisabled") Boolean forDisabled,
-                @JsonProperty("nursery") Boolean nursery,
-                @JsonProperty("smokingRoom") Boolean smokingRoom
-            ) {
-                this.wifi = wifi;
-                this.pet = pet;
-                this.parking = parking;
-                this.forDisabled = forDisabled;
-                this.nursery = nursery;
-                this.smokingRoom = smokingRoom;
-            }
-
-            private static final ObjectMapper objectMapper = new ObjectMapper();
-
-            public static FacilityInfo of(Place place) {
-                try {
-                    // facility가 JSON 형식의 문자열로 저장되어 있을 경우 이를 역직렬화
-                    return objectMapper.readValue(place.getFacility(), FacilityInfo.class);
-                } catch (JsonProcessingException e) {
-                    throw new RuntimeException("Failed to parse facility JSON", e);
-                }
-            }
+        public static FacilityInfo of(Place place) {
+            return new FacilityInfo(
+                place.isWifi(),
+                place.isPet(),
+                place.isParking(),
+                place.isFordisabled(),
+                place.isNursery(),
+                place.isSmokingroom()
+            );
         }
-    */
+    }
+
     public record MenuInfos(
         List<MenuInfo> menuList,
         LocalDateTime timeExp
