@@ -204,7 +204,9 @@ gradle-app.setting
 
 .env
 
-# CommandLineRunner for loading dummy data
-src/main/java/team7/inplace/place/config/DataLoader.java
+# Ignore specific application config files
+application.yaml
+application-security.yaml
+application-youtube.yaml
 
 # End of https://www.toptal.com/developers/gitignore/api/macos,java,intellij,gradle
