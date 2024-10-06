@@ -1,7 +1,6 @@
 package team7.inplace.video.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -18,7 +17,6 @@ public interface VideoControllerApiSpec {
             description = "토큰의 유무에 따라 다른 동작을 수행합니다."
     )
     ResponseEntity<Page<VideoResponse>> readVideos(
-            HttpServletRequest request,
             @RequestParam(name = "influencer", required = false) List<String> influencers,
             @ModelAttribute VideoSearchParams searchParams,
             @RequestParam(defaultValue = "0", required = false) int page,
