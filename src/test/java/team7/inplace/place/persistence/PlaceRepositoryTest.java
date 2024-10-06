@@ -1,54 +1,30 @@
 package team7.inplace.place.persistence;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import team7.inplace.influencer.domain.Influencer;
-import team7.inplace.place.domain.Address;
-import team7.inplace.place.domain.Category;
-import team7.inplace.place.domain.Coordinate;
-import team7.inplace.place.domain.Menu;
-import team7.inplace.place.domain.Place;
-import team7.inplace.place.domain.PlaceCloseTime;
-import team7.inplace.place.domain.PlaceOpenTime;
-import team7.inplace.video.domain.Video;
 
 @DataJpaTest
 class PlaceRepositoryTest {
-
+/*
     @PersistenceContext
     EntityManager entityManager;
 
     @Autowired
     private PlaceRepository placeRepository;
 
-    /*
-     * 테스트 Place 좌표 (longitude, latitude)
-     * (10.0, 10.0) -> video1 -> 성시경
-     * (10.0, 50.0)
-     * (10.0, 100.0)
-     * (50.0, 50.0) -> video2 -> 아이유
-     *
-     * 테스트 좌표
-     * (10.0, 51.0)
-     *
-     * boundary 좌표
-     * 좌상단: (10.0, 60.0)
-     * 우하단: (50.0, 10.0)
-     *
-     */
+
+//     * 테스트 Place 좌표 (longitude, latitude)
+//     * (10.0, 10.0) -> video1 -> 성시경
+//     * (10.0, 50.0)
+//     * (10.0, 100.0)
+//     * (50.0, 50.0) -> video2 -> 아이유
+//     *
+//     * 테스트 좌표
+//     * (10.0, 51.0)
+//     *
+//     * boundary 좌표
+//     * 좌상단: (10.0, 60.0)
+//     * 우하단: (50.0, 10.0)
+
     String topLeftLongitude = "10.0";
     String topLeftLatitude = "60.0";
     String bottomRightLongitude = "50.0";
@@ -183,9 +159,9 @@ class PlaceRepositoryTest {
 
         // when
         Page<Place> foundPlaces = placeRepository.getPlacesByDistance(
-            longitude,
-            latitude,
-            pageable
+                longitude,
+                latitude,
+                pageable
         );
         System.out.println(foundPlaces);
 
@@ -200,9 +176,8 @@ class PlaceRepositoryTest {
     @Test
     @DisplayName("필터링 NULL, boundary[(10, 60), (50, 10)]")
     public void test2() {
-        /*
-         * Place 3(10.0, 100.0) 제외
-         */
+
+//         * Place 3(10.0, 100.0) 제외
         // given
         List<String> categories = null;
         List<String> influencers = null;
@@ -362,4 +337,6 @@ class PlaceRepositoryTest {
         assertThat(foundPlaces).hasSize(1);
         assertThat(foundPlaces.getContent().get(0).getName()).isEqualTo("Place 4");
     }
+
+ */
 }

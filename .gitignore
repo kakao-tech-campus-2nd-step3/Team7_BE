@@ -203,6 +203,7 @@ gradle-app.setting
 *.hprof
 
 .env
+/src/test/resources/application-test.yaml
 
 # Ignore specific application config files
 application.yaml

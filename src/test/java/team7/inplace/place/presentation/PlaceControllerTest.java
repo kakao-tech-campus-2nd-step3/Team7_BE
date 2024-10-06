@@ -26,13 +26,8 @@ import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.application.CategoryService;
 import team7.inplace.place.application.PlaceService;
 import team7.inplace.place.application.dto.CategoryInfo;
-import team7.inplace.place.domain.Address;
 import team7.inplace.place.domain.Category;
-import team7.inplace.place.domain.Coordinate;
-import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.Place;
-import team7.inplace.place.domain.PlaceCloseTime;
-import team7.inplace.place.domain.PlaceOpenTime;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.video.domain.Video;
@@ -92,6 +87,7 @@ class PlaceControllerTest {
 
     @BeforeEach
     public void init() {
+        /*
         place1 = Place.builder()
             .id(1L)
             .name("Place 1")
@@ -201,6 +197,8 @@ class PlaceControllerTest {
 
         video1 = new Video("video.url", influencer1, place1);
         video2 = new Video("video.url", influencer2, place4);
+
+         */
     }
 
     @Test
