@@ -2,12 +2,13 @@ package team7.inplace.video.application;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
-import team7.inplace.place.domain.Place;
 import team7.inplace.place.application.dto.PlaceForVideo;
+import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
@@ -25,61 +26,55 @@ public class VideoService {
     private final InfluencerRepository influencerRepository;
     private final PlaceRepository placeRepository;
 
-    public List<VideoInfo> getByVideosInfluencer(List<String> influencers) {
+    public Page<VideoInfo> getByVideosInfluencer(List<String> influencers, Pageable pageable) {
         // 인플루언서 정보 처리
         List<Long> influencerIds = influencerRepository.findByNameIn(influencers).stream()
-            .map(Influencer::getId)
-            .toList();
+                .map(Influencer::getId)
+                .toList();
 
         // 인플루언서 정보로 필터링한 비디오 정보 불러오기
-        List<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(influencerIds);
+        Page<Video> videos = videoRepository.findVideosByInfluencerIdIn(influencerIds, pageable);
 
         // DTO 형식에 맞게 대입
-        return videoToInfo(savedVideos);
+        return videos.map(this::videoToInfo);
     }
 
-    public List<VideoInfo> getAllVideosDesc() {
+    public Page<VideoInfo> getAllVideosDesc(Pageable pageable) {
         // id를 기준으로 내림차순 정렬하여 비디오 정보 불러오기
-        List<Video> savedVideos = videoRepository.findAllByOrderByIdDesc();
+        Page<Video> videos = videoRepository.findAllByOrderByIdDesc(pageable);
 
         // DTO 형식에 맞게 대입
-        return videoToInfo(savedVideos);
+        return videos.map(this::videoToInfo);
     }
 
-    public List<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
-        Page<Place> placesByDistance = placeRepository.getPlacesByDistance(
+    public Page<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
+        Page<Place> places = placeRepository.getPlacesByDistance(
                 videoSearchParams.longitude(),
                 videoSearchParams.latitude(),
                 pageable
         );
 
-        List<Place> places = placesByDistance.getContent();
-        List<Video> videos = new ArrayList<>();
-        for (Place place : places) {
-            if(videos.size() == places.size())
+       List<Video> videos = new ArrayList<>();
+        for (Place place : places.getContent()) {
+            if (videos.size() == places.getSize())
                 break;
-            videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place));
+            videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place).orElseThrow(NoSuchFieldError::new));
         }
-        return videoToInfo(videos);
+
+        return new PageImpl<>(videos).map(this::videoToInfo);
     }
 
-    private List<VideoInfo> videoToInfo(List<Video> savedVideos) {
-        List<VideoInfo> videoInfos = new ArrayList<>();
-        for (Video savedVideo : savedVideos) {
-            Place place = savedVideo.getPlace();
-            String alias = AliasUtil.makeAlias(
+    private VideoInfo videoToInfo(Video savedVideo) {
+        Place place = savedVideo.getPlace();
+        String alias = AliasUtil.makeAlias(
                 savedVideo.getInfluencer().getName(),
                 place.getCategory()
-            );
-            videoInfos.add(
-                new VideoInfo(
-                    savedVideo.getId(),
-                    alias,
-                    savedVideo.getVideoUrl(),
-                    PlaceForVideo.of(place.getId(), place.getName())
-                )
-            );
-        }
-        return videoInfos;
+        );
+        return new VideoInfo(
+                savedVideo.getId(),
+                alias,
+                savedVideo.getVideoUrl(),
+                PlaceForVideo.of(place.getId(), place.getName())
+        );
     }
 }
