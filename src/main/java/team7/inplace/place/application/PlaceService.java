@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
+import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
@@ -89,5 +90,16 @@ public class PlaceService {
             influencerFilters,
             placesCoordinateCommand.pageable()
         );
+    }
+
+    public PlaceDetailInfo getPlaceDetailInfo(Long placeId) {
+        Place place = placeRepository.findById(placeId)
+            .orElseThrow(() -> new IllegalArgumentException("PlaceService.getPlaceDetailInfo(): "
+                + "Place Id가 존재하지 않습니다."));
+        Video video = videoRepository.findByPlaceId(placeId)
+            .orElseThrow(() -> new IllegalArgumentException("PlaceService.getPlaceDetailInfo(): "
+                + "Place Id가 존재하지 않습니다."));
+
+        return PlaceDetailInfo.of(place, video.getInfluencer().getName(), video.getVideoUrl());
     }
 }

@@ -60,8 +60,8 @@ public class VideoServiceTest {
                 new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
             ))
             .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
+                new Menu(5000L, true, "Coffee", "menuImg.url"),
+                new Menu(7000L, false, "Cake", "menuImg.url")
             ))
             .build();
 

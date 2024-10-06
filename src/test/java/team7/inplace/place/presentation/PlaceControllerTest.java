@@ -113,8 +113,8 @@ class PlaceControllerTest {
                 new PlaceCloseTime("한글날", "월~금", false)
             ))
             .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
+                new Menu(5000L, true, "Coffee", "menuImg.url"),
+                new Menu(7000L, false, "Cake", "menuImg.url")
             ))
             .build();
 
@@ -139,8 +139,8 @@ class PlaceControllerTest {
                 new PlaceCloseTime("한글날", "월~금", false)
             ))
             .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
+                new Menu(5000L, true, "Coffee", "menuImg.url"),
+                new Menu(7000L, false, "Cake", "menuImg.url")
             ))
             .build();
 
@@ -165,8 +165,8 @@ class PlaceControllerTest {
                 new PlaceCloseTime("한글날", "월~금", false)
             ))
             .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
+                new Menu(5000L, true, "Coffee", "menuImg.url"),
+                new Menu(7000L, false, "Cake", "menuImg.url")
             ))
             .build();
 
@@ -191,8 +191,8 @@ class PlaceControllerTest {
                 new PlaceCloseTime("한글날", "월~금", false)
             ))
             .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
+                new Menu(5000L, true, "Coffee", "menuImg.url"),
+                new Menu(7000L, false, "Cake", "menuImg.url")
             ))
             .build();
 

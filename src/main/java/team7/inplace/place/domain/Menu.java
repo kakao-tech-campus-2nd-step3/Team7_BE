@@ -23,4 +23,7 @@ public class Menu {
     @Column(length = 50, nullable = false)
     private String menuName;
 
+    @Column(length = 50)
+    private String menuImgUrl;
+
 }

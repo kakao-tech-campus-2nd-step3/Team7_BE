@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
+import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Address;
 import team7.inplace.place.domain.Category;
@@ -100,8 +102,8 @@ class PlaceServiceTest {
                 new PlaceCloseTime("한글날", "월~금", false)
             ))
             .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
+                new Menu(5000L, true, "Coffee", "menuImg.url"),
+                new Menu(7000L, false, "Cake", "menuImg.url")
             ))
             .build();
 
@@ -126,8 +128,8 @@ class PlaceServiceTest {
                 new PlaceCloseTime("한글날", "월~금", false)
             ))
             .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
+                new Menu(5000L, true, "Coffee", "menuImg.url"),
+                new Menu(7000L, false, "Cake", "menuImg.url")
             ))
             .build();
 
@@ -152,8 +154,8 @@ class PlaceServiceTest {
                 new PlaceCloseTime("한글날", "월~금", false)
             ))
             .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
+                new Menu(5000L, true, "Coffee", "menuImg.url"),
+                new Menu(7000L, false, "Cake", "menuImg.url")
             ))
             .build();
 
@@ -178,8 +180,8 @@ class PlaceServiceTest {
                 new PlaceCloseTime("한글날", "월~금", false)
             ))
             .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee"),
-                new Menu(7000L, false, "Cake")
+                new Menu(5000L, true, "Coffee", "menuImg.url"),
+                new Menu(7000L, false, "Cake", "menuImg.url")
             ))
             .build();
 
@@ -351,5 +353,28 @@ class PlaceServiceTest {
         assertThat(result).hasSize(1);
         assertThat(result.getContent().get(0).placeName()).isEqualTo("Place 4");
         assertThat(result.getContent().get(0).influencerName()).isEqualTo("아이유");
+    }
+
+    @Test
+    @DisplayName("장소 세부정보 조회")
+    public void test7() {
+        // given
+        Place place = video1.getPlace();
+        Influencer influencer = video1.getInfluencer();
+        PlaceDetailInfo expected = PlaceDetailInfo.of(place,
+            influencer.getName(), video1.getVideoUrl());
+
+        when(placeRepository.findById(place.getId()))
+            .thenReturn(Optional.of(place1));
+        when(videoRepository.findByPlaceId(place.getId()))
+            .thenReturn(Optional.of(video1));
+
+        // when
+        PlaceDetailInfo result = placeService.getPlaceDetailInfo(1L);
+
+        // then
+        // menuInfos의 timeExp는 실시간으로 바껴서 테스트에서 제외함
+        assertThat(result).isEqualToIgnoringGivenFields(expected, "menuInfos");
+        assertThat(result.menuInfos().menuList()).isEqualTo(expected.menuInfos().menuList());
     }
 }
