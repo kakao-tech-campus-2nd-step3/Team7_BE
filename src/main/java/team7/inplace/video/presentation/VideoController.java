@@ -1,5 +1,6 @@
 package team7.inplace.video.presentation;
 
+import ch.qos.logback.core.util.StringUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.presentation.dto.VideoResponse;
 import team7.inplace.video.application.VideoService;
@@ -33,11 +35,9 @@ public class VideoController implements VideoControllerApiSpec{
             @RequestParam(defaultValue = "10", required = false) int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        // 토큰 존재 여부 검사
-        if(true) {
-            // 토큰 유효성 검사
 
-            // 토큰이 있는 경우
+        // 토큰이 있는 경우
+        if(StringUtil.isNullOrEmpty(AuthorizationUtil.getUsername())) {
             return readByInfluencer(influencers, pageable);
         }
 
