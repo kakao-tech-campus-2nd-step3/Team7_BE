@@ -1,6 +1,5 @@
 package team7.inplace.place.domain;
 
-import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
@@ -51,7 +50,5 @@ public class Place {
 
     @ElementCollection
     private List<Menu> menus;
-
-    // influencerName, likes 기능은 추후 추가 예정
 
 }

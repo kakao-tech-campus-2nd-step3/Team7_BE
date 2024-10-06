@@ -3,13 +3,12 @@ package team7.inplace.place.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 import team7.inplace.place.domain.Menu;
+import team7.inplace.place.domain.OpenTime;
 import team7.inplace.place.domain.Place;
-import team7.inplace.place.domain.PlaceCloseTime;
-import team7.inplace.place.domain.PlaceOpenTime;
 
 public record PlaceDetailInfo(
     PlaceInfo placeInfo,
-    FacilityInfo facilityInfo,
+    String facilityInfo,
     MenuInfos menuInfos,
     OpenHour openHour,
     PlaceLikes placeLikes,
@@ -19,35 +18,59 @@ public record PlaceDetailInfo(
     public static PlaceDetailInfo of(Place place, String influencerName, String videoUrl) {
         return new PlaceDetailInfo(
             PlaceInfo.of(place, influencerName),
-            FacilityInfo.of(place),
-            MenuInfos.of(place.getMenuList()),
-            OpenHour.of(place.getTimeList(), place.getOffdayList()),
+            place.getFacility(),
+            MenuInfos.of(place.getMenus()),
+            OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
             PlaceLikes.of(null), //추후 추가 예정
             videoUrl
         );
     }
 
-    public record FacilityInfo(
-        Boolean wifi,
-        Boolean pet,
-        Boolean parking,
-        Boolean forDisabled,
-        Boolean nursery,
-        Boolean smokingRoom
-    ) {
+    /*
+        public record FacilityInfo(
+            @JsonProperty("wifi")
+            Boolean wifi,
+            @JsonProperty("pet")
+            Boolean pet,
+            @JsonProperty("parking")
+            Boolean parking,
+            @JsonProperty("forDisabled")
+            Boolean forDisabled,
+            @JsonProperty("nursery")
+            Boolean nursery,
+            @JsonProperty("smokingRoom")
+            Boolean smokingRoom
+        ) {
 
-        public static FacilityInfo of(Place place) {
-            return new FacilityInfo(
-                place.isWifi(),
-                place.isPet(),
-                place.isParking(),
-                place.isFordisabled(),
-                place.isNursery(),
-                place.isSmokingroom()
-            );
+            @JsonCreator
+            public FacilityInfo(
+                @JsonProperty("wifi") Boolean wifi,
+                @JsonProperty("pet") Boolean pet,
+                @JsonProperty("parking") Boolean parking,
+                @JsonProperty("forDisabled") Boolean forDisabled,
+                @JsonProperty("nursery") Boolean nursery,
+                @JsonProperty("smokingRoom") Boolean smokingRoom
+            ) {
+                this.wifi = wifi;
+                this.pet = pet;
+                this.parking = parking;
+                this.forDisabled = forDisabled;
+                this.nursery = nursery;
+                this.smokingRoom = smokingRoom;
+            }
+
+            private static final ObjectMapper objectMapper = new ObjectMapper();
+
+            public static FacilityInfo of(Place place) {
+                try {
+                    // facility가 JSON 형식의 문자열로 저장되어 있을 경우 이를 역직렬화
+                    return objectMapper.readValue(place.getFacility(), FacilityInfo.class);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException("Failed to parse facility JSON", e);
+                }
+            }
         }
-    }
-
+    */
     public record MenuInfos(
         List<MenuInfo> menuList,
         LocalDateTime timeExp
@@ -78,14 +101,15 @@ public record PlaceDetailInfo(
         List<OffDay> offdayList
     ) {
 
-        public static OpenHour of(List<PlaceOpenTime> openTimes, List<PlaceCloseTime> closeTimes) {
+        public static OpenHour of(List<OpenTime> openTimes,
+            List<team7.inplace.place.domain.OffDay> closeTimes) {
             List<Period> periods = openTimes.stream()
-                .map(time -> new Period(time.getTimeName(), time.getTimeSe(), time.getDayOfWeek()))
+                .map(time -> new Period(time.getTimeName(), time.getTimeSE(), time.getDayOfWeek()))
                 .toList();
 
             List<OffDay> offDays = closeTimes.stream()
                 .map(closeTime -> new OffDay(closeTime.getHolidayName(), closeTime.getWeekAndDay(),
-                    closeTime.isTemporaryHolidays()))
+                    closeTime.getTemporaryHolidays()))
                 .toList();
 
             return new OpenHour(periods, offDays);
@@ -102,7 +126,7 @@ public record PlaceDetailInfo(
         public record OffDay(
             String holidayName,
             String weekAndDay,
-            Boolean temporaryHolidays
+            String temporaryHolidays
         ) {
 
         }

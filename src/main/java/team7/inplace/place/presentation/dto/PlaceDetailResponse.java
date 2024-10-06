@@ -1,7 +1,6 @@
 package team7.inplace.place.presentation.dto;
 
 import team7.inplace.place.application.dto.PlaceDetailInfo;
-import team7.inplace.place.application.dto.PlaceDetailInfo.FacilityInfo;
 import team7.inplace.place.application.dto.PlaceDetailInfo.MenuInfos;
 import team7.inplace.place.application.dto.PlaceDetailInfo.OpenHour;
 import team7.inplace.place.application.dto.PlaceDetailInfo.PlaceLikes;
@@ -16,7 +15,7 @@ public record PlaceDetailResponse(
     String longitude,
     String latitude,
     Boolean likes,
-    FacilityInfo facilityInfo,
+    String facilityInfo,
     MenuInfos menuInfos,
     OpenHour openHour,
     PlaceLikes placeLikes,
