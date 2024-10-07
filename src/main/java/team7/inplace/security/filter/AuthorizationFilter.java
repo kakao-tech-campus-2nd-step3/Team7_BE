@@ -7,14 +7,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Objects;
+import java.util.Optional;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.security.util.JwtUtil;
 
@@ -32,23 +30,29 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         FilterChain filterChain
     ) throws ServletException, IOException {
-        Cookie[] cookies = request.getCookies();
-        if (Objects.isNull(cookies)) {
+        if (hasNoTokenCookie(request)) {
             filterChain.doFilter(request, response);
             return;
         }
-        String token = getTokenCookie(cookies).getValue();
+        String token = getTokenCookie(request).getValue();
+        jwtUtil.validateExpired(token);
         addUserToAuthentication(token);
         filterChain.doFilter(request, response);
     }
 
-    private Cookie getTokenCookie(Cookie[] cookies) throws InplaceException {
-        Cookie tokenCookie = Arrays.stream(cookies)
+    private boolean hasNoTokenCookie(HttpServletRequest request) {
+        return Optional.ofNullable(request.getCookies())
+            .flatMap(cookies -> Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals("Authorization"))
+                .findAny())
+            .isEmpty();
+    }
+
+    private Cookie getTokenCookie(HttpServletRequest request) throws InplaceException {
+        return Arrays.stream(request.getCookies())
             .filter(cookie -> cookie.getName().equals("Authorization"))
             .findAny()
-            .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
-        validateToken(tokenCookie);
-        return tokenCookie;
+            .orElse(null);
     }
 
     private void addUserToAuthentication(String token) throws InplaceException {
@@ -58,17 +62,6 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, id, roles);
         Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null);
         SecurityContextHolder.getContext().setAuthentication(authToken);
-    }
-
-    private void validateToken(Cookie authorizationCookie) throws InplaceException {
-        validateTokenEmpty(authorizationCookie);
-        jwtUtil.validateExpired(authorizationCookie.getValue());
-    }
-
-    private void validateTokenEmpty(Cookie authorizationCookie) throws InplaceException {
-        if (!StringUtils.hasText(authorizationCookie.getValue())) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
     }
 
 }

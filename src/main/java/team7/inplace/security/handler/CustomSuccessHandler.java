@@ -49,10 +49,10 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         response.addCookie(refreshTokenCookie);
     }
 
-    private void setRedirectUrlToResponse
-        (HttpServletResponse response,
-            CustomOAuth2User customOAuth2User
-        ) throws IOException {
+    private void setRedirectUrlToResponse(
+        HttpServletResponse response,
+        CustomOAuth2User customOAuth2User
+    ) throws IOException {
         if (customOAuth2User.isFirstUser()) {
             response.sendRedirect("http://localhost:8080/choice");
             return;
