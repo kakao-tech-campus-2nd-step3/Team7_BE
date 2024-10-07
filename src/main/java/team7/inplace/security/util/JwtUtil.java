@@ -28,18 +28,20 @@ public class JwtUtil {
         this.refreshTokenExpiredTime = jwtProperties.refreshTokenExpiredTime();
     }
 
-    public String createAccessToken(String username, Long userId) {
-        return createToken(username, userId, "accessToken", accessTokenExpiredTime);
+    public String createAccessToken(String username, Long userId, String roles) {
+        return createToken(username, userId, roles, "accessToken", accessTokenExpiredTime);
     }
 
-    public String createRefreshToken(String username, Long userId) {
-        return createToken(username, userId, "refreshToken", refreshTokenExpiredTime);
+    public String createRefreshToken(String username, Long userId, String roles) {
+        return createToken(username, userId, roles, "refreshToken", refreshTokenExpiredTime);
     }
 
-    private String createToken(String username, Long userId, String tokenType, Long expiredTime) {
+    private String createToken(String username, Long userId, String roles, String tokenType,
+        Long expiredTime) {
         return Jwts.builder()
             .claim("username", username)
             .claim("id", userId)
+            .claim("roles", roles)
             .claim("tokenType", tokenType)
             .issuedAt(new Date(System.currentTimeMillis()))
             .expiration(new Date(System.currentTimeMillis() + expiredTime))
@@ -66,6 +68,14 @@ public class JwtUtil {
     public Long getId(String token) throws InplaceException {
         try {
             return jwtParser.parseSignedClaims(token).getPayload().get("id", Long.class);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
+        }
+    }
+
+    public String getRoles(String token) throws InplaceException {
+        try {
+            return jwtParser.parseSignedClaims(token).getPayload().get("roles", String.class);
         } catch (JwtException | IllegalArgumentException e) {
             throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
         }

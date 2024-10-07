@@ -11,6 +11,7 @@ import java.util.Objects;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
@@ -44,7 +45,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private Cookie getTokenCookie(Cookie[] cookies) throws InplaceException {
         Cookie tokenCookie = Arrays.stream(cookies)
             .filter(cookie -> cookie.getName().equals("Authorization"))
-            .findFirst()
+            .findAny()
             .orElseThrow(() -> InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY));
         validateToken(tokenCookie);
         return tokenCookie;
@@ -53,7 +54,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private void addUserToAuthentication(String token) throws InplaceException {
         String username = jwtUtil.getUsername(token);
         Long id = jwtUtil.getId(token);
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, id, false);
+        String roles = jwtUtil.getRoles(token);
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, id, roles);
         Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null);
         SecurityContextHolder.getContext().setAuthentication(authToken);
     }
@@ -64,7 +66,7 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     }
 
     private void validateTokenEmpty(Cookie authorizationCookie) throws InplaceException {
-        if (authorizationCookie.getValue() == null) {
+        if (!StringUtils.hasText(authorizationCookie.getValue())) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
     }

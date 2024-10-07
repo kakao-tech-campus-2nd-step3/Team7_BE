@@ -8,12 +8,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import team7.inplace.security.application.dto.CustomOAuth2User;
+import team7.inplace.user.domain.Role;
 
 class AuthorizationUtilTest {
 
     @BeforeEach
     void setUp() {
-        CustomOAuth2User customOAuth2User = new CustomOAuth2User("test", 1L, false);
+        CustomOAuth2User customOAuth2User = new CustomOAuth2User("test", 1L, Role.USER.getRoles());
         Authentication authentication = new UsernamePasswordAuthenticationToken(customOAuth2User,
             null);
         SecurityContextHolder.getContext().setAuthentication(authentication);

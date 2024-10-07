@@ -41,9 +41,9 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     ) {
         UserCommand.Info user = userService.getUserByUsername(customOAuth2User.username());
         Cookie accessTokenCookie = createCookie("access_token",
-            jwtUtil.createAccessToken(user.username(), user.id()));
+            jwtUtil.createAccessToken(user.username(), user.id(), user.role().getRoles()));
         Cookie refreshTokenCookie = createCookie("refresh_token",
-            jwtUtil.createRefreshToken(user.username(), user.id()));
+            jwtUtil.createRefreshToken(user.username(), user.id(), user.role().getRoles()));
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
@@ -54,10 +54,10 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             CustomOAuth2User customOAuth2User
         ) throws IOException {
         if (customOAuth2User.isFirstUser()) {
-            response.sendRedirect("localhost:8080/choice");
+            response.sendRedirect("http://localhost:8080/choice");
             return;
         }
-        response.sendRedirect("localhost:8080/auth");
+        response.sendRedirect("http://localhost:8080/auth");
     }
 
     private Cookie createCookie(String key, String value) {

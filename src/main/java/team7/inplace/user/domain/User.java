@@ -35,11 +35,16 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserType userType;
 
-    public User(String username, String password, String nickname, UserType userType) {
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    public User(String username, String password, String nickname, UserType userType, Role role) {
         this.username = username;
         this.password = password;
         this.nickname = nickname;
         this.userType = userType;
+        this.role = role;
     }
 
     public void updateInfo(String nickname) {
