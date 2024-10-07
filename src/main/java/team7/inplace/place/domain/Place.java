@@ -30,8 +30,6 @@ public class Place {
     //@Column(columnDefinition = "json")
     private String facility;
 
-    @Column
-    private LocalDateTime menuUpdatedTime;
 
     @Column(columnDefinition = "TEXT")
     private String menuImgUrl;
@@ -55,4 +53,6 @@ public class Place {
     @ElementCollection
     private List<Menu> menus;
 
+    @Column
+    private LocalDateTime menuUpdatedTime;
 }

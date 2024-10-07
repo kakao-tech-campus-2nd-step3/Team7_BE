@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
+import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Menu;
 import team7.inplace.place.domain.OpenTime;
 import team7.inplace.place.domain.Place;
+import team7.inplace.video.domain.Video;
 
 public record PlaceDetailInfo(
     PlaceInfo placeInfo,
@@ -17,14 +19,14 @@ public record PlaceDetailInfo(
     String videoUrl
 ) {
 
-    public static PlaceDetailInfo of(Place place, String influencerName, String videoUrl) {
+    public static PlaceDetailInfo from(Place place, Influencer influencer, Video video) {
         return new PlaceDetailInfo(
-            PlaceInfo.of(place, influencerName),
+            PlaceInfo.of(place, influencer.getName()),
             facilityTree(place.getFacility()),
             MenuInfos.of(place.getMenus()),
             OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
             PlaceLikes.of(null), //추후 추가 예정
-            videoUrl
+            video.getVideoUrl()
         );
     }
 

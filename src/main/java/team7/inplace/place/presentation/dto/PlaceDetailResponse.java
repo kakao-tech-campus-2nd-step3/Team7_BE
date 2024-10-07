@@ -23,7 +23,7 @@ public record PlaceDetailResponse(
     String videoUrl
 ) {
 
-    public static PlaceDetailResponse of(PlaceDetailInfo info) {
+    public static PlaceDetailResponse from(PlaceDetailInfo info) {
         return new PlaceDetailResponse(
             info.placeInfo().placeId(),
             info.placeInfo().placeName(),

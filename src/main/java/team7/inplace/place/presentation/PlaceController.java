@@ -79,7 +79,7 @@ public class PlaceController {
     public ResponseEntity<PlaceDetailResponse> getPlaceDetail(
         @PathVariable("id") Long placeId
     ) {
-        PlaceDetailResponse response = PlaceDetailResponse.of(
+        PlaceDetailResponse response = PlaceDetailResponse.from(
             placeService.getPlaceDetailInfo(placeId));
 
         return new ResponseEntity<>(response, HttpStatus.OK);

@@ -100,6 +100,6 @@ public class PlaceService {
             .orElseThrow(() -> new IllegalArgumentException("PlaceService.getPlaceDetailInfo(): "
                 + "Place Id가 존재하지 않습니다."));
 
-        return PlaceDetailInfo.of(place, video.getInfluencer().getName(), video.getVideoUrl());
+        return PlaceDetailInfo.from(place, video.getInfluencer(), video);
     }
 }
