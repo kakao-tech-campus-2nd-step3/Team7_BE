@@ -1,5 +1,7 @@
 package team7.inplace.place.application.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
 import team7.inplace.place.domain.Menu;
@@ -8,7 +10,7 @@ import team7.inplace.place.domain.Place;
 
 public record PlaceDetailInfo(
     PlaceInfo placeInfo,
-    String facilityInfo,
+    JsonNode facilityInfo,
     MenuInfos menuInfos,
     OpenHour openHour,
     PlaceLikes placeLikes,
@@ -18,12 +20,21 @@ public record PlaceDetailInfo(
     public static PlaceDetailInfo of(Place place, String influencerName, String videoUrl) {
         return new PlaceDetailInfo(
             PlaceInfo.of(place, influencerName),
-            place.getFacility(),
+            facilityTree(place.getFacility()),
             MenuInfos.of(place.getMenus()),
             OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
             PlaceLikes.of(null), //추후 추가 예정
             videoUrl
         );
+    }
+
+    private static JsonNode facilityTree(String facility) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readTree(facility);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse facility JSON", e);
+        }
     }
 
 

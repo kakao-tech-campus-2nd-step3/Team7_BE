@@ -1,5 +1,6 @@
 package team7.inplace.place.presentation.dto;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceDetailInfo.MenuInfos;
 import team7.inplace.place.application.dto.PlaceDetailInfo.OpenHour;
@@ -15,7 +16,7 @@ public record PlaceDetailResponse(
     String longitude,
     String latitude,
     Boolean likes,
-    String facilityInfo,
+    JsonNode facilityInfo,
     MenuInfos menuInfos,
     OpenHour openHour,
     PlaceLikes placeLikes,
