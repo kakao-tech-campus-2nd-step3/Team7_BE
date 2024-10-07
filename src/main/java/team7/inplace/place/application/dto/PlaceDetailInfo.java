@@ -39,25 +39,28 @@ public record PlaceDetailInfo(
 
 
     public record MenuInfos(
+        List<String> menuImgUrls,
         List<MenuInfo> menuList,
         LocalDateTime timeExp
     ) {
 
         public static MenuInfos of(List<Menu> menus) {
-            List<MenuInfo> menuList = menus.stream()
-                .map(menu -> new MenuInfo(menu.getPrice().intValue(), menu.isRecommend(),
-                    menu.getMenuName(),
-                    menu.getMenuImgUrl()))
+            List<String> menuImgUrls = menus.stream()
+                .map(Menu::getMenuImgUrl) // 메뉴 이미지 URL을 추출
                 .toList();
 
-            return new MenuInfos(menuList, LocalDateTime.now());
+            List<MenuInfo> menuList = menus.stream()
+                .map(menu -> new MenuInfo(menu.getPrice().intValue(), menu.isRecommend(),
+                    menu.getMenuName()))
+                .toList();
+
+            return new MenuInfos(menuImgUrls, menuList, LocalDateTime.now());
         }
 
         public record MenuInfo(
             Integer price,
             Boolean recommend,
-            String menuName,
-            String menuImgUrl
+            String menuName
         ) {
 
         }

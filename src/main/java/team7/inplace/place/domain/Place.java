@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -26,8 +27,11 @@ public class Place {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(columnDefinition = "json")
+    //@Column(columnDefinition = "json")
     private String facility;
+
+    @Column
+    private LocalDateTime menuUpdatedTime;
 
     @Column(columnDefinition = "TEXT")
     private String menuImgUrl;
