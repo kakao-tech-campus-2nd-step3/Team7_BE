@@ -1,17 +1,15 @@
 package team7.inplace.video.application;
 
-import ch.qos.logback.core.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import team7.inplace.influencer.domain.Influencer;
-import team7.inplace.influencer.persistence.InfluencerRepository;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.place.application.dto.PlaceForVideo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
-import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
@@ -38,7 +36,8 @@ public class VideoService {
         for (Place place : places.getContent()) {
             if (videos.size() == places.getSize())
                 break;
-            videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place).orElseThrow(NoSuchFieldError::new));
+            videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place)
+                    .orElseThrow(()-> InplaceException.of(AuthorizationErrorCode.NO_SUCH_VIDEO)));
         }
         return new PageImpl<>(videos).map(this::videoToInfo);
     }
