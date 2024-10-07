@@ -8,7 +8,7 @@ import team7.inplace.place.domain.Place;
 
 public record PlaceDetailInfo(
     PlaceInfo placeInfo,
-    FacilityInfo facilityInfo,
+    String facilityInfo,
     MenuInfos menuInfos,
     OpenHour openHour,
     PlaceLikes placeLikes,
@@ -18,7 +18,7 @@ public record PlaceDetailInfo(
     public static PlaceDetailInfo of(Place place, String influencerName, String videoUrl) {
         return new PlaceDetailInfo(
             PlaceInfo.of(place, influencerName),
-            FacilityInfo.of(place),
+            place.getFacility(),
             MenuInfos.of(place.getMenus()),
             OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
             PlaceLikes.of(null), //추후 추가 예정
@@ -26,26 +26,6 @@ public record PlaceDetailInfo(
         );
     }
 
-    public record FacilityInfo(
-        boolean wifi,
-        boolean pet,
-        boolean parking,
-        boolean forDisabled,
-        boolean nursery,
-        boolean smokingRoom
-    ) {
-
-        public static FacilityInfo of(Place place) {
-            return new FacilityInfo(
-                place.isWifi(),
-                place.isPet(),
-                place.isParking(),
-                place.isFordisabled(),
-                place.isNursery(),
-                place.isSmokingroom()
-            );
-        }
-    }
 
     public record MenuInfos(
         List<MenuInfo> menuList,

@@ -13,7 +13,6 @@ import java.util.List;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 @Getter
 @Entity(name = "places")
@@ -27,29 +26,8 @@ public class Place {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @ColumnDefault("false")
-    @Column(nullable = false)
-    private boolean pet;
-
-    @ColumnDefault("false")
-    @Column(nullable = false)
-    private boolean wifi;
-
-    @ColumnDefault("false")
-    @Column(nullable = false)
-    private boolean parking;
-
-    @ColumnDefault("false")
-    @Column(nullable = false)
-    private boolean fordisabled;
-
-    @ColumnDefault("false")
-    @Column(nullable = false)
-    private boolean nursery;
-
-    @ColumnDefault("false")
-    @Column(nullable = false)
-    private boolean smokingroom;
+    @Column(columnDefinition = "json")
+    private String facility;
 
     @Column(columnDefinition = "TEXT")
     private String menuImgUrl;
