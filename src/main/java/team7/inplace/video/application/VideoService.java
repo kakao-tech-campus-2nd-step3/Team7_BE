@@ -25,34 +25,9 @@ import java.util.List;
 public class VideoService {
 
     private final VideoRepository videoRepository;
-    private final InfluencerRepository influencerRepository;
     private final PlaceRepository placeRepository;
 
-    public Page<VideoInfo> getVideos(
-            List<String> influencers, VideoSearchParams videoSearchParams, Pageable pageable
-    ){
-        // 토큰이 없는 경우
-        if(StringUtil.isNullOrEmpty(AuthorizationUtil.getUsername())){
-            return getVideosBySurround(videoSearchParams, pageable);
-        }
-        // 토큰이 있는 경우
-        return getByVideosInfluencer(influencers, pageable);
-    }
-
-    private Page<VideoInfo> getByVideosInfluencer(List<String> influencers, Pageable pageable) {
-        // 인플루언서 정보 처리
-        List<Long> influencerIds = influencerRepository.findByNameIn(influencers).stream()
-                .map(Influencer::getId)
-                .toList();
-
-        // 인플루언서 정보로 필터링한 비디오 정보 불러오기
-        Page<Video> videos = videoRepository.findVideosByInfluencerIdIn(influencerIds, pageable);
-
-        // DTO 형식에 맞게 대입
-        return videos.map(this::videoToInfo);
-    }
-
-    private Page<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
+    public Page<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
         Page<Place> places = placeRepository.getPlacesByDistance(
                 videoSearchParams.longitude(),
                 videoSearchParams.latitude(),

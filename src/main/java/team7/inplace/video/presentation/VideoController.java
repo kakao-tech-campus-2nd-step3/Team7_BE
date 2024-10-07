@@ -25,22 +25,20 @@ public class VideoController implements VideoControllerApiSpec{
     // 토큰 필요 메서드
     @GetMapping()
     public ResponseEntity<Page<VideoResponse>> readVideos(
-            @RequestParam(name = "influencer", required = false) List<String> influencers,
             @ModelAttribute VideoSearchParams searchParams,
-            @RequestParam(defaultValue = "0", required = false) int page,
-            @RequestParam(defaultValue = "10", required = false) int size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<VideoInfo> videoInfos = videoService.getVideos(influencers, searchParams, pageable);
+        Page<VideoInfo> videoInfos = videoService.getVideosBySurround(searchParams, pageable);
         Page<VideoResponse> videoResponses = videoInfos.map(VideoResponse::from);
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
 
-
     @GetMapping("/new")
     public ResponseEntity<Page<VideoResponse>> readByNew(
-            @RequestParam(defaultValue = "0", required = false) int page,
-            @RequestParam(defaultValue = "10", required = false) int size
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
         Page<VideoInfo> videoInfos = videoService.getAllVideosDesc(pageable);
@@ -50,7 +48,10 @@ public class VideoController implements VideoControllerApiSpec{
 
     // 조회수 반환 기능 개발 시 개발
     @GetMapping("/cool")
-    public ResponseEntity<Page<VideoResponse>> readByCool() {
+    public ResponseEntity<Page<VideoResponse>> readByCool(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
         List<VideoResponse> videoResponses = new ArrayList<>();
         return new ResponseEntity<>(new PageImpl<>(videoResponses), HttpStatus.OK);
     }
