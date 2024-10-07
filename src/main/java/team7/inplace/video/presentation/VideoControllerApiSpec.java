@@ -2,9 +2,10 @@ package team7.inplace.video.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.video.presentation.dto.VideoResponse;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
 
@@ -15,8 +16,7 @@ public interface VideoControllerApiSpec {
     )
     ResponseEntity<Page<VideoResponse>> readVideos(
             @ModelAttribute VideoSearchParams searchParams,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 
     @Operation(
@@ -24,8 +24,7 @@ public interface VideoControllerApiSpec {
             description = "id를 기준으로 내림차순 정렬한 Video 정보를 조회합니다."
     )
     ResponseEntity<Page<VideoResponse>> readByNew(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 
     @Operation(
@@ -33,7 +32,6 @@ public interface VideoControllerApiSpec {
             description = "조회수를 기준으로 내림차순 정렬한 Video 정보를 조회합니다."
     )
     ResponseEntity<Page<VideoResponse>> readByCool(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 }
