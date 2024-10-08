@@ -48,4 +48,14 @@ public class VideoController implements VideoControllerApiSpec {
         List<VideoResponse> videoResponses = new ArrayList<>();
         return new ResponseEntity<>(new PageImpl<>(videoResponses), HttpStatus.OK);
     }
+
+    // 토큰 필요 메서드
+    @GetMapping("/my")
+    public ResponseEntity<Page<VideoResponse>> readByInfluencer(
+            @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        Page<VideoResponse> videoResponses = videoService.getVideosByMyInfluencer(pageable)
+                .map(VideoResponse::from);
+        return new ResponseEntity<>(videoResponses, HttpStatus.OK);
+    }
 }
