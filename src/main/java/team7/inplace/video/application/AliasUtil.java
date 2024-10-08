@@ -6,7 +6,6 @@ import team7.inplace.place.domain.Category;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AliasUtil {
-    private final Template template;
     public static String makeAlias(String influencerName, Category category){
         String alias = mapTemplateToCategory(category);
         return influencerName + " " + alias;

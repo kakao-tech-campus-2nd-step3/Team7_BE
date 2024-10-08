@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @EqualsAndHashCode
 @Getter
 public class Address {
-
     @Column(nullable = false, length = 50)
     private String address1;
 
@@ -22,5 +21,4 @@ public class Address {
 
     @Column(nullable = false, length = 50)
     private String address3;
-    
 }
