@@ -27,16 +27,9 @@ public class InfluencerServiceTest {
 
     @Test
     public void getAllInfluencersTest() {
-        Influencer influencer1 = Influencer.builder()
-            .name("influencer1")
-            .job("job1")
-            .imgUrl("imgUrl1")
-            .build();
-        Influencer influencer2 = Influencer.builder()
-            .name("influencer2")
-            .job("job2")
-            .imgUrl("imgUrl2")
-            .build();
+        Influencer influencer1 = new Influencer("influencer1", "imgUrl1", "job1");
+        Influencer influencer2 = new Influencer("influencer2", "imgUrl2", "job2");
+
         given(influencerRepository.findAll()).willReturn(Arrays.asList(influencer1, influencer2));
 
         List<InfluencerInfo> influencerInfoList = influencerService.getAllInfluencers();

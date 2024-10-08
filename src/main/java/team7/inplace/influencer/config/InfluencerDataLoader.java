@@ -15,9 +15,9 @@ public class InfluencerDataLoader implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Influencer influencer1 = new Influencer("Influencer 1", "job1", "imgUrl1");
-        Influencer influencer2 = new Influencer("Influencer 2", "job2", "imgUrl2");
-        Influencer influencer3 = new Influencer("Influencer 3", "job3", "imgUrl3");
+        Influencer influencer1 = new Influencer("Influencer 1", "imgUrl1", "job1");
+        Influencer influencer2 = new Influencer("Influencer 2", "imgUrl2", "job2");
+        Influencer influencer3 = new Influencer("Influencer 3", "imgUrl3", "job3");
 
         influencerRepository.save(influencer1);
         influencerRepository.save(influencer2);
