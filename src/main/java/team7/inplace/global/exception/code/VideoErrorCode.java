@@ -6,10 +6,8 @@ import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @Getter
-public enum AuthorizationErrorCode implements ErrorCode {
-    TOKEN_IS_EMPTY(HttpStatus.BAD_REQUEST, "A001", "Token is Empty"),
-    INVALID_TOKEN(HttpStatus.BAD_REQUEST, "A002", "Invalid Token"),
-    TOKEN_IS_EXPIRED(HttpStatus.BAD_REQUEST, "A003", "Token is Expired");
+public enum VideoErrorCode implements ErrorCode{
+    NO_SUCH_VIDEO(HttpStatus.NOT_FOUND, "V001", "Can't find such video info");
 
     private final HttpStatus httpStatus;
     private final String errorCode;
