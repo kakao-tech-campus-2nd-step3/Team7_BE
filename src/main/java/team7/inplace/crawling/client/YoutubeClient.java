@@ -22,7 +22,6 @@ public class YoutubeClient {
     private final String apiKey;
 
     public YoutubeClient(@Value("${youtube.api.key}") String apiKey, RestTemplate restTemplate) {
-        log.info("Youtube API Key: {}", apiKey);
         this.restTemplate = restTemplate;
         this.apiKey = apiKey;
     }
