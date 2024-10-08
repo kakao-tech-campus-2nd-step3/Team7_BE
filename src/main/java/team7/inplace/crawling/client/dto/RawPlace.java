@@ -1,8 +1,10 @@
 package team7.inplace.crawling.client.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RawPlace {
     public record Info(
@@ -15,7 +17,8 @@ public class RawPlace {
             String y,
             List<OffDay> offDays,
             List<OpenTime> openPeriods,
-            List<Menu> menus
+            List<Menu> menus,
+            LocalDateTime menuUpdatedAt
     ) {
         public static Info from(JsonNode locationNode, JsonNode placeNode) {
             var basicInfo = placeNode.get("basicInfo");
@@ -47,9 +50,12 @@ public class RawPlace {
             var openPeriods = extractOpenPeriods(timeList.has("periodList") ? timeList.get("periodList") : null);
             var offDays = extractOffDays(timeList.has("offdayList") ? timeList.get("offdayList") : null);
             var menus = extractMenus(placeNode.has("menuInfo") ? placeNode.get("menuInfo") : null);
+            var menuUpdatedAt = placeNode.has("menuInfo") && placeNode.get("menuInfo").has("menuUpdatedAt")
+                    ? LocalDateTime.parse(placeNode.get("menuInfo").get("timeexp").asText())
+                    : LocalDateTime.now();
 
             return new Info(placeName, facility, menuImgUrl, category, address + " " + addressDetail, x, y, offDays,
-                    openPeriods, menus);
+                    openPeriods, menus, menuUpdatedAt);
         }
 
         private static List<RawPlace.OpenTime> extractOpenPeriods(JsonNode openTimeList) {
@@ -126,12 +132,13 @@ public class RawPlace {
             boolean recommend
     ) {
         public static Menu from(JsonNode menuNode) {
-            String menuName = menuNode != null && menuNode.has("menu")
-                    ? menuNode.get("menu").asText() : "Unknown Menu";
-            String menuPrice = menuNode != null && menuNode.has("price")
-                    ? menuNode.get("price").asText() : "0";
-            boolean recommend = menuNode != null && menuNode.has("recommend")
-                    && menuNode.get("recommend").asBoolean();
+            if (Objects.isNull(menuNode)) {
+                return new Menu("Unknown Menu", "0", false);
+            }
+            String menuName = menuNode.has("menu") ? menuNode.get("menu").asText() : "Unknown Menu";
+            String menuPrice = menuNode.has("price") ? menuNode.get("price").asText() : "0";
+            boolean recommend = menuNode.has("recommend") && menuNode.get("recommend").asBoolean();
+
             return new Menu(menuName, menuPrice, recommend);
         }
     }
