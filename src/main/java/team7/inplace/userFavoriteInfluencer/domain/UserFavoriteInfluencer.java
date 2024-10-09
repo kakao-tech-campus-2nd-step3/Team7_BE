@@ -1,7 +1,10 @@
-package team7.inplace.favorite.domain;
+package team7.inplace.userFavoriteInfluencer.domain;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.user.domain.User;
 
@@ -12,7 +15,7 @@ import static lombok.AccessLevel.PROTECTED;
 @RequiredArgsConstructor
 @NoArgsConstructor(access = PROTECTED)
 @Entity
-public class Favorite {
+public class UserFavoriteInfluencer {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -27,7 +30,19 @@ public class Favorite {
     @Column
     private boolean like = false;
 
-    public void like(boolean tf){
-        this.like = tf;
+    public void check(boolean check) {
+        if (check) {
+            like();
+            return;
+        }
+        dislike();
+    }
+
+    private void like() {
+        this.like = true;
+    }
+
+    private void dislike() {
+        this.like = false;
     }
 }
