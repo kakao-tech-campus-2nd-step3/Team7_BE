@@ -10,6 +10,7 @@ public record PlaceInfo(
     AddressInfo address,
     String category,
     String influencerName,
+    String menuImgUrl,
     String longitude,
     String latitude,
     Boolean likes
@@ -39,6 +40,7 @@ public record PlaceInfo(
             AddressInfo.of(place.getAddress()),
             place.getCategory().toString(),
             influencerName,
+            place.getMenuImgUrl(),
             place.getCoordinate().getLongitude(),
             place.getCoordinate().getLatitude(),
             null
