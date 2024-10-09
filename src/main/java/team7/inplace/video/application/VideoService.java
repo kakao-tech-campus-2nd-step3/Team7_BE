@@ -1,21 +1,21 @@
 package team7.inplace.video.application;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
-import team7.inplace.place.domain.Place;
 import team7.inplace.place.application.dto.PlaceForVideo;
+import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.video.application.command.VideoCommand.Create;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -55,8 +55,9 @@ public class VideoService {
         List<Place> places = placesByDistance.getContent();
         List<Video> videos = new ArrayList<>();
         for (Place place : places) {
-            if(videos.size() == places.size())
+            if (videos.size() == places.size()) {
                 break;
+            }
             videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place));
         }
         return videoToInfo(videos);
@@ -80,5 +81,27 @@ public class VideoService {
             );
         }
         return videoInfos;
+    }
+
+    public void createVideos(List<Create> videoCommands, List<Long> placeIds) {
+        var videos = new ArrayList<Video>();
+        for (int videoCommandIndex = 0; videoCommandIndex < videoCommands.size(); videoCommandIndex++) {
+            Create videoCommand = videoCommands.get(videoCommandIndex);
+            Long placeId = placeIds.get(videoCommandIndex);
+            var influencer = influencerRepository.getReferenceById(videoCommand.influencerId());
+
+            if (hasNoPlace(placeId)) {
+                videos.add(videoCommand.toEntityFrom(influencer, null));
+                continue;
+            }
+            Place place = placeRepository.getReferenceById(placeId);
+            videos.add(videoCommand.toEntityFrom(influencer, place));
+        }
+
+        videoRepository.saveAll(videos);
+    }
+
+    private boolean hasNoPlace(Long placeId) {
+        return placeId == -1;
     }
 }
