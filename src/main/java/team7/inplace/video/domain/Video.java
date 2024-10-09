@@ -1,13 +1,6 @@
 package team7.inplace.video.domain;
 
-import static lombok.AccessLevel.PROTECTED;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -15,8 +8,9 @@ import lombok.RequiredArgsConstructor;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Place;
 
-import static lombok.AccessLevel.PROTECTED;
+import static jakarta.persistence.FetchType.EAGER;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter
@@ -30,11 +24,13 @@ public class Video {
     @Column(name = "video_url", nullable = false, columnDefinition = "TEXT")
     @NonNull
     private String videoUrl;
-    @ManyToOne
+    // 즉시 로딩 적용
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "influencer_id", nullable = false)
     @NonNull
     private Influencer influencer;
-    @ManyToOne
+    // 즉시 로딩 적용
+    @ManyToOne(fetch = EAGER)
     @JoinColumn(name = "place_id", nullable = false)
     @NonNull
     private Place place;
