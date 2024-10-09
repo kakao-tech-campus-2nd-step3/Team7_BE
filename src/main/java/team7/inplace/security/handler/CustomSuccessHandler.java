@@ -16,39 +16,48 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
     private final UserService userService;
 
-    public CustomSuccessHandler(JwtUtil jwtUtil, UserService userService) {
+    public CustomSuccessHandler(
+        JwtUtil jwtUtil,
+        UserService userService
+    ) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-        Authentication authentication)
-        throws IOException {
+    public void onAuthenticationSuccess(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Authentication authentication
+    ) throws IOException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
         addTokenToResponse(response, customOAuth2User);
         setRedirectUrlToResponse(response, customOAuth2User);
     }
 
-    private void addTokenToResponse(HttpServletResponse response,
-        CustomOAuth2User customOAuth2User) {
+    private void addTokenToResponse(
+        HttpServletResponse response,
+        CustomOAuth2User customOAuth2User
+    ) {
         UserCommand.Info user = userService.getUserByUsername(customOAuth2User.username());
         Cookie accessTokenCookie = createCookie("access_token",
-            jwtUtil.createAccessToken(user.username(), user.id()));
+            jwtUtil.createAccessToken(user.username(), user.id(), user.role().getRoles()));
         Cookie refreshTokenCookie = createCookie("refresh_token",
-            jwtUtil.createRefreshToken(user.username(), user.id()));
+            jwtUtil.createRefreshToken(user.username(), user.id(), user.role().getRoles()));
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
     }
 
-    private void setRedirectUrlToResponse(HttpServletResponse response,
-        CustomOAuth2User customOAuth2User) throws IOException {
+    private void setRedirectUrlToResponse(
+        HttpServletResponse response,
+        CustomOAuth2User customOAuth2User
+    ) throws IOException {
         if (customOAuth2User.isFirstUser()) {
-            response.sendRedirect("localhost:8080/choice");
+            response.sendRedirect("http://localhost:8080/choice");
             return;
         }
-        response.sendRedirect("localhost:8080/auth");
+        response.sendRedirect("http://localhost:8080/auth");
     }
 
     private Cookie createCookie(String key, String value) {

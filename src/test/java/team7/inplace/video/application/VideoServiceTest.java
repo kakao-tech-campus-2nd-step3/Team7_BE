@@ -1,4 +1,4 @@
-package team7.inplace.video.service;
+package team7.inplace.video.application;
 
 import static org.mockito.BDDMockito.given;
 
