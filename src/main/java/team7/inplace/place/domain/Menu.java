@@ -22,6 +22,9 @@ public class Menu {
     @Column(length = 50, nullable = false)
     private String menuName;
 
+    @Column(length = 50)
+    private String menuImgUrl;
+    
     private Menu(Long price, boolean recommend, String menuName) {
         this.price = price;
         this.recommend = recommend;

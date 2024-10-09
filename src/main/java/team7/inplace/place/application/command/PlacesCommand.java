@@ -11,11 +11,14 @@ import team7.inplace.place.domain.Place;
 public class PlacesCommand {
 
     public record PlacesCoordinateCommand(
+            String topLeftLongitude,
+            String topLeftLatitude,
+            String bottomRightLongitude,
+            String bottomRightLatitude,
             String longitude,
             String latitude,
             Pageable pageable
     ) {
-
     }
 
     public record PlacesFilterParamsCommand(

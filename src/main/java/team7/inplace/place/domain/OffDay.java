@@ -17,7 +17,7 @@ public class OffDay {
     private String temporaryHolidays;
 
     private OffDay(String holydayName, String weekAndDay, String temporaryHolidays) {
-        this.holydayName = holydayName;
+        this.holidayName = holydayName;
         this.weekAndDay = weekAndDay;
         this.temporaryHolidays = temporaryHolidays;
     }
