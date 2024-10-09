@@ -1,14 +1,14 @@
 package team7.inplace.crawling.application;
 
+import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import team7.inplace.crawling.application.dto.CrawlingInfo;
 import team7.inplace.crawling.client.KakaoMapClient;
 import team7.inplace.crawling.client.YoutubeClient;
 import team7.inplace.crawling.persistence.YoutubeChannelRepository;
-import team7.inplace.place.application.command.PlacesCommand;
-import team7.inplace.video.application.command.VideoCommand;
 
 @Slf4j
 @Service
@@ -24,32 +24,30 @@ public class YoutubeCrawlingService {
         3. 마지막 비디오 UUID를 업데이트 한다.
         4. 카카오 API를 호출해 장소 정보를 가져온다
      */
-    public void crawlAllVideos() {
+    public List<CrawlingInfo> crawlAllVideos() {
         var youtubeChannels = youtubeChannelRepository.findAll();
-        for (var channel : youtubeChannels) {
-            var videoSnippets = youtubeClient.getVideos(channel.getPlayListUUID(), channel.getLastVideoUUID());
-            var videoCreateCommands = videoSnippets.stream()
-                    .map(VideoCommand.Create::from)
-                    .toList();
 
-            var placeNodes = videoCreateCommands.stream()
-                    .map(videoCommand -> {
-                        if (Objects.isNull(videoCommand.address())) {
-                            return null;
-                        }
-                        return kakaoMapClient.search(videoCommand.address(), channel.getChannelType().getCode());
-                    })
-                    .toList();
+        var crawlInfos = youtubeChannels.stream()
+                .map(channel -> {
+                    var videoSnippets = youtubeClient.getVideos(channel.getPlayListUUID(), channel.getLastVideoUUID());
 
-            var placeCreateCommands = placeNodes.stream()
-                    .map(placeNode -> {
-                        if (Objects.isNull(placeNode)) {
-                            return null;
-                        }
-                        return PlacesCommand.Create.from(placeNode.locationNode(), placeNode.placeNode());
-                    })
-                    .toList();
-        }
+                    var videoAddresses = videoSnippets.stream()
+                            .map(AddressUtil::extractAddress)
+                            .toList();
+
+                    var placeNodes = videoAddresses.stream()
+                            .map(address -> {
+                                if (Objects.isNull(address)) {
+                                    return null;
+                                }
+                                return kakaoMapClient.search(address, channel.getChannelType().getCode());
+                            })
+                            .toList();
+
+                    return new CrawlingInfo(channel.getInfluencerId(), videoSnippets, placeNodes);
+                }).toList();
+
+        return crawlInfos;
     }
 }
 
