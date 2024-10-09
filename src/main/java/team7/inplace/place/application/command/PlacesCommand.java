@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.springframework.data.domain.Pageable;
+import team7.inplace.place.domain.Place;
 
 public class PlacesCommand {
 
@@ -46,6 +47,21 @@ public class PlacesCommand {
             List<Menu> menus,
             LocalDateTime menuUpdatedAt
     ) {
+        public Place toEntity() {
+            var offDaysParam = offDays.stream()
+                    .map(OffDay::toEntityParams)
+                    .toList();
+            var openPeriodsParam = openPeriods.stream()
+                    .map(OpenTime::toEntityParams)
+                    .toList();
+            var menusParam = menus.stream()
+                    .map(Menu::toEntityParams)
+                    .toList();
+
+            return new Place(placeName, facility, menuImgUrl, category, address, x, y, offDaysParam, openPeriodsParam,
+                    menusParam, menuUpdatedAt);
+        }
+
         public static Create from(JsonNode locationNode, JsonNode placeNode) {
             var basicInfo = placeNode.get("basicInfo");
 
@@ -134,6 +150,10 @@ public class PlacesCommand {
                     ? offDayNode.get("temporaryHolidays").asText() : "No Temporary Holidays";
             return new OffDay(holidayName, weekAndDay, temporaryHolidays);
         }
+
+        public String toEntityParams() {
+            return holidayName + "|" + weekAndDay + "|" + temporaryHolidays;
+        }
     }
 
     public record OpenTime(
@@ -149,6 +169,10 @@ public class PlacesCommand {
             String dayOfWeek = openTimeNode != null && openTimeNode.has("dayOfWeek")
                     ? openTimeNode.get("dayOfWeek").asText() : "Unknown Day Of Week";
             return new OpenTime(timeName, timeSE, dayOfWeek);
+        }
+
+        public String toEntityParams() {
+            return timeName + "|" + timeSE + "|" + dayOfWeek;
         }
     }
 
@@ -166,6 +190,10 @@ public class PlacesCommand {
             boolean recommend = menuNode.has("recommend") && menuNode.get("recommend").asBoolean();
 
             return new Menu(menuName, menuPrice, recommend);
+        }
+
+        public String toEntityParams() {
+            return menuName + "|" + menuPrice + "|" + recommend;
         }
     }
 }
