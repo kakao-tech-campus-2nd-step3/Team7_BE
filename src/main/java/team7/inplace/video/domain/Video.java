@@ -15,7 +15,7 @@ import static lombok.AccessLevel.PROTECTED;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@RequiredArgsConstructor // 테스팅을 위한 부분 추가, 협의 하에 다른 방식 채택 가능
+@RequiredArgsConstructor
 public class Video {
 
     @Id
