@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import team7.inplace.crawling.client.KakaoMapClient;
 import team7.inplace.crawling.client.YoutubeClient;
 import team7.inplace.crawling.persistence.YoutubeChannelRepository;
+import team7.inplace.place.application.command.PlacesCommand;
+import team7.inplace.video.application.command.VideoCommand;
 
 @Slf4j
 @Service
@@ -25,12 +27,27 @@ public class YoutubeCrawlingService {
     public void crawlAllVideos() {
         var youtubeChannels = youtubeChannelRepository.findAll();
         for (var channel : youtubeChannels) {
-            var rawVideoInfos = youtubeClient.getVideos(channel.getPlayListUUID(), channel.getLastVideoUUID());
-            channel.updateLastVideoUUID(rawVideoInfos.get(0).videoId());
+            var videoSnippets = youtubeClient.getVideos(channel.getPlayListUUID(), channel.getLastVideoUUID());
+            var videoCreateCommands = videoSnippets.stream()
+                    .map(VideoCommand.Create::from)
+                    .toList();
 
-            var videos = rawVideoInfos.stream()
-                    .map(rawVideoInfo -> kakaoMapClient.search(rawVideoInfo, channel.getChannelType().getCode()))
-                    .filter(Objects::nonNull)
+            var placeNodes = videoCreateCommands.stream()
+                    .map(videoCommand -> {
+                        if (Objects.isNull(videoCommand.address())) {
+                            return null;
+                        }
+                        return kakaoMapClient.search(videoCommand.address(), channel.getChannelType().getCode());
+                    })
+                    .toList();
+
+            var placeCreateCommands = placeNodes.stream()
+                    .map(placeNode -> {
+                        if (Objects.isNull(placeNode)) {
+                            return null;
+                        }
+                        return PlacesCommand.Create.from(placeNode.locationNode(), placeNode.placeNode());
+                    })
                     .toList();
         }
     }
