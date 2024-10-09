@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
@@ -22,11 +23,12 @@ import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 
 @RequiredArgsConstructor
 @RestController
+@RequestMapping("/influencers")
 public class InfluencerController implements InfluencerControllerApiSpec {
 
     private final InfluencerService influencerService;
 
-    @GetMapping("/influencers")
+    @GetMapping()
     public ResponseEntity<InfluencerListResponse> getAllInfluencers() {
         List<InfluencerInfo> influencersDtoList = influencerService.getAllInfluencers();
         List<InfluencerResponse> influencers = influencersDtoList.stream()
@@ -37,7 +39,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/influencers")
+    @PostMapping()
     public ResponseEntity<Long> createInfluencer(@RequestBody InfluencerRequest request) {
         InfluencerCommand influencerCommand = new InfluencerCommand(
                 request.influencerName(),
@@ -49,7 +51,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
         return new ResponseEntity<>(savedId, HttpStatus.OK);
     }
 
-    @PutMapping("/influencers/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Long> updateInfluencer(@PathVariable Long id,
                                                  @RequestBody InfluencerRequest request) {
         InfluencerCommand influencerCommand = new InfluencerCommand(
@@ -62,7 +64,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
         return new ResponseEntity<>(updatedId, HttpStatus.OK);
     }
 
-    @DeleteMapping("/influencers/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Long> deleteInfluencer(@PathVariable Long id) {
         influencerService.deleteInfluencer(id);
 
