@@ -53,6 +53,29 @@ public class Place {
     @ElementCollection
     private List<Menu> menus;
 
-    @Column
-    private LocalDateTime menuUpdatedTime;
+    private LocalDateTime menuUpdatedAt;
+
+    public Place(String name, String facility, String menuImgsUrl, String category,
+                 String address, String x, String y,
+                 List<String> offDays,
+                 List<String> openPeriods,
+                 List<String> menus,
+                 LocalDateTime menuUpdatedAt) {
+        this.name = name;
+        this.facility = facility;
+        this.menuImgUrl = menuImgsUrl;
+        this.category = Category.valueOf(category);
+        this.address = Address.of(address);
+        this.coordinate = Coordinate.of(x, y);
+        this.offDays = offDays.stream()
+                .map(OffDay::of)
+                .toList();
+        this.openPeriods = openPeriods.stream()
+                .map(OpenTime::of)
+                .toList();
+        this.menus = menus.stream()
+                .map(Menu::of)
+                .toList();
+        this.menuUpdatedAt = menuUpdatedAt;
+    }
 }

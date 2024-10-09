@@ -1,4 +1,4 @@
-package team7.inplace.video.repository;
+package team7.inplace.video.persistence;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -10,10 +10,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.domain.Video;
-import team7.inplace.video.persistence.VideoRepository;
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD) // 각 메서드 실행마다 이전 결과 초기화
@@ -81,9 +82,11 @@ public class VideoRepositoryTest {
         List<Long> influencerIds = new ArrayList<>();
         influencerIds.add(1L);
 
-        List<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(influencerIds);
+        Page<Video> savedVideos = videoRepository.findVideosByInfluencerIdIn(
+                influencerIds, PageRequest.of(0, 5)
+        );
         // then
-        Assertions.assertThat(savedVideos.size()).isEqualTo(3);
+        Assertions.assertThat(savedVideos.getContent().size()).isEqualTo(3);
     }
 
     @Test
@@ -93,11 +96,11 @@ public class VideoRepositoryTest {
         /* Before Each */
 
         // when
-        List<Video> videos = videoRepository.findAllByOrderByIdDesc();
+        Page<Video> videos = videoRepository.findAllByOrderByIdDesc(PageRequest.of(0, 5));
 
         // then
         Long number = 5L;
-        for (Video video : videos) {
+        for (Video video : videos.getContent()) {
             Assertions.assertThat(video.getId()).isEqualTo(number);
             number -= 1L;
         }
@@ -109,9 +112,10 @@ public class VideoRepositoryTest {
         // given
 
         // when
-        Video video = videoRepository.findTopByPlaceOrderByIdDesc(place);
+        Video video = videoRepository.findTopByPlaceOrderByIdDesc(place).orElseThrow(NoSuchFieldError::new);
 
         // then
+        Assertions.assertThat(video).isNotNull();
         Assertions.assertThat(video.getId()).isEqualTo(5L);
     }
 }
