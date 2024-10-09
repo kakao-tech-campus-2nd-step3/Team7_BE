@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.security.util.JwtUtil;
+import team7.inplace.token.application.RefreshTokenService;
 import team7.inplace.user.application.UserService;
 import team7.inplace.user.application.dto.UserCommand;
 
@@ -15,13 +16,15 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
     private final UserService userService;
+    private final RefreshTokenService refreshTokenService;
 
     public CustomSuccessHandler(
         JwtUtil jwtUtil,
-        UserService userService
+        UserService userService, RefreshTokenService refreshTokenService
     ) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
+        this.refreshTokenService = refreshTokenService;
     }
 
     @Override
@@ -31,19 +34,22 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         Authentication authentication
     ) throws IOException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        addTokenToResponse(response, customOAuth2User);
+        UserCommand.Info userInfo = userService.getUserByUsername(customOAuth2User.username());
+        String accessToken = jwtUtil.createAccessToken(userInfo.username(), userInfo.id(),
+            userInfo.role().getRoles());
+        String refreshToken = jwtUtil.createRefreshToken(userInfo.username(), userInfo.id(),
+            userInfo.role().getRoles());
+        refreshTokenService.saveRefreshToken(userInfo.username(), refreshToken);
+        addTokenToResponse(response, accessToken, refreshToken);
         setRedirectUrlToResponse(response, customOAuth2User);
     }
 
     private void addTokenToResponse(
         HttpServletResponse response,
-        CustomOAuth2User customOAuth2User
+        String accessToken, String refreshToken
     ) {
-        UserCommand.Info user = userService.getUserByUsername(customOAuth2User.username());
-        Cookie accessTokenCookie = createCookie("access_token",
-            jwtUtil.createAccessToken(user.username(), user.id(), user.role().getRoles()));
-        Cookie refreshTokenCookie = createCookie("refresh_token",
-            jwtUtil.createRefreshToken(user.username(), user.id(), user.role().getRoles()));
+        Cookie accessTokenCookie = createCookie("access_token", accessToken);
+        Cookie refreshTokenCookie = createCookie("refresh_token", refreshToken);
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
