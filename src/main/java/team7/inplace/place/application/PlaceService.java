@@ -82,11 +82,26 @@ public class PlaceService {
             List<String> influencerFilters
     ) {
         return placeRepository.getPlacesByDistanceAndFilters(
-                placesCoordinateCommand.latitude(),
+                placesCoordinateCommand.topLeftLongitude(),
+                placesCoordinateCommand.topLeftLatitude(),
+                placesCoordinateCommand.bottomRightLongitude(),
+                placesCoordinateCommand.bottomRightLatitude(),
                 placesCoordinateCommand.longitude(),
+                placesCoordinateCommand.latitude(),
                 categoryFilters,
                 influencerFilters,
-                placesCoordinateCommand.pageable());
+                placesCoordinateCommand.pageable()
+        );
+    }
+
+    public PlaceDetailInfo getPlaceDetailInfo(Long placeId) {
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> new IllegalArgumentException("PlaceService.getPlaceDetailInfo(): "
+                        + "Place Id가 존재하지 않습니다."));
+        Video video = videoRepository.findByPlaceId(placeId)
+                .orElseThrow(() -> new IllegalArgumentException("PlaceService.getPlaceDetailInfo(): "
+                        + "Place Id가 존재하지 않습니다."));
+        return PlaceDetailInfo.from(place, video.getInfluencer(), video);
     }
 
     public List<Long> createPlaces(List<Create> placeCommands) {
