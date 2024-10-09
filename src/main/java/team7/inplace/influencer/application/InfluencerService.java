@@ -12,8 +12,8 @@ import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.influencer.presentation.dto.InfluencerRequestParam;
-import team7.inplace.favorite.domain.Favorite;
-import team7.inplace.favorite.persistent.FavoriteRepository;
+import team7.inplace.userFavoriteInfluencer.domain.UserFavoriteInfluencer;
+import team7.inplace.userFavoriteInfluencer.persistent.UserFavoriteInfluencerRepository;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
@@ -23,7 +23,7 @@ import team7.inplace.user.persistence.UserRepository;
 public class InfluencerService {
 
     private final InfluencerRepository influencerRepository;
-    private final FavoriteRepository favoriteRepository;
+    private final UserFavoriteInfluencerRepository favoriteRepository;
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
@@ -42,8 +42,8 @@ public class InfluencerService {
         User user = userRepository.findByUsername(username).orElseThrow();
         Influencer influencer = influencerRepository.findById(param.influencerId()).orElseThrow();
 
-        Favorite favorite = new Favorite(user, influencer);
-        favorite.like(param.likes());
+        UserFavoriteInfluencer favorite = new UserFavoriteInfluencer(user, influencer);
+        favorite.check(param.likes());
         favoriteRepository.save(favorite);
     }
 }
