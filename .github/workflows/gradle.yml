@@ -73,17 +73,7 @@ jobs:
       # .env 파일 생성
       - name: Create .env file
         run: |
-          echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
-          echo "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" >> .env
-          echo "KAKAO_REDIRECT_URI=${{ secrets.KAKAO_REDIRECT_URI }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "JWT_ACCESS_TOKEN_EXPIRED_TIME=${{ secrets.JWT_ACCESS_TOKEN_EXPIRED_TIME }}" >> .env
-          echo "JWT_REFRESH_TOKEN_EXPIRED_TIME=${{ secrets.JWT_REFRESH_TOKEN_EXPIRED_TIME }}" >> .env
-          echo "YOUTUBE_API_KEY=${{ secrets.YOUTUBE_API_KEY }}" >> .env
-          echo "KAKAO_REST_API_KEY=${{ secrets.KAKAO_REST_API_KEY }}" >> .env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
+          echo "${{ secrets.ENV }}" >> .env
 
       # 브랜치에 따라 다른 환경 변수를 설정하여 컨테이너 실행
       - name: docker run new container
