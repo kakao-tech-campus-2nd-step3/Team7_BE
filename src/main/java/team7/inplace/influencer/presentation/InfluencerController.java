@@ -26,12 +26,12 @@ public class InfluencerController implements InfluencerControllerApiSpec {
 
     private final InfluencerService influencerService;
 
-    @GetMapping()
+    @GetMapping("/influencers")
     public ResponseEntity<InfluencerListResponse> getAllInfluencers() {
         List<InfluencerInfo> influencersDtoList = influencerService.getAllInfluencers();
         List<InfluencerResponse> influencers = influencersDtoList.stream()
-            .map(InfluencerResponse::from)
-            .toList();
+                .map(InfluencerResponse::from)
+                .toList();
         InfluencerListResponse response = new InfluencerListResponse(influencers);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -40,9 +40,9 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     @PostMapping("/influencers")
     public ResponseEntity<Long> createInfluencer(@RequestBody InfluencerRequest request) {
         InfluencerCommand influencerCommand = new InfluencerCommand(
-            request.influencerName(),
-            request.influencerImgUrl(),
-            request.influencerJob()
+                request.influencerName(),
+                request.influencerImgUrl(),
+                request.influencerJob()
         );
         Long savedId = influencerService.createInfluencer(influencerCommand);
 
@@ -51,11 +51,11 @@ public class InfluencerController implements InfluencerControllerApiSpec {
 
     @PutMapping("/influencers/{id}")
     public ResponseEntity<Long> updateInfluencer(@PathVariable Long id,
-        @RequestBody InfluencerRequest request) {
+                                                 @RequestBody InfluencerRequest request) {
         InfluencerCommand influencerCommand = new InfluencerCommand(
-            request.influencerName(),
-            request.influencerImgUrl(),
-            request.influencerJob()
+                request.influencerName(),
+                request.influencerImgUrl(),
+                request.influencerJob()
         );
         Long updatedId = influencerService.updateInfluencer(id, influencerCommand);
 
