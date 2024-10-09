@@ -1,15 +1,17 @@
 package team7.inplace.crawling.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-import team7.inplace.crawling.client.dto.RawVideoInfo;
 
 @SpringBootTest
 @ActiveProfiles("test")
 class KakaoMapClientTest {
+    
     @Autowired
     public KakaoMapClient KakaoMapClient;
 
@@ -18,9 +20,9 @@ class KakaoMapClientTest {
     void searchAddressTest() {
         // given
         var address = "대구 북구 대현남로6길 25";
-        var rawVideoInfo = new RawVideoInfo("test", "test", address);
 
         // when
-        KakaoMapClient.search(rawVideoInfo, "FD6");
+        assertThat(KakaoMapClient.search(address, "FD6"))
+                .isNotNull();
     }
 }
