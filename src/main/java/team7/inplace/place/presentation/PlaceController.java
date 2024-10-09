@@ -1,6 +1,5 @@
 package team7.inplace.place.presentation;
 
-import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,12 +25,11 @@ import team7.inplace.place.presentation.dto.PlacesResponse;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/places")
-public class PlaceController {
+public class PlaceController implements PlaceControllerApiSpec {
 
     private final PlaceService placeService;
     private final CategoryService categoryService;
 
-    @Operation(summary = "장소 조회", description = "위치 기반으로 반경 내의 장소 목록을 조회합니다.")
     @GetMapping
     public ResponseEntity<PlacesResponse> getPlaces(
         @RequestParam String longitude,
@@ -65,7 +63,6 @@ public class PlaceController {
         return new ResponseEntity<>(PlacesResponse.of(placeInfos), HttpStatus.OK);
     }
 
-    @Operation(summary = "카테고리 조회", description = "장소의 카테고리 목록을 조회합니다.")
     @GetMapping("/categories")
     public ResponseEntity<CategoriesResponse> getCategories() {
         List<CategoryInfo> categories = categoryService.getCategories();
@@ -74,7 +71,6 @@ public class PlaceController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @Operation(summary = "장소 상세 조회", description = "장소 ID를 통해 특정 장소의 상세 정보를 조회합니다.")
     @GetMapping("/{id}")
     public ResponseEntity<PlaceDetailResponse> getPlaceDetail(
         @PathVariable("id") Long placeId
