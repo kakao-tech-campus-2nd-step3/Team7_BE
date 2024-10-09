@@ -36,9 +36,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<Long> getInfluencerIdsByUsername(String username) {
-        List<UserFavoriteInfluencer> likes = userFavoriteInfluencerRepository
-                .findByUser(userRepository.findByUsername(username).orElseThrow());
+    public List<Long> getInfluencerIdsByUsername(Long userId) {
+        List<UserFavoriteInfluencer> likes = userFavoriteInfluencerRepository.findByUserId(userId);
          return likes.stream().map(UserFavoriteInfluencer::getInfluencer).map(Influencer::getId).toList();
     }
 }

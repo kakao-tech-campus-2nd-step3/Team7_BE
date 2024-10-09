@@ -7,7 +7,5 @@ import team7.inplace.user.domain.User;
 import java.util.List;
 
 public interface UserFavoriteInfluencerRepository extends JpaRepository<UserFavoriteInfluencer, Long> {
-    List<UserFavoriteInfluencer> findByUser(User user);
-
-    UserFavoriteInfluencer save(UserFavoriteInfluencer favorite);
+    List<UserFavoriteInfluencer> findByUserId(Long userId);
 }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
@@ -57,13 +58,13 @@ public class VideoService {
 
     public Page<VideoInfo> getVideosByMyInfluencer(Pageable pageable){
         // User 정보를 쿠키에서 추출
-        String username = AuthorizationUtil.getUsername();
+        Long userId = AuthorizationUtil.getUserId();
         // 토큰 정보에 대한 검증
-        if(!StringUtils.hasText(username)) {
+        if(ObjectUtils.isEmpty(userId)) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
         // 유저 정보를 이용하여 유저가 좋아요를 누른 인플루언서 id 리스트를 조회
-        List<Long> influencerIds = userService.getInfluencerIdsByUsername(username);
+        List<Long> influencerIds = userService.getInfluencerIdsByUsername(userId);
         // 인플루언서 id 리스트를 이용하여 해당 인플루언서의 비디오들을 조회
         Page<Video> videos = videoRepository.findVideosByInfluencerIdIn(influencerIds, pageable);
         return videos.map(this::videoToInfo);
