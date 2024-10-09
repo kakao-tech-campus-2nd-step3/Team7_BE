@@ -20,7 +20,7 @@ import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 
 @RequiredArgsConstructor
 @RestController
-public class InfluencerController {
+public class InfluencerController implements InfluencerControllerApiSpec {
 
     private final InfluencerService influencerService;
 
