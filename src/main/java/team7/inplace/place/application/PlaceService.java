@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
+import team7.inplace.place.application.dto.PlaceDetailInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
@@ -72,7 +73,7 @@ public class PlaceService {
                 .toList();
 
         // PlaceInfo 리스트를 Page로 변환하여 반환
-        return new PageImpl<>(placeInfos, placesPage.getPageable(), placesPage.getTotalElements());
+        return new PageImpl<>(placeInfos, placesPage.getPageable(), placeInfos.size());
     }
 
     private Page<Place> getPlacesByDistance(

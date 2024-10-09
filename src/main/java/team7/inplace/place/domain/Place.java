@@ -27,8 +27,9 @@ public class Place {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(columnDefinition = "json")
+    //@Column(columnDefinition = "json")
     private String facility;
+
 
     @Column(columnDefinition = "TEXT")
     private String menuImgUrl;
