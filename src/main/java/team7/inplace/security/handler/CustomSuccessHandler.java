@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import team7.inplace.security.application.dto.CustomOAuth2User;
+import team7.inplace.security.util.CookieUtil;
 import team7.inplace.security.util.JwtUtil;
 import team7.inplace.token.application.RefreshTokenService;
 import team7.inplace.user.application.UserService;
@@ -17,14 +18,18 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
     private final UserService userService;
     private final RefreshTokenService refreshTokenService;
+    private final CookieUtil cookieUtil;
 
     public CustomSuccessHandler(
         JwtUtil jwtUtil,
-        UserService userService, RefreshTokenService refreshTokenService
+        UserService userService,
+        RefreshTokenService refreshTokenService,
+        CookieUtil cookieUtil
     ) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
         this.refreshTokenService = refreshTokenService;
+        this.cookieUtil = cookieUtil;
     }
 
     @Override
@@ -48,8 +53,8 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         HttpServletResponse response,
         String accessToken, String refreshToken
     ) {
-        Cookie accessTokenCookie = createCookie("access_token", accessToken);
-        Cookie refreshTokenCookie = createCookie("refresh_token", refreshToken);
+        Cookie accessTokenCookie = cookieUtil.createCookie("access_token", accessToken);
+        Cookie refreshTokenCookie = cookieUtil.createCookie("refresh_token", refreshToken);
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
@@ -65,13 +70,4 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         }
         response.sendRedirect("http://localhost:8080/auth");
     }
-
-    private Cookie createCookie(String key, String value) {
-        Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(60 * 60);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        return cookie;
-    }
-
 }
