@@ -43,14 +43,14 @@ public class AuthorizationFilter extends OncePerRequestFilter {
     private boolean hasNoTokenCookie(HttpServletRequest request) {
         return Optional.ofNullable(request.getCookies())
             .flatMap(cookies -> Arrays.stream(cookies)
-                .filter(cookie -> cookie.getName().equals("Authorization"))
+                .filter(cookie -> cookie.getName().equals("access_token"))
                 .findAny())
             .isEmpty();
     }
 
     private Cookie getTokenCookie(HttpServletRequest request) throws InplaceException {
         return Arrays.stream(request.getCookies())
-            .filter(cookie -> cookie.getName().equals("Authorization"))
+            .filter(cookie -> cookie.getName().equals("access_token"))
             .findAny()
             .orElse(null);
     }

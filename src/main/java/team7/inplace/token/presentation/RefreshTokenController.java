@@ -22,7 +22,7 @@ public class RefreshTokenController {
     private final RefreshTokenFacade refreshTokenFacade;
 
     @GetMapping("/refresh-token")
-    public ResponseEntity<Void> refreshToken(@CookieValue(value = "Authorization") Cookie cookie,
+    public ResponseEntity<Void> refreshToken(@CookieValue(value = "refresh_token") Cookie cookie,
         HttpServletResponse response) {
         if (cannotRefreshToken(cookie)) {
             throw InplaceException.of(AuthorizationErrorCode.INVALID_TOKEN);
