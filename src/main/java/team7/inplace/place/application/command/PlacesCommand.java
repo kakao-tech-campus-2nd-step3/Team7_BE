@@ -69,7 +69,7 @@ public class PlacesCommand {
             if (Objects.isNull(locationNode) || Objects.isNull(placeNode)) {
                 return null;
             }
-            
+
             var basicInfo = placeNode.get("basicInfo");
 
             String placeName =
@@ -186,21 +186,25 @@ public class PlacesCommand {
     public record Menu(
             String menuName,
             String menuPrice,
-            boolean recommend
+            boolean recommend,
+            String menuImgUrl,
+            String description
     ) {
         public static Menu from(JsonNode menuNode) {
             if (Objects.isNull(menuNode)) {
-                return new Menu("Unknown Menu", "0", false);
+                return new Menu("Unknown Menu", "0", false, "", "");
             }
-            String menuName = menuNode.has("menu") ? menuNode.get("menu").asText() : "Unknown Menu";
-            String menuPrice = menuNode.has("price") ? menuNode.get("price").asText() : "0";
+            String menuName = menuNode.has("menu") ? menuNode.get("menu").asText() : " ";
+            String menuPrice = menuNode.has("price") ? menuNode.get("price").asText() : " ";
             boolean recommend = menuNode.has("recommend") && menuNode.get("recommend").asBoolean();
+            String menuImgUrl = menuNode.has("img") ? menuNode.get("img").asText() : " ";
+            String description = menuNode.has("desc") ? menuNode.get("desc").asText() : " ";
 
-            return new Menu(menuName, menuPrice, recommend);
+            return new Menu(menuName, menuPrice, recommend, menuImgUrl, description);
         }
 
         public String toEntityParams() {
-            return menuName + "|" + menuPrice + "|" + recommend;
+            return menuName + "|" + menuPrice + "|" + recommend + "|" + menuImgUrl + "|" + description;
         }
     }
 }
