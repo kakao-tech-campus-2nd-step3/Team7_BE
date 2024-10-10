@@ -19,24 +19,20 @@ import team7.inplace.place.domain.Place;
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@RequiredArgsConstructor
 public class Video {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @Column(name = "video_url", nullable = false, columnDefinition = "TEXT")
-    @NonNull
     private String videoUrl;
 
     @ManyToOne
     @JoinColumn(name = "influencer_id", nullable = false)
-    @NonNull
     private Influencer influencer;
 
     @ManyToOne
-    @JoinColumn(name = "place_id", nullable = false)
-    @NonNull
+    @JoinColumn(name = "place_id")
     private Place place;
 
     private Video(Influencer influencer, Place place, String videoUrl) {
