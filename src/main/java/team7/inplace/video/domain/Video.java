@@ -11,14 +11,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Place;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = PROTECTED)
-@RequiredArgsConstructor
 public class Video {
     @Id
     @GeneratedValue(strategy = IDENTITY)
