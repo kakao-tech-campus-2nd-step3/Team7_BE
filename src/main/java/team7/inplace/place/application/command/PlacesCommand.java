@@ -74,8 +74,8 @@ public class PlacesCommand {
                     ? basicInfo.get("facilityInfo").toString() : "N/A";
 
             String menuImgUrl = basicInfo.has("mainphotourl") ? basicInfo.get("mainphotourl").asText() : "";
-            String category = basicInfo.has("category") && basicInfo.get("category").has("catename")
-                    ? basicInfo.get("category").get("catename").asText() : "Unknown Category";
+            String category = basicInfo.has("category") && basicInfo.get("category").has("cate1name")
+                    ? basicInfo.get("category").get("cate1name").asText() : "Unknown Category";
             String address =
                     basicInfo.has("address") && basicInfo.get("address").has("region") && basicInfo.get("address")
                             .get("region").has("newaddrfullname")
