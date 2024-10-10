@@ -66,6 +66,10 @@ public class PlacesCommand {
         }
 
         public static Create from(JsonNode locationNode, JsonNode placeNode) {
+            if (Objects.isNull(locationNode) || Objects.isNull(placeNode)) {
+                return null;
+            }
+            
             var basicInfo = placeNode.get("basicInfo");
 
             String placeName =
