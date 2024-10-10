@@ -30,7 +30,6 @@ public class Address {
     }
 
     public static Address of(String address) {
-        System.out.println("address: " + address);
         String[] split = address.split(" ");
         var address1 = split[0];
         var address2 = split[1];
