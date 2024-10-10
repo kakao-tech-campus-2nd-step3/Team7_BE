@@ -96,8 +96,12 @@ public class PlacesCommand {
                     ? locationNode.get("documents").get(0).get("y").asText() : "0.0";
 
             var timeList = basicInfo.has("openHour") ? basicInfo.get("openHour") : null;
-            var openPeriods = extractOpenPeriods(timeList.has("periodList") ? timeList.get("periodList") : null);
-            var offDays = extractOffDays(timeList.has("offdayList") ? timeList.get("offdayList") : null);
+            List<OpenTime> openPeriods = Objects.nonNull(timeList) ?
+                    extractOpenPeriods(timeList.has("periodList") ? timeList.get("periodList") : null)
+                    : new ArrayList<>();
+            List<OffDay> offDays = Objects.nonNull(timeList) ?
+                    extractOffDays(timeList.has("offdayList") ? timeList.get("offdayList") : null) : new ArrayList<>();
+
             var menus = extractMenus(placeNode.has("menuInfo") ? placeNode.get("menuInfo") : null);
             var menuUpdatedAt = placeNode.has("menuInfo") && placeNode.get("menuInfo").has("menuUpdatedAt")
                     ? LocalDateTime.parse(placeNode.get("menuInfo").get("timeexp").asText())
