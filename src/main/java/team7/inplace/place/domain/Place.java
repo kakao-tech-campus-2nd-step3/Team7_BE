@@ -64,7 +64,7 @@ public class Place {
         this.name = name;
         this.facility = facility;
         this.menuImgUrl = menuImgsUrl;
-        this.category = Category.valueOf(category);
+        this.category = Category.of(category);
         this.address = Address.of(address);
         this.coordinate = Coordinate.of(x, y);
         this.offDays = offDays.stream()
