@@ -24,7 +24,7 @@ public class Menu {
 
     @Column(length = 50)
     private String menuImgUrl;
-    
+
     private Menu(Long price, boolean recommend, String menuName) {
         this.price = price;
         this.recommend = recommend;
@@ -33,7 +33,8 @@ public class Menu {
 
     public static Menu of(String menu) {
         String[] menus = menu.split("\\|");
-
-        return new Menu(Long.parseLong(menus[1]), Boolean.parseBoolean(menus[2]), menus[0]);
+        var price = menus[1].replace(",", "");
+        return new Menu(Long.valueOf(price), Boolean.parseBoolean(menus[2]), menus[0]);
     }
+
 }
