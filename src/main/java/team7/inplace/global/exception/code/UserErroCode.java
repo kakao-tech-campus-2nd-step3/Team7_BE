@@ -13,16 +13,16 @@ public enum UserErroCode implements ErrorCode {
 
     @Override
     public HttpStatus httpStatus() {
-        return null;
+        return status;
     }
 
     @Override
     public String code() {
-        return "";
+        return code;
     }
 
     @Override
     public String message() {
-        return "";
+        return message;
     }
 }
