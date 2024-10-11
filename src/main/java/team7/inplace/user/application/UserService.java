@@ -6,6 +6,8 @@ import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.userFavoriteInfluencer.domain.UserFavoriteInfluencer;
 import team7.inplace.userFavoriteInfluencer.persistent.UserFavoriteInfluencerRepository;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.UserErroCode;
 import team7.inplace.user.application.dto.UserCommand;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
@@ -32,7 +34,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserCommand.Info getUserByUsername(String username) {
-        return UserCommand.Info.of(userRepository.findByUsername(username).orElseThrow());
+        return UserCommand.Info.of(userRepository.findByUsername(username)
+            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND)));
     }
 
     @Transactional(readOnly = true)
