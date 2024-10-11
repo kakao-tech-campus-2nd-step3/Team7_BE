@@ -55,6 +55,7 @@ public class InfluencerService {
         influencerRepository.delete(influencer);
     }
 
+    @Transactional
     public void likeToInfluencer(InfluencerRequestParam param) {
         String username = AuthorizationUtil.getUsername();
         if (StringUtils.hasText(username)) {
