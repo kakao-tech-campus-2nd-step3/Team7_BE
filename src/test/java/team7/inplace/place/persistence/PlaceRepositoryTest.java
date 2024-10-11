@@ -1,16 +1,34 @@
 package team7.inplace.place.persistence;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.place.domain.Category;
+import team7.inplace.place.domain.Place;
+import team7.inplace.video.domain.Video;
 
 @DataJpaTest
 class PlaceRepositoryTest {
-/*
+
     @PersistenceContext
     EntityManager entityManager;
 
     @Autowired
     private PlaceRepository placeRepository;
-
 
 //     * 테스트 Place 좌표 (longitude, latitude)
 //     * (10.0, 10.0) -> video1 -> 성시경
@@ -35,105 +53,49 @@ class PlaceRepositoryTest {
 
     @BeforeEach
     public void init() {
-        Place place1 = Place.builder()
-            .name("Place 1")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.CAFE)
-            .coordinate(new Coordinate("10.0", "10.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        Place place1 = new Place("Place 1",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", Category.CAFE.toString(),
+            "Address 1|Address 2|Address 3",
+            "10.0", "10.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
 
-        Place place2 = Place.builder()
-            .name("Place 2")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("10.0", "50.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        Place place2 = new Place("Place 2",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", Category.JAPANESE.toString(),
+            "Address 1|Address 2|Address 3",
+            "10.0", "50.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
 
-        Place place3 = Place.builder()
-            .name("Place 3")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.CAFE)
-            .coordinate(new Coordinate("10.0", "100.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        Place place3 = new Place("Place 3",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", Category.CAFE.toString(),
+            "Address 1|Address 2|Address 3",
+            "10.0", "100.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
 
-        Place place4 = Place.builder()
-            .name("Place 4")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("50.0", "50.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        Place place4 = new Place("Place 4",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", Category.JAPANESE.toString(),
+            "Address 1|Address 2|Address 3",
+            "50.0", "50.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
 
         entityManager.persist(place1);
         entityManager.persist(place2);
@@ -159,9 +121,9 @@ class PlaceRepositoryTest {
 
         // when
         Page<Place> foundPlaces = placeRepository.getPlacesByDistance(
-                longitude,
-                latitude,
-                pageable
+            longitude,
+            latitude,
+            pageable
         );
         System.out.println(foundPlaces);
 
@@ -337,6 +299,4 @@ class PlaceRepositoryTest {
         assertThat(foundPlaces).hasSize(1);
         assertThat(foundPlaces.getContent().get(0).getName()).isEqualTo("Place 4");
     }
-
- */
 }

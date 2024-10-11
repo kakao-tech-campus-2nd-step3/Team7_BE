@@ -1,11 +1,26 @@
 package team7.inplace.place.application;
 
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
+import team7.inplace.place.domain.Category;
+import team7.inplace.place.domain.Place;
+import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.video.domain.Video;
+import team7.inplace.video.persistence.VideoRepository;
 
 @ExtendWith(MockitoExtension.class)
 class PlaceServiceTest {
-/*
+
     @Mock
     private VideoRepository videoRepository;
     @Mock
@@ -16,7 +31,6 @@ class PlaceServiceTest {
     private Place place1, place2, place3, place4;
     private Video video1, video2;
     private Influencer influencer1, influencer2;
-
 
 //     * 테스트 Place 좌표 (longitude, latitude)
 //     * (10.0, 10.0) -> video1 -> 성시경
@@ -50,118 +64,67 @@ class PlaceServiceTest {
     );
 
     @BeforeEach
-    public void init() {
-        place1 = Place.builder()
-            .id(1L)
-            .name("Place 1")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.CAFE)
-            .coordinate(new Coordinate("10.0", "10.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+    public void init() throws NoSuchFieldException, IllegalAccessException {
+        Field placeIdField = Place.class.getDeclaredField("id");
+        placeIdField.setAccessible(true);
 
-        place2 = Place.builder()
-            .id(2L)
-            .name("Place 2")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("10.0", "50.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        place1 = new Place("Place 1",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", Category.CAFE.toString(),
+            "Address 1|Address 2|Address 3",
+            "10.0", "10.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
+        placeIdField.set(place1, 1L);
 
-        place3 = Place.builder()
-            .id(3L)
-            .name("Place 3")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.CAFE)
-            .coordinate(new Coordinate("10.0", "100.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        place2 = new Place("Place 2",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", Category.JAPANESE.toString(),
+            "Address 1|Address 2|Address 3",
+            "10.0", "50.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
+        placeIdField.set(place2, 2L);
 
-        place4 = Place.builder()
-            .id(4L)
-            .name("Place 4")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("50.0", "50.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        place3 = new Place("Place 3",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", Category.CAFE.toString(),
+            "Address 1|Address 2|Address 3",
+            "10.0", "100.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
+        placeIdField.set(place3, 3L);
 
+        place4 = new Place("Place 4",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", Category.JAPANESE.toString(),
+            "Address 1|Address 2|Address 3",
+            "50.0", "50.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
+        placeIdField.set(place4, 4L);
+
+        Field influencerIdField = Place.class.getDeclaredField("id");
+        placeIdField.setAccessible(true);
         influencer1 = new Influencer("성시경", "가수", "img.url");
         influencer2 = new Influencer("아이유", "가수", "img.rul");
 
         video1 = new Video("video.url", influencer1, place1);
         video2 = new Video("video.url", influencer2, place4);
     }
-
+/*
     @Test
     @DisplayName("필터링 없이 가까운 장소 조회")
     public void test1() {
