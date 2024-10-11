@@ -32,7 +32,7 @@ public class YoutubeCrawlingService {
                     var videoSnippets = youtubeClient.getVideos(channel.getPlayListUUID(), channel.getLastVideoUUID());
 
                     var videoAddresses = videoSnippets.stream()
-                            .map(AddressUtil::extractAddress)
+                            .map(AddressUtil::extractAddressFromJsonNode)
                             .toList();
 
                     var placeNodes = videoAddresses.stream()
