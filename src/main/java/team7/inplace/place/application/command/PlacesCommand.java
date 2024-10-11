@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import org.springframework.data.domain.Pageable;
 import team7.inplace.place.domain.Place;
+import team7.inplace.video.presentation.dto.VideoSearchParams;
 
 public class PlacesCommand {
 
@@ -19,6 +20,17 @@ public class PlacesCommand {
             String latitude,
             Pageable pageable
     ) {
+        public static PlacesCoordinateCommand from(VideoSearchParams videoSearchParams, Pageable pageable) {
+            return new PlacesCoordinateCommand(
+                    videoSearchParams.topLeftLongitude(),
+                    videoSearchParams.topLeftLatitude(),
+                    videoSearchParams.bottomRightLatitude(),
+                    videoSearchParams.bottomRightLatitude(),
+                    videoSearchParams.longitude(),
+                    videoSearchParams.latitude(),
+                    pageable
+            );
+        }
     }
 
     public record PlacesFilterParamsCommand(
