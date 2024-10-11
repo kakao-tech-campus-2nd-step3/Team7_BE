@@ -6,7 +6,7 @@ import team7.inplace.place.domain.Category;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public final class AliasUtil {
-    public static String makeAlias(String influencerName, Category category){
+    public static String makeAlias(String influencerName, Category category) {
         String alias = mapTemplateToCategory(category);
         return influencerName + " " + alias;
     }
@@ -18,6 +18,8 @@ public final class AliasUtil {
             case WESTERN -> Template.WESTERN.getRandomTemplate();
             case JAPANESE -> Template.JAPANESE.getRandomTemplate();
             case KOREAN -> Template.KOREAN.getRandomTemplate();
+            case RESTAURANT -> Template.RESTAURANT.getRandomTemplate();
+            default -> Template.NONE.getRandomTemplate();
         };
     }
 }

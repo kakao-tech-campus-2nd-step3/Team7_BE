@@ -1,6 +1,9 @@
 package team7.inplace.crawling.domain;
 
+import static jakarta.persistence.EnumType.STRING;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,6 +25,7 @@ public class YoutubeChannel {
     private String playListUUID;
     private String lastVideoUUID;
 
+    @Enumerated(value = STRING)
     private ChannelType channelType;
 
     public String getChannelTypeCode() {

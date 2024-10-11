@@ -24,8 +24,9 @@ public class KakaoMapClient {
     private final RestTemplate restTemplate;
 
     public PlaceNode search(String address, String category) {
+        log.info("KakaoMapClient search address: {}, category: {}", address, category);
         var locationInfo = getLocateInfo(address, category);
-        var placeId = locationInfo.has("documents") ?
+        var placeId = locationInfo.has("documents") && locationInfo.get("documents").hasNonNull(1) ?
                 locationInfo.get("documents").get(0).get("id").asText() : null;
         if (Objects.isNull(placeId)) {
             return null;
