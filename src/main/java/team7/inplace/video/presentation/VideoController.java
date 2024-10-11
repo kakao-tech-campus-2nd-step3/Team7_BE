@@ -8,6 +8,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import team7.inplace.video.application.VideoFacade;
 import team7.inplace.video.application.VideoService;
 import team7.inplace.video.presentation.dto.VideoResponse;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequestMapping("/videos")
 public class VideoController implements VideoControllerApiSpec {
     private final VideoService videoService;
+    private final VideoFacade videoFacade;
 
     @GetMapping()
     public ResponseEntity<Page<VideoResponse>> readVideos(
@@ -54,7 +56,7 @@ public class VideoController implements VideoControllerApiSpec {
     public ResponseEntity<Page<VideoResponse>> readByInfluencer(
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
-        Page<VideoResponse> videoResponses = videoService.getVideosByMyInfluencer(pageable)
+        Page<VideoResponse> videoResponses = videoFacade.getVideosByMyInfluencer(pageable)
                 .map(VideoResponse::from);
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }

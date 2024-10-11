@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import org.springframework.data.domain.Pageable;
 import team7.inplace.place.domain.Place;
+import team7.inplace.video.presentation.dto.VideoSearchParams;
 
 public class PlacesCommand {
 
@@ -19,6 +20,17 @@ public class PlacesCommand {
             String latitude,
             Pageable pageable
     ) {
+        public static PlacesCoordinateCommand from(VideoSearchParams videoSearchParams, Pageable pageable) {
+            return new PlacesCoordinateCommand(
+                    videoSearchParams.topLeftLongitude(),
+                    videoSearchParams.topLeftLatitude(),
+                    videoSearchParams.bottomRightLatitude(),
+                    videoSearchParams.bottomRightLatitude(),
+                    videoSearchParams.longitude(),
+                    videoSearchParams.latitude(),
+                    pageable
+            );
+        }
     }
 
     public record PlacesFilterParamsCommand(
@@ -66,6 +78,10 @@ public class PlacesCommand {
         }
 
         public static Create from(JsonNode locationNode, JsonNode placeNode) {
+            if (Objects.isNull(locationNode) || Objects.isNull(placeNode)) {
+                return null;
+            }
+
             var basicInfo = placeNode.get("basicInfo");
 
             String placeName =
@@ -74,8 +90,8 @@ public class PlacesCommand {
                     ? basicInfo.get("facilityInfo").toString() : "N/A";
 
             String menuImgUrl = basicInfo.has("mainphotourl") ? basicInfo.get("mainphotourl").asText() : "";
-            String category = basicInfo.has("category") && basicInfo.get("category").has("catename")
-                    ? basicInfo.get("category").get("catename").asText() : "Unknown Category";
+            String category = basicInfo.has("category") && basicInfo.get("category").has("cate1name")
+                    ? basicInfo.get("category").get("cate1name").asText() : "Unknown Category";
             String address =
                     basicInfo.has("address") && basicInfo.get("address").has("region") && basicInfo.get("address")
                             .get("region").has("newaddrfullname")
@@ -92,8 +108,12 @@ public class PlacesCommand {
                     ? locationNode.get("documents").get(0).get("y").asText() : "0.0";
 
             var timeList = basicInfo.has("openHour") ? basicInfo.get("openHour") : null;
-            var openPeriods = extractOpenPeriods(timeList.has("periodList") ? timeList.get("periodList") : null);
-            var offDays = extractOffDays(timeList.has("offdayList") ? timeList.get("offdayList") : null);
+            List<OpenTime> openPeriods = Objects.nonNull(timeList) ?
+                    extractOpenPeriods(timeList.has("periodList") ? timeList.get("periodList") : null)
+                    : new ArrayList<>();
+            List<OffDay> offDays = Objects.nonNull(timeList) ?
+                    extractOffDays(timeList.has("offdayList") ? timeList.get("offdayList") : null) : new ArrayList<>();
+
             var menus = extractMenus(placeNode.has("menuInfo") ? placeNode.get("menuInfo") : null);
             var menuUpdatedAt = placeNode.has("menuInfo") && placeNode.get("menuInfo").has("menuUpdatedAt")
                     ? LocalDateTime.parse(placeNode.get("menuInfo").get("timeexp").asText())
@@ -182,21 +202,25 @@ public class PlacesCommand {
     public record Menu(
             String menuName,
             String menuPrice,
-            boolean recommend
+            boolean recommend,
+            String menuImgUrl,
+            String description
     ) {
         public static Menu from(JsonNode menuNode) {
             if (Objects.isNull(menuNode)) {
-                return new Menu("Unknown Menu", "0", false);
+                return new Menu("Unknown Menu", "0", false, "", "");
             }
-            String menuName = menuNode.has("menu") ? menuNode.get("menu").asText() : "Unknown Menu";
-            String menuPrice = menuNode.has("price") ? menuNode.get("price").asText() : "0";
+            String menuName = menuNode.has("menu") ? menuNode.get("menu").asText() : " ";
+            String menuPrice = menuNode.has("price") ? menuNode.get("price").asText() : " ";
             boolean recommend = menuNode.has("recommend") && menuNode.get("recommend").asBoolean();
+            String menuImgUrl = menuNode.has("img") ? menuNode.get("img").asText() : " ";
+            String description = menuNode.has("desc") ? menuNode.get("desc").asText() : " ";
 
-            return new Menu(menuName, menuPrice, recommend);
+            return new Menu(menuName, menuPrice, recommend, menuImgUrl, description);
         }
 
         public String toEntityParams() {
-            return menuName + "|" + menuPrice + "|" + recommend;
+            return menuName + "|" + menuPrice + "|" + recommend + "|" + menuImgUrl + "|" + description;
         }
     }
 }

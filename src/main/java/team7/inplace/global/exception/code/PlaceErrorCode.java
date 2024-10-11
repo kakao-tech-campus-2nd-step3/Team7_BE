@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
+
 @AllArgsConstructor
 @Getter
-public enum VideoErrorCode implements ErrorCode{
-    NOT_FOUND(HttpStatus.NOT_FOUND, "V001", "Can't find such video info");
+public enum PlaceErrorCode implements ErrorCode{
+    NOT_FOUND(HttpStatus.NOT_FOUND, "P001", "Can't find such place info");
 
     private final HttpStatus httpStatus;
     private final String errorCode;

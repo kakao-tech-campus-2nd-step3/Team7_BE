@@ -1,26 +1,24 @@
 package team7.inplace.global.exception.code;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
-@Getter
-public enum VideoErrorCode implements ErrorCode{
-    NOT_FOUND(HttpStatus.NOT_FOUND, "V001", "Can't find such video info");
+public enum UserErroCode implements ErrorCode {
+    NOT_FOUND(HttpStatus.NOT_FOUND, "U001", "User is not found");
 
-    private final HttpStatus httpStatus;
-    private final String errorCode;
+    private final HttpStatus status;
+    private final String code;
     private final String message;
 
     @Override
     public HttpStatus httpStatus() {
-        return httpStatus;
+        return status;
     }
 
     @Override
     public String code() {
-        return errorCode;
+        return code;
     }
 
     @Override

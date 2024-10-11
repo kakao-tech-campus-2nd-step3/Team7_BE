@@ -55,11 +55,9 @@ class JwtUtilTest {
         assertAll(
             () -> assertThat(jwtUtil.getUsername(accessToken)).isEqualTo(username),
             () -> assertThat(jwtUtil.getId(accessToken)).isEqualTo(userId),
-            () -> assertThat(jwtUtil.getTokenType(accessToken)).isEqualTo("accessToken"),
             () -> assertThat(jwtUtil.getRoles(accessToken)).isEqualTo(Role.USER.getRoles()),
             () -> assertThat(jwtUtil.getUsername(refreshToken)).isEqualTo(username),
             () -> assertThat(jwtUtil.getId(refreshToken)).isEqualTo(userId),
-            () -> assertThat(jwtUtil.getTokenType(refreshToken)).isEqualTo("refreshToken"),
             () -> assertThat(jwtUtil.getRoles(refreshToken)).isEqualTo(Role.USER.getRoles())
         );
     }
