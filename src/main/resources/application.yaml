@@ -5,4 +5,5 @@ spring:
       - classpath:application-youtube.yaml
       - classpath:application-kakao.yaml
       - classpath:application-db.yaml
+      - classpath:application-redis.yaml
       - optional:file:.env[.properties]

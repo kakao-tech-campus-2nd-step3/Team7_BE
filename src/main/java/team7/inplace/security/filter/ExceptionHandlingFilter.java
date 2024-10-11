@@ -16,9 +16,11 @@ import team7.inplace.global.exception.InplaceException;
 public class ExceptionHandlingFilter extends OncePerRequestFilter {
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-        FilterChain filterChain)
-        throws ServletException, IOException {
+    protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
+    ) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
         } catch (InplaceException inplaceException) {
@@ -26,8 +28,10 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
         }
     }
 
-    private void setErrorResponse(HttpServletResponse response, InplaceException inplaceException)
-        throws IOException {
+    private void setErrorResponse(
+        HttpServletResponse response,
+        InplaceException inplaceException
+    ) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         response.setStatus(inplaceException.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

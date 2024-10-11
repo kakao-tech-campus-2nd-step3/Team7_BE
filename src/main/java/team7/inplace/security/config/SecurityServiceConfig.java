@@ -16,7 +16,9 @@ public class SecurityServiceConfig {
 
     @Bean
     public CustomOAuth2UserService customOAuth2UserService(
-        DefaultOAuth2UserService defaultOAuth2UserService, UserService userService) {
+        DefaultOAuth2UserService defaultOAuth2UserService,
+        UserService userService
+    ) {
         return new CustomOAuth2UserService(defaultOAuth2UserService, userService);
     }
 }

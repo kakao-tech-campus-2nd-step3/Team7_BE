@@ -1,15 +1,36 @@
 package team7.inplace.security.application.dto;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.util.StringUtils;
+import team7.inplace.user.application.dto.UserCommand;
+import team7.inplace.user.domain.Role;
 
 public record CustomOAuth2User(
     String username,
     Long id,
-    Boolean firstUser
+    Collection<GrantedAuthority> authorities
 ) implements OAuth2User {
+
+    public CustomOAuth2User(String username, Long id, String roles) {
+        this(username, id, createAuthorities(roles));
+    }
+
+    private static Collection<GrantedAuthority> createAuthorities(String roles) {
+        Collection<GrantedAuthority> authorities = new ArrayList<>();
+
+        for (String role : roles.split(",")) {
+            if (!StringUtils.hasText(role)) {
+                continue;
+            }
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+        return authorities;
+    }
 
     @Override
     public Map<String, Object> getAttributes() {
@@ -18,7 +39,7 @@ public record CustomOAuth2User(
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.authorities;
     }
 
     @Override
@@ -26,15 +47,17 @@ public record CustomOAuth2User(
         return username;
     }
 
-    public static CustomOAuth2User makeExistUser(KakaoOAuthResponse kakaoOAuthResponse) {
-        return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), null, false);
+    public static CustomOAuth2User makeExistUser(UserCommand.Info user) {
+        return new CustomOAuth2User(user.username(), user.id(), user.role().getRoles());
     }
 
-    public static CustomOAuth2User makeNewUser(KakaoOAuthResponse kakaoOAuthResponse) {
-        return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), null, true);
+    public static CustomOAuth2User makeNewUser(KakaoOAuthResponse kakaoOAuthResponse,
+        String roles) {
+        return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), null, roles);
     }
 
-    public Boolean isFirstUser() {
-        return this.firstUser;
+    public boolean isFirstUser() {
+        return this.authorities.stream()
+            .anyMatch(authority -> authority.getAuthority().equals(Role.FIRST_USER.getRoles()));
     }
 }

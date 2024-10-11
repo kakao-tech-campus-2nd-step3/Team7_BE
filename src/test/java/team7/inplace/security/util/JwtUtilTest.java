@@ -14,6 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.security.config.JwtProperties;
+import team7.inplace.user.domain.Role;
 
 class JwtUtilTest {
 
@@ -32,7 +33,7 @@ class JwtUtilTest {
     void createTokenTest() {
         String username = "testMan";
         Long userId = 3L;
-        String accessToken = jwtUtil.createAccessToken(username, userId);
+        String accessToken = jwtUtil.createAccessToken(username, userId, Role.USER.getRoles());
         assertThat(accessToken).isNotNull();
     }
 
@@ -40,7 +41,7 @@ class JwtUtilTest {
     void createRefreshTokenTest() {
         String username = "testMan";
         Long userId = 3L;
-        String refreshToken = jwtUtil.createRefreshToken(username, userId);
+        String refreshToken = jwtUtil.createRefreshToken(username, userId, Role.USER.getRoles());
         assertThat(refreshToken).isNotNull();
     }
 
@@ -48,16 +49,16 @@ class JwtUtilTest {
     void getInfoTests() {
         String username = "testMan";
         Long userId = 3L;
-        String accessToken = jwtUtil.createAccessToken(username, userId);
-        String refreshToken = jwtUtil.createRefreshToken(username, userId);
+        String accessToken = jwtUtil.createAccessToken(username, userId, Role.USER.getRoles());
+        String refreshToken = jwtUtil.createRefreshToken(username, userId, Role.USER.getRoles());
 
         assertAll(
             () -> assertThat(jwtUtil.getUsername(accessToken)).isEqualTo(username),
             () -> assertThat(jwtUtil.getId(accessToken)).isEqualTo(userId),
-            () -> assertThat(jwtUtil.getTokenType(accessToken)).isEqualTo("accessToken"),
+            () -> assertThat(jwtUtil.getRoles(accessToken)).isEqualTo(Role.USER.getRoles()),
             () -> assertThat(jwtUtil.getUsername(refreshToken)).isEqualTo(username),
             () -> assertThat(jwtUtil.getId(refreshToken)).isEqualTo(userId),
-            () -> assertThat(jwtUtil.getTokenType(refreshToken)).isEqualTo("refreshToken")
+            () -> assertThat(jwtUtil.getRoles(refreshToken)).isEqualTo(Role.USER.getRoles())
         );
     }
 
