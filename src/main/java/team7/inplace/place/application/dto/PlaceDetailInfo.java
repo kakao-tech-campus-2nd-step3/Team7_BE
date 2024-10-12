@@ -11,22 +11,22 @@ import team7.inplace.place.domain.Place;
 import team7.inplace.video.domain.Video;
 
 public record PlaceDetailInfo(
-        PlaceInfo placeInfo,
-        JsonNode facilityInfo,
-        MenuInfos menuInfos,
-        OpenHour openHour,
-        PlaceLikes placeLikes,
-        String videoUrl
+    PlaceInfo placeInfo,
+    JsonNode facilityInfo,
+    MenuInfos menuInfos,
+    OpenHour openHour,
+    PlaceLikes placeLikes,
+    String videoUrl
 ) {
 
     public static PlaceDetailInfo from(Place place, Influencer influencer, Video video) {
         return new PlaceDetailInfo(
-                PlaceInfo.of(place, influencer.getName()),
-                facilityTree(place.getFacility()),
-                MenuInfos.of(place.getMenus()),
-                OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
-                PlaceLikes.of(null), //추후 추가 예정
-                video.getVideoUrl()
+            PlaceInfo.of(place, influencer.getName()),
+            facilityTree(place.getFacility()),
+            MenuInfos.of(place.getMenus()),
+            OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
+            PlaceLikes.of(null), //추후 추가 예정
+            video.getVideoUrl()
         );
     }
 
@@ -41,73 +41,70 @@ public record PlaceDetailInfo(
 
 
     public record MenuInfos(
-            List<String> menuImgUrls,
-            List<MenuInfo> menuList,
-            LocalDateTime timeExp
+        List<MenuInfo> menuList,
+        LocalDateTime timeExp
     ) {
 
         public static MenuInfos of(List<Menu> menus) {
-            List<String> menuImgUrls = menus.stream()
-                    .map(Menu::getMenuImgUrl) // 메뉴 이미지 URL을 추출
-                    .toList();
-
             List<MenuInfo> menuList = menus.stream()
-                    .map(menu -> new MenuInfo(menu.getPrice().intValue(), menu.isRecommend(),
-                            menu.getMenuName()))
-                    .toList();
+                .map(menu -> new MenuInfo(Integer.parseInt(menu.getPrice()), menu.isRecommend(),
+                    menu.getMenuName(), menu.getMenuImgUrl(), menu.getDescription()))
+                .toList();
 
-            return new MenuInfos(menuImgUrls, menuList, LocalDateTime.now());
+            return new MenuInfos(menuList, LocalDateTime.now());
         }
 
         public record MenuInfo(
-                Integer price,
-                Boolean recommend,
-                String menuName
+            Integer price,
+            Boolean recommend,
+            String menuName,
+            String menuImgUrl,
+            String description
         ) {
 
         }
     }
 
     public record OpenHour(
-            List<Period> periodList,
-            List<OffDay> offdayList
+        List<Period> periodList,
+        List<OffDay> offdayList
     ) {
 
         public static OpenHour of(List<OpenTime> openTimes,
-                                  List<team7.inplace.place.domain.OffDay> closeTimes
+            List<team7.inplace.place.domain.OffDay> closeTimes
         ) {
             List<Period> periods = openTimes.stream()
-                    .map(time -> new Period(time.getTimeName(), time.getTimeSE(), time.getDayOfWeek()))
-                    .toList();
+                .map(time -> new Period(time.getTimeName(), time.getTimeSE(), time.getDayOfWeek()))
+                .toList();
 
             List<OffDay> offDays = closeTimes.stream()
-                    .map(closeTime -> new OffDay(closeTime.getHolidayName(), closeTime.getWeekAndDay(),
-                            closeTime.getTemporaryHolidays()))
-                    .toList();
+                .map(closeTime -> new OffDay(closeTime.getHolidayName(), closeTime.getWeekAndDay(),
+                    closeTime.getTemporaryHolidays()))
+                .toList();
 
             return new OpenHour(periods, offDays);
         }
 
         public record Period(
-                String timeName,
-                String timeSE,
-                String dayOfWeek
+            String timeName,
+            String timeSE,
+            String dayOfWeek
         ) {
 
         }
 
         public record OffDay(
-                String holidayName,
-                String weekAndDay,
-                String temporaryHolidays
+            String holidayName,
+            String weekAndDay,
+            String temporaryHolidays
         ) {
 
         }
     }
 
     public record PlaceLikes(
-            Integer like,
-            Integer dislike
+        Integer like,
+        Integer dislike
     ) {
 
         public static PlaceLikes of(Boolean likes) {

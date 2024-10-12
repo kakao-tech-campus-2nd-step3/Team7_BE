@@ -4,6 +4,7 @@ import static lombok.AccessLevel.PROTECTED;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import java.util.Arrays;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,7 +30,10 @@ public class Address {
     }
 
     public static Address of(String address) {
-        String[] split = address.split("\\|");
-        return new Address(split[0], split[1], split[2]);
+        String[] split = address.split(" ");
+        var address1 = split[0];
+        var address2 = split[1];
+        var address3 = String.join(" ", Arrays.copyOfRange(split, 2, split.length));
+        return new Address(address1, address2, address3);
     }
 }
