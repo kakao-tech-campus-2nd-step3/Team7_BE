@@ -17,16 +17,9 @@ public class InfluencerRepositoryTest {
 
     @Test
     public void findAllTest() {
-        Influencer influencer1 = Influencer.builder()
-            .name("influencer1")
-            .job("job1")
-            .imgUrl("imgUrl1")
-            .build();
-        Influencer influencer2 = Influencer.builder()
-            .name("influencer2")
-            .job("job2")
-            .imgUrl("imgUrl2")
-            .build();
+        Influencer influencer1 = new Influencer("influencer1", "imgUrl1", "job1");
+        Influencer influencer2 = new Influencer("influencer2", "imgUrl2", "job2");
+
         influencerRepository.save(influencer1);
         influencerRepository.save(influencer2);
 

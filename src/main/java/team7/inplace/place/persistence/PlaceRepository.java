@@ -40,15 +40,26 @@ public interface PlaceRepository extends JpaRepository<Place, Long> {
         "LEFT JOIN video v ON p.id = v.place_id " +
         "LEFT JOIN influencer i ON v.influencer_id = i.id " +
         "WHERE (:categories IS NULL OR p.category IN (:categories)) " +
-        "AND (:influencers IS NULL OR i.name IN (:influencers)) " +  // 인플루언서 이름 필터
+        "AND (:influencers IS NULL OR i.name IN (:influencers)) " +
+        "AND (CAST(p.longitude AS DECIMAL(10, 6)) BETWEEN CAST(:topLeftLongitude AS DECIMAL(10, 6)) AND CAST(:bottomRightLongitude AS DECIMAL(10, 6))) "
+        +
+        "AND (CAST(p.latitude AS DECIMAL(10, 6)) BETWEEN CAST(:bottomRightLatitude AS DECIMAL(10, 6)) AND CAST(:topLeftLatitude AS DECIMAL(10, 6)))"
+        +
         "ORDER BY distance",
         countQuery = "SELECT count(*) FROM places p " +
-            "JOIN video v ON p.id = v.place_id " +
-            "JOIN influencer i ON v.influencer_id = i.id " +
+            "LEFT JOIN video v ON p.id = v.place_id " +
+            "LEFT JOIN influencer i ON v.influencer_id = i.id " +
             "WHERE (:categories IS NULL OR p.category IN (:categories)) " +
-            "AND (:influencers IS NULL OR i.name IN (:influencers))",  // 총 개수 쿼리
+            "AND (:influencers IS NULL OR i.name IN (:influencers)) " +
+            "AND (CAST(p.longitude AS DECIMAL(10, 6)) BETWEEN CAST(:topLeftLongitude AS DECIMAL(10, 6)) AND CAST(:bottomRightLongitude AS DECIMAL(10, 6))) "
+            +
+            "AND (CAST(p.latitude AS DECIMAL(10, 6)) BETWEEN CAST(:bottomRightLatitude AS DECIMAL(10, 6)) AND CAST(:topLeftLatitude AS DECIMAL(10, 6)))",
         nativeQuery = true)
     Page<Place> getPlacesByDistanceAndFilters(
+        @Param("topLeftLongitude") String topLeftLongitude,
+        @Param("topLeftLatitude") String topLeftLatitude,
+        @Param("bottomRightLongitude") String bottomRightLongitude,
+        @Param("bottomRightLatitude") String bottomRightLatitude,
         @Param("longitude") String longitude,
         @Param("latitude") String latitude,
         @Param("categories") List<String> categories,

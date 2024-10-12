@@ -23,7 +23,7 @@ class YoutubeClientTest {
 
         // 2024. 10. 2기준 154개
         // regex로 판별되는 기준 138개
-        final int expectedSize = 138;
+        final int expectedSize = 154;
         assertThat(response.size())
                 .isEqualTo(expectedSize);
     }

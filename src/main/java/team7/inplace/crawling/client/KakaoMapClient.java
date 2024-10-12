@@ -10,8 +10,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-import team7.inplace.crawling.client.dto.RawPlace;
-import team7.inplace.crawling.client.dto.RawVideoInfo;
+import team7.inplace.crawling.client.dto.PlaceNode;
 import team7.inplace.global.kakao.config.KakaoApiProperties;
 
 @Slf4j
@@ -24,17 +23,17 @@ public class KakaoMapClient {
     private final KakaoApiProperties kakaoApiProperties;
     private final RestTemplate restTemplate;
 
-    public RawPlace.Info search(RawVideoInfo videoInfo, String category) {
-        var address = videoInfo.address();
+    public PlaceNode search(String address, String category) {
+        log.info("KakaoMapClient search address: {}, category: {}", address, category);
         var locationInfo = getLocateInfo(address, category);
-        var placeId = locationInfo.has("documents") ?
+        var placeId = locationInfo.has("documents") && locationInfo.get("documents").hasNonNull(1) ?
                 locationInfo.get("documents").get(0).get("id").asText() : null;
         if (Objects.isNull(placeId)) {
             return null;
         }
 
         var placeInfo = getPlaceInfo(placeId);
-        return RawPlace.Info.from(locationInfo, placeInfo);
+        return PlaceNode.of(locationInfo, placeInfo);
     }
 
     private JsonNode getLocateInfo(String address, String category) {

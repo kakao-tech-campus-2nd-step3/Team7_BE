@@ -7,12 +7,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = PROTECTED)
+@AllArgsConstructor
 @Entity
 public class Influencer {
 
@@ -29,10 +30,15 @@ public class Influencer {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String imgUrl;
 
-    @Builder
-    public Influencer(String name, String job, String imgUrl) {
+    public Influencer(String name, String imgUrl, String job) {
         this.name = name;
-        this.job = job;
         this.imgUrl = imgUrl;
+        this.job = job;
+    }
+
+    public void update(String name, String imgUrl, String job) {
+        this.name = name;
+        this.imgUrl = imgUrl;
+        this.job = job;
     }
 }

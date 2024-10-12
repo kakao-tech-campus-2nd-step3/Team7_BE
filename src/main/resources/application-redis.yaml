@@ -1,0 +1,4 @@
+redis:
+  db:
+    url: ${REDIS_DATABASE_URL}
+    port: ${REDIS_DATABASE_PORT}

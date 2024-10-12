@@ -13,7 +13,7 @@ import org.hibernate.annotations.ColumnDefault;
 @EqualsAndHashCode
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Menu {
-    private Long price;
+    private String price;
 
     @ColumnDefault("false")
     @Column(nullable = false)
@@ -21,5 +21,22 @@ public class Menu {
 
     @Column(length = 50, nullable = false)
     private String menuName;
+
+    private String menuImgUrl;
+
+    private String description;
+
+    private Menu(String price, boolean recommend, String menuName, String menuImgUrl, String description) {
+        this.price = price;
+        this.recommend = recommend;
+        this.menuName = menuName;
+        this.menuImgUrl = menuImgUrl;
+        this.description = description;
+    }
+
+    public static Menu of(String menu) {
+        String[] menus = menu.split("\\|");
+        return new Menu(menus[1], Boolean.parseBoolean(menus[2]), menus[0], menus[3], menus[4]);
+    }
 
 }
