@@ -10,24 +10,19 @@ import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.security.util.CookieUtil;
 import team7.inplace.security.util.JwtUtil;
 import team7.inplace.token.application.RefreshTokenService;
-import team7.inplace.user.application.UserService;
-import team7.inplace.user.application.dto.UserCommand;
 
 public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
-    private final UserService userService;
     private final RefreshTokenService refreshTokenService;
     private final CookieUtil cookieUtil;
 
     public CustomSuccessHandler(
         JwtUtil jwtUtil,
-        UserService userService,
         RefreshTokenService refreshTokenService,
         CookieUtil cookieUtil
     ) {
         this.jwtUtil = jwtUtil;
-        this.userService = userService;
         this.refreshTokenService = refreshTokenService;
         this.cookieUtil = cookieUtil;
     }
@@ -39,12 +34,11 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         Authentication authentication
     ) throws IOException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        UserCommand.Info userInfo = userService.getUserByUsername(customOAuth2User.username());
-        String accessToken = jwtUtil.createAccessToken(userInfo.username(), userInfo.id(),
-            userInfo.role().getRoles());
-        String refreshToken = jwtUtil.createRefreshToken(userInfo.username(), userInfo.id(),
-            userInfo.role().getRoles());
-        refreshTokenService.saveRefreshToken(userInfo.username(), refreshToken);
+        String accessToken = jwtUtil.createAccessToken(customOAuth2User.username(),
+            customOAuth2User.id(), customOAuth2User.roles());
+        String refreshToken = jwtUtil.createRefreshToken(customOAuth2User.username(),
+            customOAuth2User.id(), customOAuth2User.roles());
+        refreshTokenService.saveRefreshToken(customOAuth2User.username(), refreshToken);
         addTokenToResponse(response, accessToken, refreshToken);
         setRedirectUrlToResponse(request, response, customOAuth2User);
     }
