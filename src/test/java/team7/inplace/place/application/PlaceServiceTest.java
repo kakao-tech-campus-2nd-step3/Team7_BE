@@ -150,8 +150,9 @@ class PlaceServiceTest {
     public void test1() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place4, place1), pageable, 3);
-        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
-            any(), any(), any()))
+        when(
+            placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
+                any(), any(), any()))
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
@@ -177,8 +178,9 @@ class PlaceServiceTest {
     public void test2() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place4, place1), pageable, 3);
-        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
-            any(), any(), any()))
+        when(
+            placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(), any(),
+                any(), any(), any()))
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
@@ -211,7 +213,7 @@ class PlaceServiceTest {
     public void test3() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place2, place4), pageable, 2);
-        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(),
+        when(placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(),
             any(),
             any(), any(), any()))
             .thenReturn(placesPage);
@@ -243,7 +245,7 @@ class PlaceServiceTest {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4, place1), pageable, 1);
         when(
-            placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(), any(),
+            placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(), any(),
                 any(),
                 any(), any(), any()))
             .thenReturn(placesPage);
@@ -270,7 +272,7 @@ class PlaceServiceTest {
     public void test5() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4), pageable, 1);
-        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(),
+        when(placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(),
             any(), any(),
             any(), any(), any()))
             .thenReturn(placesPage);
@@ -296,7 +298,7 @@ class PlaceServiceTest {
     public void test6() {
         // given
         Page<Place> placesPage = new PageImpl<>(Arrays.asList(place4), pageable, 1);
-        when(placeRepository.getPlacesByDistanceAndFilters(any(), any(), any(), any(),
+        when(placeRepository.findPlacesByDistanceAndFilters(any(), any(), any(), any(),
             any(), any(),
             any(), any(), any()))
             .thenReturn(placesPage);
