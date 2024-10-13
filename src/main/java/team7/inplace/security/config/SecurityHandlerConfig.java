@@ -1,7 +1,9 @@
 package team7.inplace.security.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import team7.inplace.security.handler.CustomFailureHandler;
 import team7.inplace.security.handler.CustomSuccessHandler;
 import team7.inplace.security.util.CookieUtil;
 import team7.inplace.security.util.JwtUtil;
@@ -19,5 +21,10 @@ public class SecurityHandlerConfig {
         CookieUtil cookieUtil
     ) {
         return new CustomSuccessHandler(jwtUtil, userService, refreshTokenService, cookieUtil);
+    }
+
+    @Bean
+    public CustomFailureHandler customFailureHandler(ObjectMapper objectMapper) {
+        return new CustomFailureHandler(objectMapper);
     }
 }

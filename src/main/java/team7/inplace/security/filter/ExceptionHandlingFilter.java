@@ -6,14 +6,18 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import lombok.NoArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.filter.OncePerRequestFilter;
 import team7.inplace.global.exception.InplaceException;
 
-@NoArgsConstructor
 public class ExceptionHandlingFilter extends OncePerRequestFilter {
+
+    private final ObjectMapper objectMapper;
+
+    public ExceptionHandlingFilter(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     @Override
     protected void doFilterInternal(
@@ -32,7 +36,6 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
         HttpServletResponse response,
         InplaceException inplaceException
     ) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
         response.setStatus(inplaceException.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(

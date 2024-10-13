@@ -39,6 +39,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         Authentication authentication
     ) throws IOException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
+        System.out.println("3 " + request.getRequestURI());
         UserCommand.Info userInfo = userService.getUserByUsername(customOAuth2User.username());
         String accessToken = jwtUtil.createAccessToken(userInfo.username(), userInfo.id(),
             userInfo.role().getRoles());
@@ -46,7 +47,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
             userInfo.role().getRoles());
         refreshTokenService.saveRefreshToken(userInfo.username(), refreshToken);
         addTokenToResponse(response, accessToken, refreshToken);
-        setRedirectUrlToResponse(response, customOAuth2User);
+        setRedirectUrlToResponse(request, response, customOAuth2User);
     }
 
     private void addTokenToResponse(
@@ -61,13 +62,14 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     private void setRedirectUrlToResponse(
+        HttpServletRequest request,
         HttpServletResponse response,
         CustomOAuth2User customOAuth2User
     ) throws IOException {
         if (customOAuth2User.isFirstUser()) {
-            response.sendRedirect("http://localhost:8080/choice");
+            response.sendRedirect("/choice");
             return;
         }
-        response.sendRedirect("http://localhost:8080/auth");
+        response.sendRedirect("/auth");
     }
 }

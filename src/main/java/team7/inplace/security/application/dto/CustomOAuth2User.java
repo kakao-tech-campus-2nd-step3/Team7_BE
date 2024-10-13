@@ -47,6 +47,10 @@ public record CustomOAuth2User(
         return username;
     }
 
+    public String getRegistrationId() {
+        return "kakao";
+    }
+
     public static CustomOAuth2User makeExistUser(UserCommand.Info user) {
         return new CustomOAuth2User(user.username(), user.id(), user.role().getRoles());
     }
