@@ -41,7 +41,7 @@ class PlaceServiceTest {
     private PlaceService placeService;
 
     private Place place1, place2, place3, place4;
-    private Video video1, video2;
+    private Video video1, video2, video3;
     private Influencer influencer1, influencer2;
 
 //     * 테스트 Place 좌표 (longitude, latitude)
@@ -140,8 +140,9 @@ class PlaceServiceTest {
         influencer2 = new Influencer("아이유", "가수", "img.rul");
         influencerIdField.set(influencer2, 2L);
 
-        video1 = Video.from(influencer1, place1, "video.url");
-        video2 = Video.from(influencer2, place4, "video.url");
+        video1 = Video.from(influencer1, place1, "video1.url");
+        video2 = Video.from(influencer2, place4, "video2.url");
+        video3 = Video.from(influencer1, place4, "video3.url");
     }
 
     @Test
@@ -154,7 +155,7 @@ class PlaceServiceTest {
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1, video2));
+            Arrays.asList(video1, video2, video3));
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null, null);
 
         // when
@@ -181,7 +182,7 @@ class PlaceServiceTest {
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1, video2));
+            Arrays.asList(video1, video2, video3));
 
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand("일식, 카페",
             null);
@@ -216,7 +217,7 @@ class PlaceServiceTest {
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video2));
+            Arrays.asList(video2, video3));
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand("일식",
             null);
 
@@ -248,7 +249,7 @@ class PlaceServiceTest {
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video1, video2));
+            Arrays.asList(video1, video2, video3));
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null,
             "성시경, 아이유");
 
@@ -275,7 +276,7 @@ class PlaceServiceTest {
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video2));
+            Arrays.asList(video2, video3));
 
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(null,
             "아이유");
@@ -301,7 +302,7 @@ class PlaceServiceTest {
             .thenReturn(placesPage);
         when(videoRepository.findByPlaceIdIn(
             placesPage.getContent().stream().map(Place::getId).toList())).thenReturn(
-            Arrays.asList(video2));
+            Arrays.asList(video2, video3));
 
         PlacesFilterParamsCommand filterParams = new PlacesFilterParamsCommand(
             "JAPANESE", "아이유");
@@ -320,24 +321,26 @@ class PlaceServiceTest {
     @DisplayName("장소 세부정보 조회")
     public void test7() {
         // given
-        Place place = video1.getPlace();
-        Influencer influencer = video1.getInfluencer();
-        PlaceDetailInfo expected = PlaceDetailInfo.from(place,
-            influencer, video1);
+//        Place place = video1.getPlace();
+//        Influencer influencer = video1.getInfluencer();
+        PlaceDetailInfo expected = PlaceDetailInfo.from(place4,
+            influencer2, video2);
 
-        when(placeRepository.findById(place.getId()))
-            .thenReturn(Optional.of(place1));
-        when(videoRepository.findByPlaceId(place.getId()))
-            .thenReturn(Optional.of(video1));
+        when(placeRepository.findById(place4.getId()))
+            .thenReturn(Optional.of(place4));
+        when(videoRepository.findByPlaceId(place4.getId()))
+            .thenReturn(Arrays.asList(video2, video3));
 
         // when
-        PlaceDetailInfo result = placeService.getPlaceDetailInfo(1L);
+        PlaceDetailInfo result = placeService.getPlaceDetailInfo(4L);
 
         // then
         // menuInfos의 timeExp는 실시간으로 바껴서 테스트에서 제외함
         assertThat(result).isEqualToIgnoringGivenFields(expected, "menuInfos");
         assertThat(result.menuInfos().menuList()).isEqualTo(
             expected.menuInfos().menuList());
+        assertThat(result.placeInfo().influencerName()).isEqualTo(
+            expected.placeInfo().influencerName());
     }
 
 }

@@ -63,7 +63,8 @@ public class PlaceService {
         Map<Long, String> placeIdToInfluencerName = videos.stream()
             .collect(Collectors.toMap(
                 video -> video.getPlace().getId(),
-                video -> video.getInfluencer().getName()
+                video -> video.getInfluencer().getName(),
+                (existing, replacement) -> existing
             ));
 
         // PlaceInfo 생성
@@ -101,7 +102,12 @@ public class PlaceService {
         Place place = placeRepository.findById(placeId)
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
 
-        Video video = videoRepository.findByPlaceId(placeId).orElse(null);
+        Video video = null;
+        List<Video> videos = videoRepository.findByPlaceId(placeId);
+
+        if (!videos.isEmpty()) {
+            video = videos.get(0);
+        }
         Influencer influencer = (video != null) ? video.getInfluencer() : null;
 
         return PlaceDetailInfo.from(place, influencer, video);
