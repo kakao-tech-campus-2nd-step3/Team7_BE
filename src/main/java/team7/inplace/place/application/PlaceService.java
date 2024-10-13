@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.application.command.PlacesCommand.Create;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
@@ -97,19 +99,11 @@ public class PlaceService {
 
     public PlaceDetailInfo getPlaceDetailInfo(Long placeId) {
         Place place = placeRepository.findById(placeId)
-            .orElseThrow(() -> new IllegalArgumentException("PlaceService.getPlaceDetailInfo(): "
-                + "Place Id가 존재하지 않습니다."));
-        Video video = null;
-        Influencer influencer = null;
-        try {
-            video = videoRepository.findByPlaceId(placeId)
-                .orElseThrow(
-                    () -> new IllegalArgumentException("PlaceService.getPlaceDetailInfo(): "
-                        + "Place Id가 존재하지 않습니다."));
-            influencer = video.getInfluencer();
-        } catch (IllegalArgumentException e) {
+            .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
 
-        }
+        Video video = videoRepository.findByPlaceId(placeId).orElse(null);
+        Influencer influencer = (video != null) ? video.getInfluencer() : null;
+
         return PlaceDetailInfo.from(place, influencer, video);
     }
 

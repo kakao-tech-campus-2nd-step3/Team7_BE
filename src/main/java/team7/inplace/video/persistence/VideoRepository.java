@@ -19,4 +19,6 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
     List<Video> findByPlaceIdIn(List<Long> placeIds);
 
     Optional<Video> findByPlaceId(Long placeId);
+
+    boolean existsByPlaceId(Long placeId);
 }

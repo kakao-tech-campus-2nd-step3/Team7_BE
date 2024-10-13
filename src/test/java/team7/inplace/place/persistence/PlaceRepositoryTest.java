@@ -55,45 +55,49 @@ class PlaceRepositoryTest {
     public void init() {
         Place place1 = new Place("Place 1",
             "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", Category.CAFE.toString(),
+            "menuImg.url", "카페",
             "Address 1|Address 2|Address 3",
             "10.0", "10.0",
             Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
             Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            Arrays.asList("삼겹살|5000|false|menu.url|description",
+                "돼지찌개|7000|true|menu.url|description"),
             LocalDateTime.of(2024, 3, 28, 5, 30)
         );
 
         Place place2 = new Place("Place 2",
             "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", Category.JAPANESE.toString(),
+            "menuImg.url", "일식",
             "Address 1|Address 2|Address 3",
             "10.0", "50.0",
             Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
             Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            Arrays.asList("삼겹살|5000|false|menu.url|description",
+                "돼지찌개|7000|true|menu.url|description"),
             LocalDateTime.of(2024, 3, 28, 5, 30)
         );
 
         Place place3 = new Place("Place 3",
             "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", Category.CAFE.toString(),
+            "menuImg.url", "카페",
             "Address 1|Address 2|Address 3",
             "10.0", "100.0",
             Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
             Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            Arrays.asList("삼겹살|5000|false|menu.url|description",
+                "돼지찌개|7000|true|menu.url|description"),
             LocalDateTime.of(2024, 3, 28, 5, 30)
         );
 
         Place place4 = new Place("Place 4",
             "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
-            "menuImg.url", Category.JAPANESE.toString(),
+            "menuImg.url", "일식",
             "Address 1|Address 2|Address 3",
             "50.0", "50.0",
             Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
             Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
-            Arrays.asList("삼겹살|5000|false", "돼지찌개|7000|true"),
+            Arrays.asList("삼겹살|5000|false|menu.url|description",
+                "돼지찌개|7000|true|menu.url|description"),
             LocalDateTime.of(2024, 3, 28, 5, 30)
         );
 
@@ -107,8 +111,8 @@ class PlaceRepositoryTest {
         entityManager.persist(influencer1);
         entityManager.persist(influencer2);
 
-        Video video1 = new Video("video.url", influencer1, place1);
-        Video video2 = new Video("video.url", influencer2, place4);
+        Video video1 = Video.from(influencer1, place1, "video.url");
+        Video video2 = Video.from(influencer2, place4, "video.url");
 
         entityManager.persist(video1);
         entityManager.persist(video2);
@@ -168,7 +172,7 @@ class PlaceRepositoryTest {
     @DisplayName("카테고리(japan, cafe) 필터링")
     public void test3() {
         // given
-        List<String> categories = Stream.of(Category.CAFE, Category.JAPANESE)
+        List<String> categories = Stream.of(Category.of("카페"), Category.of("일식"))
             .map(Enum::toString)  // Enum 값을 문자열로 변환
             .toList();
         List<String> influencers = null;
