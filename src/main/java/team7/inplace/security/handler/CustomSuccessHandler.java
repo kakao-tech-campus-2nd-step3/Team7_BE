@@ -39,7 +39,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         Authentication authentication
     ) throws IOException {
         CustomOAuth2User customOAuth2User = (CustomOAuth2User) authentication.getPrincipal();
-        System.out.println("3 " + request.getRequestURI());
         UserCommand.Info userInfo = userService.getUserByUsername(customOAuth2User.username());
         String accessToken = jwtUtil.createAccessToken(userInfo.username(), userInfo.id(),
             userInfo.role().getRoles());
