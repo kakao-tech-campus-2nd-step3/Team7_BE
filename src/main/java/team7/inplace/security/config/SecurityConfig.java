@@ -63,13 +63,14 @@ public class SecurityConfig {
                 .addFilterBefore(exceptionHandlingFilter, AuthorizationFilter.class)
                 //authentication 경로 설정
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/login/**").permitAll()
-                        .requestMatchers("/oauth2/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/error").permitAll()
-                        .requestMatchers("swagger-ui/**").permitAll()
-                        .requestMatchers("/v3/api-docs/**").permitAll()
                         .anyRequest().permitAll())
+//                        .requestMatchers("/login/**").permitAll()
+//                        .requestMatchers("/oauth2/**").permitAll()
+//                        .requestMatchers("/admin/**").hasRole("ADMIN")
+//                        .requestMatchers("/error").permitAll()
+//                        .requestMatchers("swagger-ui/**").permitAll()
+//                        .requestMatchers("/v3/api-docs/**").permitAll()
+//                        .anyRequest().permitAll())
                 //cors 설정
                 .addFilter(corsFilter)
                 //session 설정
