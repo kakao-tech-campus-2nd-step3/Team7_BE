@@ -8,6 +8,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.filter.CorsFilter;
 import team7.inplace.security.application.CustomOAuth2UserService;
 import team7.inplace.security.filter.AuthorizationFilter;
 import team7.inplace.security.filter.ExceptionHandlingFilter;
@@ -23,51 +24,55 @@ public class SecurityConfig {
     private final ExceptionHandlingFilter exceptionHandlingFilter;
     private final AuthorizationFilter authorizationFilter;
     private final CustomFailureHandler customFailureHandler;
+    private final CorsFilter corsFilter;
 
     public SecurityConfig(
-        CustomOAuth2UserService customOAuth2UserService,
-        CustomSuccessHandler customSuccessHandler,
-        ExceptionHandlingFilter exceptionHandlingFilter,
-        AuthorizationFilter authorizationFilter,
-        CustomFailureHandler customFailureHandler
+            CustomOAuth2UserService customOAuth2UserService,
+            CustomSuccessHandler customSuccessHandler,
+            ExceptionHandlingFilter exceptionHandlingFilter,
+            AuthorizationFilter authorizationFilter,
+            CustomFailureHandler customFailureHandler,
+            CorsFilter corsFilter
     ) {
         this.customOauth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
         this.exceptionHandlingFilter = exceptionHandlingFilter;
         this.authorizationFilter = authorizationFilter;
         this.customFailureHandler = customFailureHandler;
+        this.corsFilter = corsFilter;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
-        throws Exception {
+            throws Exception {
 
         //http 설정
         http.csrf(AbstractHttpConfigurer::disable)
-            .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
 
-            //authentication Service, Handler 설정
-            .oauth2Login((oauth2) -> oauth2
-                .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
-                    .userService(customOauth2UserService)).successHandler(customSuccessHandler)
-                .failureHandler(customFailureHandler))
+                //authentication Service, Handler 설정
+                .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
+                                .userService(customOauth2UserService)).successHandler(customSuccessHandler)
+                        .failureHandler(customFailureHandler))
 
-            //authentication Filter 설정
-            .addFilterBefore(authorizationFilter,
-                UsernamePasswordAuthenticationFilter.class)
-            .addFilterBefore(exceptionHandlingFilter, AuthorizationFilter.class)
-            //authentication 경로 설정
-            .authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/login/**").permitAll()
-                .requestMatchers("/oauth2/**").permitAll()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/error").permitAll()
-                .anyRequest().authenticated())
-
-            //session 설정
-            .sessionManagement((session) -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                //authentication Filter 설정
+                .addFilterBefore(authorizationFilter,
+                        UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(exceptionHandlingFilter, AuthorizationFilter.class)
+                //authentication 경로 설정
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/login/**").permitAll()
+                        .requestMatchers("/oauth2/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/error").permitAll()
+                        .anyRequest().authenticated())
+                //cors 설정
+                .addFilter(corsFilter)
+                //session 설정
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
