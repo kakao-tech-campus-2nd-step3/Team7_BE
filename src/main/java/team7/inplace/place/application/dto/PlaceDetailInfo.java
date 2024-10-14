@@ -50,7 +50,7 @@ public record PlaceDetailInfo(
 
         public static MenuInfos of(List<Menu> menus) {
             List<MenuInfo> menuList = menus.stream()
-                .map(menu -> new MenuInfo(Integer.parseInt(menu.getPrice()), menu.isRecommend(),
+                .map(menu -> new MenuInfo(menu.getPrice(), menu.isRecommend(),
                     menu.getMenuName(), menu.getMenuImgUrl(), menu.getDescription()))
                 .toList();
 
@@ -58,7 +58,7 @@ public record PlaceDetailInfo(
         }
 
         public record MenuInfo(
-            Integer price,
+            String price,
             Boolean recommend,
             String menuName,
             String menuImgUrl,

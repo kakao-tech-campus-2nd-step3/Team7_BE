@@ -85,7 +85,7 @@ public class PlaceService {
         List<String> categoryFilters,
         List<String> influencerFilters
     ) {
-        return placeRepository.getPlacesByDistanceAndFilters(
+        return placeRepository.findPlacesByDistanceAndFilters(
             placesCoordinateCommand.topLeftLongitude(),
             placesCoordinateCommand.topLeftLatitude(),
             placesCoordinateCommand.bottomRightLongitude(),

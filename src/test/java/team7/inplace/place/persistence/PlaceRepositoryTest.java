@@ -7,21 +7,22 @@ import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.place.domain.Category;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.domain.Video;
 
-@DataJpaTest
+@SpringBootTest
+@Transactional
 class PlaceRepositoryTest {
 
     @PersistenceContext
@@ -124,7 +125,7 @@ class PlaceRepositoryTest {
         // given
 
         // when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistance(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistance(
             longitude,
             latitude,
             pageable
@@ -149,7 +150,7 @@ class PlaceRepositoryTest {
         List<String> influencers = null;
 
         // when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -172,12 +173,12 @@ class PlaceRepositoryTest {
     @DisplayName("카테고리(japan, cafe) 필터링")
     public void test3() {
         // given
-        List<String> categories = Stream.of(Category.of("카페"), Category.of("일식"))
-            .map(Enum::toString)  // Enum 값을 문자열로 변환
-            .toList();
+        List<String> categories = Arrays.asList(Category.CAFE.getName(),
+            Category.JAPANESE.getName());
+
         List<String> influencers = null;
         // when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -202,12 +203,10 @@ class PlaceRepositoryTest {
     @DisplayName("카테고리(japan) 필터링")
     public void test4() {
         // given
-        List<String> categories = Stream.of(Category.JAPANESE)
-            .map(Enum::toString)
-            .toList();
+        List<String> categories = Arrays.asList(Category.JAPANESE.getName());
         List<String> influencers = null;
         // when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -234,7 +233,7 @@ class PlaceRepositoryTest {
         List<String> influencers = List.of("성시경", "아이유");
 
         //when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -260,7 +259,7 @@ class PlaceRepositoryTest {
         List<String> influencers = List.of("성시경");
 
         //when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -281,13 +280,11 @@ class PlaceRepositoryTest {
     @DisplayName("카테고리(Japanese), 인플루언서(아이유) 필터링")
     public void test7() {
         // given
-        List<String> categories = Stream.of(Category.JAPANESE)
-            .map(Enum::toString)
-            .toList();
+        List<String> categories = Arrays.asList(Category.JAPANESE.getName());
         List<String> influencers = List.of("아이유");
 
         //when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
