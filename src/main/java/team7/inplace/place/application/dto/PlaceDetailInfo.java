@@ -20,13 +20,16 @@ public record PlaceDetailInfo(
 ) {
 
     public static PlaceDetailInfo from(Place place, Influencer influencer, Video video) {
+        String influencerName = (influencer != null) ? influencer.getName() : "";
+        String videoUrl = (video != null) ? video.getVideoUrl() : "";
+
         return new PlaceDetailInfo(
-            PlaceInfo.of(place, influencer.getName()),
+            PlaceInfo.of(place, influencerName),
             facilityTree(place.getFacility()),
             MenuInfos.of(place.getMenus()),
             OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
             PlaceLikes.of(null), //추후 추가 예정
-            video.getVideoUrl()
+            videoUrl
         );
     }
 
