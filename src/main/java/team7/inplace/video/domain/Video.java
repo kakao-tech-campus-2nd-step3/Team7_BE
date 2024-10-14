@@ -26,11 +26,11 @@ public class Video {
     private String videoUrl;
 
     @ManyToOne
-    @JoinColumn(name = "influencer_id", nullable = false)
+    @JoinColumn(name = "influencer_id")
     private Influencer influencer;
 
     @ManyToOne
-    @JoinColumn(name = "place_id")
+    @JoinColumn(name = "place_id", nullable = false)
     private Place place;
 
     private Video(Influencer influencer, Place place, String videoUrl) {
