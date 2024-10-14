@@ -69,7 +69,7 @@ public class SecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers("swagger-ui/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
-                        .anyRequest().authenticated())
+                        .anyRequest().permitAll())
                 //cors 설정
                 .addFilter(corsFilter)
                 //session 설정
