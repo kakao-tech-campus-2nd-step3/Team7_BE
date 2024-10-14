@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import team7.inplace.security.application.CustomOAuth2UserService;
 import team7.inplace.security.filter.AuthorizationFilter;
 import team7.inplace.security.filter.ExceptionHandlingFilter;
+import team7.inplace.security.handler.CustomFailureHandler;
 import team7.inplace.security.handler.CustomSuccessHandler;
 
 @Configuration
@@ -21,17 +22,20 @@ public class SecurityConfig {
     private final CustomSuccessHandler customSuccessHandler;
     private final ExceptionHandlingFilter exceptionHandlingFilter;
     private final AuthorizationFilter authorizationFilter;
+    private final CustomFailureHandler customFailureHandler;
 
     public SecurityConfig(
         CustomOAuth2UserService customOAuth2UserService,
         CustomSuccessHandler customSuccessHandler,
         ExceptionHandlingFilter exceptionHandlingFilter,
-        AuthorizationFilter authorizationFilter
+        AuthorizationFilter authorizationFilter,
+        CustomFailureHandler customFailureHandler
     ) {
         this.customOauth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
         this.exceptionHandlingFilter = exceptionHandlingFilter;
         this.authorizationFilter = authorizationFilter;
+        this.customFailureHandler = customFailureHandler;
     }
 
     @Bean
@@ -46,7 +50,8 @@ public class SecurityConfig {
             //authentication Service, Handler 설정
             .oauth2Login((oauth2) -> oauth2
                 .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
-                    .userService(customOauth2UserService)).successHandler(customSuccessHandler))
+                    .userService(customOauth2UserService)).successHandler(customSuccessHandler)
+                .failureHandler(customFailureHandler))
 
             //authentication Filter 설정
             .addFilterBefore(authorizationFilter,
@@ -54,10 +59,11 @@ public class SecurityConfig {
             .addFilterBefore(exceptionHandlingFilter, AuthorizationFilter.class)
             //authentication 경로 설정
             .authorizeHttpRequests((auth) -> auth
-                .requestMatchers("/login").permitAll()
-                .requestMatchers("/hello").authenticated()
+                .requestMatchers("/login/**").permitAll()
+                .requestMatchers("/oauth2/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                .anyRequest().permitAll())
+                .requestMatchers("/error").permitAll()
+                .anyRequest().authenticated())
 
             //session 설정
             .sessionManagement((session) -> session
