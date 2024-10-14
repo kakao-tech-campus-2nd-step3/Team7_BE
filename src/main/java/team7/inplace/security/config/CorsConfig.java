@@ -14,7 +14,8 @@ public class CorsConfig {
         var source = new UrlBasedCorsConfigurationSource();
         var config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("https://*.inplace.my");
+        config.addAllowedOrigin("https://www.inplace.my");
+        config.addAllowedOriginPattern("https://api.inplace.my");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         source.registerCorsConfiguration("/**", config);
