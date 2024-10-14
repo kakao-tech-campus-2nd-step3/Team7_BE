@@ -2,6 +2,8 @@ package team7.inplace.video.application;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -68,6 +70,14 @@ public class VideoService {
 
     private VideoInfo videoToInfo(Video savedVideo) {
         Place place = savedVideo.getPlace();
+        if(Objects.isNull(place)){
+            return new VideoInfo(
+                    savedVideo.getId(),
+                    "장소 정보 없음",
+                    savedVideo.getVideoUrl(),
+                    PlaceForVideo.of(-1L, "장소 정보 없음")
+            );
+        }
         String alias = AliasUtil.makeAlias(
                 savedVideo.getInfluencer().getName(),
                 place.getCategory()
