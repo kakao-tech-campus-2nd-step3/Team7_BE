@@ -12,6 +12,7 @@ public class CorsConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
             .allowedOriginPatterns("https://inplace.my")
             .allowedMethods("GET", "POST", "PUT", "DELETE")
-            .allowCredentials(true);
+            .allowCredentials(true)
+            .allowedHeaders("*");
     }
 }
