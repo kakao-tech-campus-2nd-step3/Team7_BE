@@ -1,16 +1,35 @@
 package team7.inplace.place.persistence;
 
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@DataJpaTest
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
+import team7.inplace.influencer.domain.Influencer;
+import team7.inplace.place.domain.Category;
+import team7.inplace.place.domain.Place;
+import team7.inplace.video.domain.Video;
+
+@SpringBootTest
+@Transactional
 class PlaceRepositoryTest {
-/*
+
     @PersistenceContext
     EntityManager entityManager;
 
     @Autowired
     private PlaceRepository placeRepository;
-
 
 //     * 테스트 Place 좌표 (longitude, latitude)
 //     * (10.0, 10.0) -> video1 -> 성시경
@@ -35,105 +54,53 @@ class PlaceRepositoryTest {
 
     @BeforeEach
     public void init() {
-        Place place1 = Place.builder()
-            .name("Place 1")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.CAFE)
-            .coordinate(new Coordinate("10.0", "10.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        Place place1 = new Place("Place 1",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", "카페",
+            "Address 1|Address 2|Address 3",
+            "10.0", "10.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false|menu.url|description",
+                "돼지찌개|7000|true|menu.url|description"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
 
-        Place place2 = Place.builder()
-            .name("Place 2")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("10.0", "50.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        Place place2 = new Place("Place 2",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", "일식",
+            "Address 1|Address 2|Address 3",
+            "10.0", "50.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false|menu.url|description",
+                "돼지찌개|7000|true|menu.url|description"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
 
-        Place place3 = Place.builder()
-            .name("Place 3")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.CAFE)
-            .coordinate(new Coordinate("10.0", "100.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        Place place3 = new Place("Place 3",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", "카페",
+            "Address 1|Address 2|Address 3",
+            "10.0", "100.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false|menu.url|description",
+                "돼지찌개|7000|true|menu.url|description"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
 
-        Place place4 = Place.builder()
-            .name("Place 4")
-            .pet(false)
-            .wifi(true)
-            .parking(false)
-            .fordisabled(true)
-            .nursery(false)
-            .smokingroom(false)
-            .address(new Address("Address 1", "Address 2", "Address 3"))
-            .menuImgUrl("menu.jpg")
-            .category(Category.JAPANESE)
-            .coordinate(new Coordinate("50.0", "50.0"))
-            .timeList(Arrays.asList(
-                new PlaceOpenTime("Opening Hours", "9:00 AM", "Monday"),
-                new PlaceOpenTime("Closing Hours", "10:00 PM", "Monday")
-            ))
-            .offdayList(Arrays.asList(
-                new PlaceCloseTime("한글날", "월~금", false)
-            ))
-            .menuList(Arrays.asList(
-                new Menu(5000L, true, "Coffee", "menuImg.url"),
-                new Menu(7000L, false, "Cake", "menuImg.url")
-            ))
-            .build();
+        Place place4 = new Place("Place 4",
+            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+            "menuImg.url", "일식",
+            "Address 1|Address 2|Address 3",
+            "50.0", "50.0",
+            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+            Arrays.asList("삼겹살|5000|false|menu.url|description",
+                "돼지찌개|7000|true|menu.url|description"),
+            LocalDateTime.of(2024, 3, 28, 5, 30)
+        );
 
         entityManager.persist(place1);
         entityManager.persist(place2);
@@ -145,8 +112,8 @@ class PlaceRepositoryTest {
         entityManager.persist(influencer1);
         entityManager.persist(influencer2);
 
-        Video video1 = new Video("video.url", influencer1, place1);
-        Video video2 = new Video("video.url", influencer2, place4);
+        Video video1 = Video.from(influencer1, place1, "video.url");
+        Video video2 = Video.from(influencer2, place4, "video.url");
 
         entityManager.persist(video1);
         entityManager.persist(video2);
@@ -158,10 +125,10 @@ class PlaceRepositoryTest {
         // given
 
         // when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistance(
-                longitude,
-                latitude,
-                pageable
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistance(
+            longitude,
+            latitude,
+            pageable
         );
         System.out.println(foundPlaces);
 
@@ -183,7 +150,7 @@ class PlaceRepositoryTest {
         List<String> influencers = null;
 
         // when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -206,12 +173,12 @@ class PlaceRepositoryTest {
     @DisplayName("카테고리(japan, cafe) 필터링")
     public void test3() {
         // given
-        List<String> categories = Stream.of(Category.CAFE, Category.JAPANESE)
-            .map(Enum::toString)  // Enum 값을 문자열로 변환
-            .toList();
+        List<String> categories = Arrays.asList(Category.CAFE.getName(),
+            Category.JAPANESE.getName());
+
         List<String> influencers = null;
         // when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -236,12 +203,10 @@ class PlaceRepositoryTest {
     @DisplayName("카테고리(japan) 필터링")
     public void test4() {
         // given
-        List<String> categories = Stream.of(Category.JAPANESE)
-            .map(Enum::toString)
-            .toList();
+        List<String> categories = Arrays.asList(Category.JAPANESE.getName());
         List<String> influencers = null;
         // when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -268,7 +233,7 @@ class PlaceRepositoryTest {
         List<String> influencers = List.of("성시경", "아이유");
 
         //when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -294,7 +259,7 @@ class PlaceRepositoryTest {
         List<String> influencers = List.of("성시경");
 
         //when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -315,13 +280,11 @@ class PlaceRepositoryTest {
     @DisplayName("카테고리(Japanese), 인플루언서(아이유) 필터링")
     public void test7() {
         // given
-        List<String> categories = Stream.of(Category.JAPANESE)
-            .map(Enum::toString)
-            .toList();
+        List<String> categories = Arrays.asList(Category.JAPANESE.getName());
         List<String> influencers = List.of("아이유");
 
         //when
-        Page<Place> foundPlaces = placeRepository.getPlacesByDistanceAndFilters(
+        Page<Place> foundPlaces = placeRepository.findPlacesByDistanceAndFilters(
             topLeftLongitude,
             topLeftLatitude,
             bottomRightLongitude,
@@ -337,6 +300,4 @@ class PlaceRepositoryTest {
         assertThat(foundPlaces).hasSize(1);
         assertThat(foundPlaces.getContent().get(0).getName()).isEqualTo("Place 4");
     }
-
- */
 }

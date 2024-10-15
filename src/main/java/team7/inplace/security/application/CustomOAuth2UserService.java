@@ -10,7 +10,6 @@ import team7.inplace.security.application.dto.CustomOAuth2User;
 import team7.inplace.security.application.dto.KakaoOAuthResponse;
 import team7.inplace.user.application.UserService;
 import team7.inplace.user.application.dto.UserCommand;
-import team7.inplace.user.domain.Role;
 
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
@@ -28,8 +27,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 kakaoOAuthResponse.getEmail());
             return CustomOAuth2User.makeExistUser(userInfo);
         }
-        userService.registerUser(UserCommand.Create.of(kakaoOAuthResponse));
-        return CustomOAuth2User.makeNewUser(kakaoOAuthResponse,
-            Role.addRole(Role.USER, Role.FIRST_USER));
+        UserCommand.Info userInfo = userService.registerUser(
+            UserCommand.Create.of(kakaoOAuthResponse));
+        return CustomOAuth2User.makeNewUser(userInfo);
     }
 }
