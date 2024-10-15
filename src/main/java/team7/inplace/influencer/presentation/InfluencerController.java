@@ -32,8 +32,8 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     public ResponseEntity<InfluencerListResponse> getAllInfluencers() {
         List<InfluencerInfo> influencersDtoList = influencerService.getAllInfluencers();
         List<InfluencerResponse> influencers = influencersDtoList.stream()
-                .map(InfluencerResponse::from)
-                .toList();
+            .map(InfluencerResponse::from)
+            .toList();
         InfluencerListResponse response = new InfluencerListResponse(influencers);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -41,23 +41,21 @@ public class InfluencerController implements InfluencerControllerApiSpec {
 
     @PostMapping()
     public ResponseEntity<Long> createInfluencer(@RequestBody InfluencerRequest request) {
-        InfluencerCommand influencerCommand = new InfluencerCommand(
-                request.influencerName(),
-                request.influencerImgUrl(),
-                request.influencerJob()
-        );
+        InfluencerCommand influencerCommand = InfluencerRequest.to(request);
         Long savedId = influencerService.createInfluencer(influencerCommand);
 
         return new ResponseEntity<>(savedId, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Long> updateInfluencer(@PathVariable Long id,
-                                                 @RequestBody InfluencerRequest request) {
+    public ResponseEntity<Long> updateInfluencer(
+        @PathVariable Long id,
+        @RequestBody InfluencerRequest request
+    ) {
         InfluencerCommand influencerCommand = new InfluencerCommand(
-                request.influencerName(),
-                request.influencerImgUrl(),
-                request.influencerJob()
+            request.influencerName(),
+            request.influencerImgUrl(),
+            request.influencerJob()
         );
         Long updatedId = influencerService.updateInfluencer(id, influencerCommand);
 
