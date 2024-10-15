@@ -48,7 +48,7 @@ public class VideoController implements VideoControllerApiSpec {
             @PageableDefault(page = 0, size = 10) Pageable pageable
     ) {
         List<VideoResponse> videoResponses = new ArrayList<>();
-        return new ResponseEntity<>(new PageImpl<>(videoResponses), HttpStatus.OK);
+        return new ResponseEntity<>(new PageImpl<>(videoResponses, pageable, 0), HttpStatus.OK);
     }
 
     // 토큰 필요 메서드
