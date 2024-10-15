@@ -9,7 +9,7 @@ import team7.inplace.influencer.presentation.dto.InfluencerRequest;
 
 public interface InfluencerControllerApiSpec {
 
-    @Operation(summary = "인플루언서들 리스트 반환", description = "토큰 유무에 따라 좋아요한 인플루언서 반영 여부가 다릅니다.")
+    @Operation(summary = "인플루언서들 리스트 반환", description = "토큰이 있는 경우 좋아요된 인플루언서가 먼저 반환됩니다.")
     ResponseEntity<InfluencerListResponse> getAllInfluencers();
 
     @Operation(summary = "인플루언서 등록", description = "새 인플루언서를 등록합니다.")

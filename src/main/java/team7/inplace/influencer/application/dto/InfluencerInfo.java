@@ -10,13 +10,13 @@ public record InfluencerInfo(
     boolean likes
 ) {
 
-    public static InfluencerInfo from(Influencer influencer) {
+    public static InfluencerInfo from(Influencer influencer, boolean isLiked) {
         return new InfluencerInfo(
             influencer.getId(),
             influencer.getName(),
             influencer.getImgUrl(),
             influencer.getJob(),
-            false // 좋아요 기능 추가할 때 로직 추가 예정
+            isLiked
         );
     }
 }

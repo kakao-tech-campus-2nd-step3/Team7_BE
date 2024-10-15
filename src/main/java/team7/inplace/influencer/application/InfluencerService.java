@@ -1,6 +1,8 @@
 package team7.inplace.influencer.application;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,9 +30,31 @@ public class InfluencerService {
 
     @Transactional(readOnly = true)
     public List<InfluencerInfo> getAllInfluencers() {
-        return influencerRepository.findAll().stream()
-                .map(InfluencerInfo::from)
+        List<Influencer> influencers = influencerRepository.findAll();
+        Long userId = AuthorizationUtil.getUserId();
+
+        // 로그인 안된 경우, likes를 모두 false로 설정
+        if (userId == null) {
+            return influencers.stream()
+                .map(influencer -> InfluencerInfo.from(influencer, false))
                 .toList();
+        }
+
+        // 로그인 된 경우
+        Set<Long> likedInfluencerIds = favoriteRepository.findByUserId(userId).stream()
+            .map(FavoriteInfluencer::getInfluencer)
+            .map(Influencer::getId)
+            .collect(Collectors.toSet());
+
+        List<InfluencerInfo> influencerInfos = influencers.stream()
+            .map(influencer -> {
+                boolean isLiked = likedInfluencerIds.contains(influencer.getId());
+                return InfluencerInfo.from(influencer, isLiked);
+            })
+            .sorted((a, b) -> Boolean.compare(b.likes(), a.likes()))
+            .toList();
+
+        return influencerInfos;
     }
 
     @Transactional
@@ -43,7 +67,7 @@ public class InfluencerService {
     public Long updateInfluencer(Long id, InfluencerCommand command) {
         Influencer influencer = influencerRepository.findById(id).orElseThrow();
         influencer.update(command.influencerName(), command.influencerImgUrl(),
-                command.influencerJob());
+            command.influencerJob());
 
         return influencer.getId();
     }
@@ -58,7 +82,7 @@ public class InfluencerService {
     @Transactional
     public void likeToInfluencer(InfluencerRequestParam param) {
         String username = AuthorizationUtil.getUsername();
-        if (StringUtils.hasText(username)) {
+        if (!StringUtils.hasText(username)) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
 
