@@ -78,11 +78,14 @@ public class InfluencerServiceTest {
         given(AuthorizationUtil.getUserId()).willReturn(userId);
 
         // 2, 3번째 인플루언서 좋아요로 설정
+        FavoriteInfluencer favoriteInfluencer1 = new FavoriteInfluencer(user, influencer2);
+        favoriteInfluencer1.updateLike(true);
+        FavoriteInfluencer favoriteInfluencer2 = new FavoriteInfluencer(user, influencer3);
+        favoriteInfluencer2.updateLike(true);
         given(favoriteInfluencerRepository.findByUserId(userId)).willReturn(Arrays.asList(
-            new FavoriteInfluencer(user, influencer2),
-            new FavoriteInfluencer(user, influencer3)
+            favoriteInfluencer1, favoriteInfluencer2
         ));
-
+        
         List<InfluencerInfo> influencerInfoList = influencerService.getAllInfluencers();
 
         assertThat(influencerInfoList).hasSize(3);
