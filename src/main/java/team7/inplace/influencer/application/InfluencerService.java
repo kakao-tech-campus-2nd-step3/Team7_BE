@@ -2,7 +2,6 @@ package team7.inplace.influencer.application;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,11 +40,7 @@ public class InfluencerService {
         }
 
         // 로그인 된 경우
-        Set<Long> likedInfluencerIds = favoriteRepository.findByUserId(userId).stream()
-            .filter(FavoriteInfluencer::isLiked)
-            .map(FavoriteInfluencer::getInfluencer)
-            .map(Influencer::getId)
-            .collect(Collectors.toSet());
+        Set<Long> likedInfluencerIds = favoriteRepository.findLikedInfluencerIdsByUserId(userId);
 
         List<InfluencerInfo> influencerInfos = influencers.stream()
             .map(influencer -> {
