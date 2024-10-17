@@ -1,6 +1,7 @@
 package team7.inplace.place.application.command;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import io.micrometer.common.util.StringUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,70 +13,72 @@ import team7.inplace.video.presentation.dto.VideoSearchParams;
 public class PlacesCommand {
 
     public record PlacesCoordinateCommand(
-            String topLeftLongitude,
-            String topLeftLatitude,
-            String bottomRightLongitude,
-            String bottomRightLatitude,
-            String longitude,
-            String latitude,
-            Pageable pageable
+        String topLeftLongitude,
+        String topLeftLatitude,
+        String bottomRightLongitude,
+        String bottomRightLatitude,
+        String longitude,
+        String latitude,
+        Pageable pageable
     ) {
-        public static PlacesCoordinateCommand from(VideoSearchParams videoSearchParams, Pageable pageable) {
+
+        public static PlacesCoordinateCommand from(VideoSearchParams videoSearchParams,
+            Pageable pageable) {
             return new PlacesCoordinateCommand(
-                    videoSearchParams.topLeftLongitude(),
-                    videoSearchParams.topLeftLatitude(),
-                    videoSearchParams.bottomRightLatitude(),
-                    videoSearchParams.bottomRightLatitude(),
-                    videoSearchParams.longitude(),
-                    videoSearchParams.latitude(),
-                    pageable
+                videoSearchParams.topLeftLongitude(),
+                videoSearchParams.topLeftLatitude(),
+                videoSearchParams.bottomRightLatitude(),
+                videoSearchParams.bottomRightLatitude(),
+                videoSearchParams.longitude(),
+                videoSearchParams.latitude(),
+                pageable
             );
         }
     }
 
     public record PlacesFilterParamsCommand(
-            String categories,
-            String influencers
+        String categories,
+        String influencers
     ) {
 
         public boolean isCategoryFilterExists() {
-            return categories != null
-                    && !categories.isEmpty();
+            return StringUtils.isNotEmpty(categories);
         }
 
         public boolean isInfluencerFilterExists() {
-            return influencers != null
-                    && !influencers.isEmpty();
+            return StringUtils.isNotEmpty(influencers);
         }
     }
 
     public record Create(
-            String placeName,
-            String facility,
-            String menuImgUrl,
-            String category,
-            String address,
-            String x,
-            String y,
-            List<OffDay> offDays,
-            List<OpenTime> openPeriods,
-            List<Menu> menus,
-            LocalDateTime menuUpdatedAt,
-            List<String> menuboardphotourlList
+        String placeName,
+        String facility,
+        String menuImgUrl,
+        String category,
+        String address,
+        String x,
+        String y,
+        List<OffDay> offDays,
+        List<OpenTime> openPeriods,
+        List<Menu> menus,
+        LocalDateTime menuUpdatedAt,
+        List<String> menuboardphotourlList
     ) {
+
         public Place toEntity() {
             var offDaysParam = offDays.stream()
-                    .map(OffDay::toEntityParams)
-                    .toList();
+                .map(OffDay::toEntityParams)
+                .toList();
             var openPeriodsParam = openPeriods.stream()
-                    .map(OpenTime::toEntityParams)
-                    .toList();
+                .map(OpenTime::toEntityParams)
+                .toList();
             var menusParam = menus.stream()
-                    .map(Menu::toEntityParams)
-                    .toList();
+                .map(Menu::toEntityParams)
+                .toList();
 
-            return new Place(placeName, facility, menuImgUrl, category, address, x, y, offDaysParam, openPeriodsParam,
-                    menusParam, menuUpdatedAt, menuboardphotourlList);
+            return new Place(placeName, facility, menuImgUrl, category, address, x, y, offDaysParam,
+                openPeriodsParam,
+                menusParam, menuUpdatedAt, menuboardphotourlList);
         }
 
         public static Create from(JsonNode locationNode, JsonNode placeNode) {
@@ -86,44 +89,55 @@ public class PlacesCommand {
             var basicInfo = placeNode.get("basicInfo");
 
             String placeName =
-                    basicInfo.has("placenamefull") ? basicInfo.get("placenamefull").asText() : "Unknown Place";
+                basicInfo.has("placenamefull") ? basicInfo.get("placenamefull").asText()
+                    : "Unknown Place";
             String facility = basicInfo.has("facilityInfo")
-                    ? basicInfo.get("facilityInfo").toString() : "";
+                ? basicInfo.get("facilityInfo").toString() : "";
 
-            String menuImgUrl = basicInfo.has("mainphotourl") ? basicInfo.get("mainphotourl").asText() : "";
-            String category = basicInfo.has("category") && basicInfo.get("category").has("cate1name")
+            String menuImgUrl =
+                basicInfo.has("mainphotourl") ? basicInfo.get("mainphotourl").asText() : "";
+            String category =
+                basicInfo.has("category") && basicInfo.get("category").has("cate1name")
                     ? basicInfo.get("category").get("cate1name").asText() : "";
             String address =
-                    basicInfo.has("address") && basicInfo.get("address").has("region") && basicInfo.get("address")
-                            .get("region").has("newaddrfullname")
-                            ? basicInfo.get("address").get("region").get("newaddrfullname").asText()
-                            : "";
+                basicInfo.has("address") && basicInfo.get("address").has("region") && basicInfo.get(
+                        "address")
+                    .get("region").has("newaddrfullname")
+                    ? basicInfo.get("address").get("region").get("newaddrfullname").asText()
+                    : "";
             String addressDetail =
-                    basicInfo.has("address") && basicInfo.get("address").has("newaddr") && basicInfo.get("address")
-                            .get("newaddr").has("newaddrfull")
-                            ? basicInfo.get("address").get("newaddr").get("newaddrfull").asText() : "";
+                basicInfo.has("address") && basicInfo.get("address").has("newaddr")
+                    && basicInfo.get("address")
+                    .get("newaddr").has("newaddrfull")
+                    ? basicInfo.get("address").get("newaddr").get("newaddrfull").asText() : "";
 
-            String x = locationNode.has("documents") && locationNode.get("documents").get(0).has("x")
+            String x =
+                locationNode.has("documents") && locationNode.get("documents").get(0).has("x")
                     ? locationNode.get("documents").get(0).get("x").asText() : "0.0";
-            String y = locationNode.has("documents") && locationNode.get("documents").get(0).has("y")
+            String y =
+                locationNode.has("documents") && locationNode.get("documents").get(0).has("y")
                     ? locationNode.get("documents").get(0).get("y").asText() : "0.0";
 
             var timeList = basicInfo.has("openHour") ? basicInfo.get("openHour") : null;
             List<OpenTime> openPeriods = Objects.nonNull(timeList) ?
-                    extractOpenPeriods(timeList.has("periodList") ? timeList.get("periodList") : null)
-                    : new ArrayList<>();
+                extractOpenPeriods(timeList.has("periodList") ? timeList.get("periodList") : null)
+                : new ArrayList<>();
             List<OffDay> offDays = Objects.nonNull(timeList) ?
-                    extractOffDays(timeList.has("offdayList") ? timeList.get("offdayList") : null) : new ArrayList<>();
+                extractOffDays(timeList.has("offdayList") ? timeList.get("offdayList") : null)
+                : new ArrayList<>();
 
             var menuNodes = placeNode.has("menuInfo") ? placeNode.get("menuInfo") : null;
             var menus = extractMenus(menuNodes);
-            var menuUpdatedAt = menuNodes != null && menuNodes.has("menuUpdatedAt") ? LocalDateTime.parse(
+            var menuUpdatedAt =
+                menuNodes != null && menuNodes.has("menuUpdatedAt") ? LocalDateTime.parse(
                     placeNode.get("menuInfo").get("timeexp").asText()) : LocalDateTime.now();
-            var menuBoardPhotoUrlList = menuNodes != null && menuNodes.has("menuboardphotourlList") ?
+            var menuBoardPhotoUrlList =
+                menuNodes != null && menuNodes.has("menuboardphotourlList") ?
                     menuNodes.findValuesAsText("menuboardphotourlList") : new ArrayList<String>();
 
-            return new Create(placeName, facility, menuImgUrl, category, address + " " + addressDetail, x, y, offDays,
-                    openPeriods, menus, menuUpdatedAt, menuBoardPhotoUrlList);
+            return new Create(placeName, facility, menuImgUrl, category,
+                address + " " + addressDetail, x, y, offDays,
+                openPeriods, menus, menuUpdatedAt, menuBoardPhotoUrlList);
         }
 
         private static List<OpenTime> extractOpenPeriods(JsonNode openTimeList) {
@@ -163,17 +177,18 @@ public class PlacesCommand {
     }
 
     public record OffDay(
-            String holidayName,
-            String weekAndDay,
-            String temporaryHolidays
+        String holidayName,
+        String weekAndDay,
+        String temporaryHolidays
     ) {
+
         public static OffDay from(JsonNode offDayNode) {
             String holidayName = offDayNode != null && offDayNode.has("holidayName")
-                    ? offDayNode.get("holidayName").asText() : "Unknown Holiday";
+                ? offDayNode.get("holidayName").asText() : "Unknown Holiday";
             String weekAndDay = offDayNode != null && offDayNode.has("weekAndDay")
-                    ? offDayNode.get("weekAndDay").asText() : "Unknown Week And Day";
+                ? offDayNode.get("weekAndDay").asText() : "Unknown Week And Day";
             String temporaryHolidays = offDayNode != null && offDayNode.has("temporaryHolidays")
-                    ? offDayNode.get("temporaryHolidays").asText() : "No Temporary Holidays";
+                ? offDayNode.get("temporaryHolidays").asText() : "No Temporary Holidays";
             return new OffDay(holidayName, weekAndDay, temporaryHolidays);
         }
 
@@ -183,17 +198,18 @@ public class PlacesCommand {
     }
 
     public record OpenTime(
-            String timeName,
-            String timeSE,
-            String dayOfWeek
+        String timeName,
+        String timeSE,
+        String dayOfWeek
     ) {
+
         public static OpenTime from(JsonNode openTimeNode) {
             String timeName = openTimeNode != null && openTimeNode.has("timeName")
-                    ? openTimeNode.get("timeName").asText() : "Unknown Time Name";
+                ? openTimeNode.get("timeName").asText() : "Unknown Time Name";
             String timeSE = openTimeNode != null && openTimeNode.has("timeSE")
-                    ? openTimeNode.get("timeSE").asText() : "Unknown Time Range";
+                ? openTimeNode.get("timeSE").asText() : "Unknown Time Range";
             String dayOfWeek = openTimeNode != null && openTimeNode.has("dayOfWeek")
-                    ? openTimeNode.get("dayOfWeek").asText() : "Unknown Day Of Week";
+                ? openTimeNode.get("dayOfWeek").asText() : "Unknown Day Of Week";
             return new OpenTime(timeName, timeSE, dayOfWeek);
         }
 
@@ -203,12 +219,13 @@ public class PlacesCommand {
     }
 
     public record Menu(
-            String menuName,
-            String menuPrice,
-            boolean recommend,
-            String menuImgUrl,
-            String description
+        String menuName,
+        String menuPrice,
+        boolean recommend,
+        String menuImgUrl,
+        String description
     ) {
+
         public static Menu from(JsonNode menuNode) {
             if (Objects.isNull(menuNode)) {
                 return new Menu("Unknown Menu", "0", false, "", "");
@@ -223,7 +240,8 @@ public class PlacesCommand {
         }
 
         public String toEntityParams() {
-            return menuName + "|" + menuPrice + "|" + recommend + "|" + menuImgUrl + "|" + description;
+            return menuName + "|" + menuPrice + "|" + recommend + "|" + menuImgUrl + "|"
+                + description;
         }
     }
 }
