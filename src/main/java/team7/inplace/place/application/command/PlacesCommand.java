@@ -60,7 +60,8 @@ public class PlacesCommand {
             List<OffDay> offDays,
             List<OpenTime> openPeriods,
             List<Menu> menus,
-            LocalDateTime menuUpdatedAt
+            LocalDateTime menuUpdatedAt,
+            List<String> menuboardphotourlList
     ) {
         public Place toEntity() {
             var offDaysParam = offDays.stream()
@@ -74,7 +75,7 @@ public class PlacesCommand {
                     .toList();
 
             return new Place(placeName, facility, menuImgUrl, category, address, x, y, offDaysParam, openPeriodsParam,
-                    menusParam, menuUpdatedAt);
+                    menusParam, menuUpdatedAt, menuboardphotourlList);
         }
 
         public static Create from(JsonNode locationNode, JsonNode placeNode) {
@@ -87,16 +88,16 @@ public class PlacesCommand {
             String placeName =
                     basicInfo.has("placenamefull") ? basicInfo.get("placenamefull").asText() : "Unknown Place";
             String facility = basicInfo.has("facilityInfo")
-                    ? basicInfo.get("facilityInfo").toString() : "N/A";
+                    ? basicInfo.get("facilityInfo").toString() : "";
 
             String menuImgUrl = basicInfo.has("mainphotourl") ? basicInfo.get("mainphotourl").asText() : "";
             String category = basicInfo.has("category") && basicInfo.get("category").has("cate1name")
-                    ? basicInfo.get("category").get("cate1name").asText() : "Unknown Category";
+                    ? basicInfo.get("category").get("cate1name").asText() : "";
             String address =
                     basicInfo.has("address") && basicInfo.get("address").has("region") && basicInfo.get("address")
                             .get("region").has("newaddrfullname")
                             ? basicInfo.get("address").get("region").get("newaddrfullname").asText()
-                            : "Unknown Address";
+                            : "";
             String addressDetail =
                     basicInfo.has("address") && basicInfo.get("address").has("newaddr") && basicInfo.get("address")
                             .get("newaddr").has("newaddrfull")
@@ -114,13 +115,15 @@ public class PlacesCommand {
             List<OffDay> offDays = Objects.nonNull(timeList) ?
                     extractOffDays(timeList.has("offdayList") ? timeList.get("offdayList") : null) : new ArrayList<>();
 
-            var menus = extractMenus(placeNode.has("menuInfo") ? placeNode.get("menuInfo") : null);
-            var menuUpdatedAt = placeNode.has("menuInfo") && placeNode.get("menuInfo").has("menuUpdatedAt")
-                    ? LocalDateTime.parse(placeNode.get("menuInfo").get("timeexp").asText())
-                    : LocalDateTime.now();
+            var menuNodes = placeNode.has("menuInfo") ? placeNode.get("menuInfo") : null;
+            var menus = extractMenus(menuNodes);
+            var menuUpdatedAt = menuNodes != null && menuNodes.has("menuUpdatedAt") ? LocalDateTime.parse(
+                    placeNode.get("menuInfo").get("timeexp").asText()) : LocalDateTime.now();
+            var menuBoardPhotoUrlList = menuNodes != null && menuNodes.has("menuboardphotourlList") ?
+                    menuNodes.findValuesAsText("menuboardphotourlList") : new ArrayList<String>();
 
             return new Create(placeName, facility, menuImgUrl, category, address + " " + addressDetail, x, y, offDays,
-                    openPeriods, menus, menuUpdatedAt);
+                    openPeriods, menus, menuUpdatedAt, menuBoardPhotoUrlList);
         }
 
         private static List<OpenTime> extractOpenPeriods(JsonNode openTimeList) {
