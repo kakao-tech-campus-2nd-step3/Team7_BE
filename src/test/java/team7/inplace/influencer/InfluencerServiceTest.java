@@ -8,9 +8,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
@@ -133,26 +131,5 @@ public class InfluencerServiceTest {
         influencerService.deleteInfluencer(1L);
 
         verify(influencerRepository, times(1)).delete(influencer);
-    }
-
-    @Test
-    public void test() {
-        List<Boolean> booleanList = new ArrayList<>();
-        booleanList.add(false);
-        booleanList.add(true);
-        booleanList.add(false);
-        booleanList.add(true);
-        booleanList.add(false);
-
-        // 정렬 전 리스트 출력
-        System.out.println("정렬 전: " + booleanList);
-
-        // 정렬: true 값이 앞에 오도록
-        List<Boolean> sortedList = booleanList.stream()
-            .sorted(Comparator.reverseOrder()) // reverseOrder()를 사용하여 true가 먼저 오게 함
-            .toList();
-
-        // 정렬 후 리스트 출력
-        System.out.println("정렬 후: " + sortedList);
     }
 }
