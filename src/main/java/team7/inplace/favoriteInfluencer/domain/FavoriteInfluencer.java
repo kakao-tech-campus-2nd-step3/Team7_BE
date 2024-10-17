@@ -36,19 +36,7 @@ public class FavoriteInfluencer {
     @Column
     private boolean isLiked = false;
 
-    public void check(boolean check) {
-        if (check) {
-            like();
-            return;
-        }
-        dislike();
-    }
-
-    private void like() {
-        this.isLiked = true;
-    }
-
-    private void dislike() {
-        this.isLiked = false;
+    public void updateLike(boolean like) {
+        this.isLiked = like;
     }
 }
