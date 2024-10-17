@@ -60,4 +60,13 @@ public class VideoController implements VideoControllerApiSpec {
                 .map(VideoResponse::from);
         return new ResponseEntity<>(videoResponses, HttpStatus.OK);
     }
+
+    @GetMapping("/null")
+    public ResponseEntity<Page<VideoResponse>> readPlaceNullVideo(
+            @PageableDefault(page = 0, size = 10) Pageable pageable
+    ) {
+        Page<VideoResponse> videoResponses = videoService.getPlaceNullVideo(pageable)
+                .map(VideoResponse::from);
+        return new ResponseEntity<>(videoResponses, HttpStatus.OK);
+    }
 }

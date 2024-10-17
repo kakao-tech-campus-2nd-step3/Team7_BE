@@ -43,4 +43,12 @@ public interface VideoControllerApiSpec {
     ResponseEntity<Page<VideoResponse>> readByInfluencer(
             @PageableDefault(page = 0, size = 10) Pageable pageable
     );
+
+    @Operation(
+            summary = "장소 정보가 없는 비디오 반환",
+            description = "장소 정보가 없는 비디오를 조회합니다."
+    )
+    ResponseEntity<Page<VideoResponse>> readPlaceNullVideo(
+            @PageableDefault(page = 0, size = 10) Pageable pageable
+    );
 }

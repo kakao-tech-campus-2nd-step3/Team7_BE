@@ -14,6 +14,8 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 
     Page<Video> findAllByOrderByIdDesc(Pageable pageable);
 
+    Page<Video> findAllByPlaceIsNull(Pageable pageable);
+
     Optional<Video> findTopByPlaceOrderByIdDesc(Place place);
 
     List<Video> findByPlaceIdIn(List<Long> placeIds);

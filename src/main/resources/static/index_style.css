@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+h1 {
+    color: #2e8b57; /* Dark green */
+    margin-top: 20px;
+}
+a, input[type="submit"], input[type="button"] {
+    display: inline-block;
+    margin: 20px 0;
+    padding: 10px 20px;
+    background-color: #3cb371; /* Medium sea green */
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+a:hover, input[type="submit"]:hover, input[type="button"]:hover {
+    background-color: #2e8b57; /* Dark green */
+}
+table {
+    border-collapse: collapse;
+    width: 80%;
+    max-width: 1000px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    background-color: white;
+    margin-bottom: 20px;
+}
+th, td {
+    padding: 15px;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+th {
+    background-color: #3cb371; /* Medium sea green */
+    color: white;
+}
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+img {
+    width: 100px;
+    height: 100px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+.form-inline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 5px; /* 두 div 태그 사이의 간격을 줄이기 위해 조정 */
+}
+.form-inline label {
+    margin-right: 10px;
+    flex: 1;
+    text-align: left;
+}
+.form-inline input[type="text"],
+.form-inline input[type="number"],
+.form-inline input[type="password"],
+.form-inline input[type="email"] {
+    flex: 2;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.header {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    padding: 10px;
+    background-color: #3cb371; /* Medium sea green */
+}
+.header-link {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+.header-link:hover {
+    color: #f5f5f5; /* Light color on hover */
+}

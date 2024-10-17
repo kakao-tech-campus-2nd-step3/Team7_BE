@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="KR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>인플레이스 어드민 페이지</title>
+    <link rel="stylesheet" href="/index_style.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="header" id="header">
+
+</div>
+<h1>Administrator Manage Page</h1>
+<table id="video-data">
+    <thead>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Url</th>
+            <th scope="col">PlaceId</th>
+            <th scope="col">PlaceName</th>
+        </tr>
+    </thead>
+
+    <tbody id="video-tbody">
+
+    </tbody>
+</table>
+
+<div>
+    <button id="prevPage">Previous</button>
+    <button id="search" onclick="getNullVideos(currentPage)">검색</button>
+    <button id="nextPage">Next</button>
+</div>
+</body>
+<script>
+    var currentPage = 0;
+    var pageSize = 10;
+    function getNullVideos(page){
+        $.ajax({
+            url: '/videos/null?page=' + page + '&size=' + pageSize,
+            method: 'GET',
+            success: function(data) {
+                var contents = data.content;
+                var tbody = $('#video-tbody');
+                tbody.empty(); // 초기화
+
+                // 데이터에 따라 테이블 행을 생성
+                contents.forEach(function(video) {
+                    imageUrl = "https://img.youtube.com/vi/" + getYouTubeVideoId(video.videoUrl) + "/0.jpg"
+                    // 한 행의 내용
+                    var row = `
+                        <tr>
+                            <td>${video.videoId}</td>
+                            <td><img src="${imageUrl}" alt="유튜브썸네일"></td>
+                            <td>${video.place.placeId}</td>
+                            <td>${video.place.placeName}</td>
+                        </tr>
+                    `;
+                    tbody.append(row);
+
+                    currentPage = data.number;
+
+                    $('#prevPage').prop('disabled', data.first);
+                    $('#nextPage').prop('disabled', data.last);
+                });
+            },
+            error: function(err) {
+                if(err.responseJSON){
+                    var s = JSON.stringify(err.responseJSON);
+                    alert(s);
+                }
+                else{
+                    alert("문제가 발생했습니다! 상태 코드 : " + err.status)
+                }
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        getNullVideos(currentPage);
+
+        $('#prevPage').click(function() {
+            if (currentPage > 0) {
+                getNullVideos(currentPage - 1);
+            }
+        });
+
+        $('#nextPage').click(function() {
+            getNullVideos(currentPage + 1);
+        });
+    });
+
+    function getYouTubeVideoId(url) {
+        const urlObj = new URL(url);  // Create a URL object from the input URL
+        return urlObj.searchParams.get('v');  // Extract the 'v' parameter from the query string
+    }
+</script>
+</html>
