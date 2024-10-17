@@ -15,7 +15,7 @@ import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
-import team7.inplace.influencer.presentation.dto.InfluencerRequestParam;
+import team7.inplace.influencer.presentation.dto.InfluencerLikeRequest;
 import team7.inplace.security.util.AuthorizationUtil;
 import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
@@ -80,7 +80,7 @@ public class InfluencerService {
     }
 
     @Transactional
-    public void likeToInfluencer(InfluencerRequestParam param) {
+    public void likeToInfluencer(InfluencerLikeRequest param) {
         String username = AuthorizationUtil.getUsername();
         if (!StringUtils.hasText(username)) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);

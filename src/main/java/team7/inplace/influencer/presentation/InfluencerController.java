@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
+import team7.inplace.influencer.presentation.dto.InfluencerLikeRequest;
 import team7.inplace.influencer.presentation.dto.InfluencerListResponse;
 import team7.inplace.influencer.presentation.dto.InfluencerRequest;
-import team7.inplace.influencer.presentation.dto.InfluencerRequestParam;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 
 @RequiredArgsConstructor
@@ -70,7 +69,7 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     }
 
     @PostMapping("/likes")
-    public ResponseEntity<Void> likeToInfluencer(@ModelAttribute InfluencerRequestParam param) {
+    public ResponseEntity<Void> likeToInfluencer(@RequestBody InfluencerLikeRequest param) {
         influencerService.likeToInfluencer(param);
         return new ResponseEntity<>(HttpStatus.OK);
     }
