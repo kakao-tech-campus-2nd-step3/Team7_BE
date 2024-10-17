@@ -42,4 +42,12 @@ public class Video {
     public static Video from(Influencer influencer, Place place, String videoUrl) {
         return new Video(influencer, place, videoUrl);
     }
+
+    public String getVideoUrl() {
+        return String.format("https://www.youtube.com/watch?v=%s", videoUrl);
+    }
+
+    public String getVideoUUID() {
+        return videoUrl;
+    }
 }
