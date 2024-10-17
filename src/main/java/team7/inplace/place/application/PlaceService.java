@@ -35,49 +35,57 @@ public class PlaceService {
         PlacesFilterParamsCommand placesFilterParamsCommand) {
 
         // categories와 influencers 필터 처리
-        List<String> categoryFilters = null;
-        List<String> influencerFilters = null;
+        List<String> categoryFilters = placesFilterParamsCommand.isCategoryFilterExists()
+            ? Arrays.stream(placesFilterParamsCommand.categories().split(",")).toList()
+            : null;
 
-        // 필터 값이 있을 경우에만 split 처리
-        if (placesFilterParamsCommand.isCategoryFilterExists()) {
-            categoryFilters = Arrays.stream(placesFilterParamsCommand.categories().split(","))
-                .toList();
-        }
-
-        if (placesFilterParamsCommand.isInfluencerFilterExists()) {
-            influencerFilters = Arrays.stream(placesFilterParamsCommand.influencers().split(","))
-                .toList();
-        }
+        List<String> influencerFilters = placesFilterParamsCommand.isInfluencerFilterExists()
+            ? Arrays.stream(placesFilterParamsCommand.influencers().split(",")).toList()
+            : null;
 
         // 주어진 좌표로 장소를 찾고, 해당 페이지의 결과를 가져옵니다.
         Page<Place> placesPage = getPlacesByDistance(placesCoordinateCommand, categoryFilters,
             influencerFilters);
 
         // Place ID 목록 추출
-        List<Long> placeIds = placesPage.getContent().stream()
-            .map(Place::getId)
-            .toList();
+        List<Long> placeIds = getPlaceIds(placesPage);
 
-        // influencer 조회와 PlaceInfo 변환
+        // influencer 조회 => video->Map(placeId, influencerName)
         List<Video> videos = videoRepository.findByPlaceIdIn(placeIds);
-        Map<Long, String> placeIdToInfluencerName = videos.stream()
-            .collect(Collectors.toMap(
-                video -> video.getPlace().getId(),
-                video -> video.getInfluencer().getName(),
-                (existing, replacement) -> existing
-            ));
+        Map<Long, String> placeIdToInfluencerName = getMapPlaceIdToInfluencerName(
+            videos);
 
         // PlaceInfo 생성
-        List<PlaceInfo> placeInfos = placesPage.getContent().stream()
+        List<PlaceInfo> placeInfos = convertToPlaceInfos(placesPage, placeIdToInfluencerName);
+
+        // PlaceInfo 리스트를 Page로 변환하여 반환
+        return new PageImpl<>(placeInfos, placesPage.getPageable(), placeInfos.size());
+    }
+
+    private static List<PlaceInfo> convertToPlaceInfos(Page<Place> placesPage,
+        Map<Long, String> placeIdToInfluencerName) {
+        return placesPage.getContent().stream()
             .map(place -> {
                 // map에서 조회되지 않은 placeId는 null로 처리
                 String influencerName = placeIdToInfluencerName.getOrDefault(place.getId(), null);
                 return PlaceInfo.of(place, influencerName);
             })
             .toList();
+    }
 
-        // PlaceInfo 리스트를 Page로 변환하여 반환
-        return new PageImpl<>(placeInfos, placesPage.getPageable(), placeInfos.size());
+    private static Map<Long, String> getMapPlaceIdToInfluencerName(List<Video> videos) {
+        return videos.stream()
+            .collect(Collectors.toMap(
+                video -> video.getPlace().getId(),
+                video -> video.getInfluencer().getName(),
+                (existing, replacement) -> existing
+            ));
+    }
+
+    private static List<Long> getPlaceIds(Page<Place> placesPage) {
+        return placesPage.getContent().stream()
+            .map(Place::getId)
+            .toList();
     }
 
     private Page<Place> getPlacesByDistance(
