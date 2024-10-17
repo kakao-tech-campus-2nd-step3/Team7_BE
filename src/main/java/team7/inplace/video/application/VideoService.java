@@ -70,6 +70,11 @@ public class VideoService {
         return videos.map(this::videoToInfo);
     }
 
+    public Page<VideoInfo> getPlaceNullVideo(Pageable pageable){
+        Page<Video> videos = videoRepository.findAllByPlaceIsNull(pageable);
+        return videos.map(this::videoToInfo);
+    }
+
     private VideoInfo videoToInfo(Video savedVideo) {
         Place place = savedVideo.getPlace();
         if(Objects.isNull(place)){
