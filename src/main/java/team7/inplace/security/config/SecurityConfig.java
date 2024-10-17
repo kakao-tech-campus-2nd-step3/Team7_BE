@@ -10,8 +10,10 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.filter.CorsFilter;
 import team7.inplace.security.application.CustomOAuth2UserService;
+import team7.inplace.security.entryPoint.LoginAuthenticationEntryPoint;
 import team7.inplace.security.filter.AuthorizationFilter;
 import team7.inplace.security.filter.ExceptionHandlingFilter;
+import team7.inplace.security.handler.CustomAccessDeniedHandler;
 import team7.inplace.security.handler.CustomFailureHandler;
 import team7.inplace.security.handler.CustomSuccessHandler;
 
@@ -25,14 +27,18 @@ public class SecurityConfig {
     private final AuthorizationFilter authorizationFilter;
     private final CustomFailureHandler customFailureHandler;
     private final CorsFilter corsFilter;
+    private final LoginAuthenticationEntryPoint loginAuthenticationEntryPoint;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
     public SecurityConfig(
-            CustomOAuth2UserService customOAuth2UserService,
-            CustomSuccessHandler customSuccessHandler,
-            ExceptionHandlingFilter exceptionHandlingFilter,
-            AuthorizationFilter authorizationFilter,
-            CustomFailureHandler customFailureHandler,
-            CorsFilter corsFilter
+        CustomOAuth2UserService customOAuth2UserService,
+        CustomSuccessHandler customSuccessHandler,
+        ExceptionHandlingFilter exceptionHandlingFilter,
+        AuthorizationFilter authorizationFilter,
+        CustomFailureHandler customFailureHandler,
+        CorsFilter corsFilter,
+        LoginAuthenticationEntryPoint loginAuthenticationEntryPoint,
+        CustomAccessDeniedHandler customAccessDeniedHandler
     ) {
         this.customOauth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
@@ -40,42 +46,48 @@ public class SecurityConfig {
         this.authorizationFilter = authorizationFilter;
         this.customFailureHandler = customFailureHandler;
         this.corsFilter = corsFilter;
+        this.loginAuthenticationEntryPoint = loginAuthenticationEntryPoint;
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http)
-            throws Exception {
+        throws Exception {
 
         //http 설정
         http.csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
-                .httpBasic(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
 
-                //authentication Service, Handler 설정
-                .oauth2Login((oauth2) -> oauth2
-                        .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
-                                .userService(customOauth2UserService)).successHandler(customSuccessHandler)
-                        .failureHandler(customFailureHandler))
+            //authentication Service, Handler 설정
+            .oauth2Login((oauth2) -> oauth2
+                .userInfoEndpoint((userInfoEndPointConfig) -> userInfoEndPointConfig
+                    .userService(customOauth2UserService)).successHandler(customSuccessHandler)
+                .failureHandler(customFailureHandler))
 
-                //authentication Filter 설정
-                .addFilterBefore(authorizationFilter,
-                        UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(exceptionHandlingFilter, AuthorizationFilter.class)
-                //authentication 경로 설정
-                .authorizeHttpRequests((auth) -> auth
-                        .anyRequest().permitAll())
-//                        .requestMatchers("/login/**").permitAll()
+            //authentication Filter 설정
+            .addFilterBefore(authorizationFilter,
+                UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(exceptionHandlingFilter, AuthorizationFilter.class)
+
+            .exceptionHandling((auth) -> auth
+                .authenticationEntryPoint(loginAuthenticationEntryPoint)
+                .accessDeniedHandler(customAccessDeniedHandler))
+            //authentication 경로 설정
+            .authorizeHttpRequests((auth) -> auth
+                    .anyRequest().permitAll()
 //                        .requestMatchers("/oauth2/**").permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/error").permitAll()
 //                        .requestMatchers("swagger-ui/**").permitAll()
 //                        .requestMatchers("/v3/api-docs/**").permitAll()
 //                        .anyRequest().permitAll())
-                //cors 설정
-                .addFilter(corsFilter)
-                //session 설정
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+            )
+            //cors 설정
+            .addFilter(corsFilter)
+            //session 설정
+            .sessionManagement((session) -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
