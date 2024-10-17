@@ -14,7 +14,7 @@ public record VideoResponse(
         return new VideoResponse(
                 videoInfo.videoId(),
                 videoInfo.videoAlias(),
-                "https://www.youtube.com/watch?v=" + videoInfo.videoUrl(),
+                videoInfo.videoUrl(),
                 videoInfo.place()
         );
     }
