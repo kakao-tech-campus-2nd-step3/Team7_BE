@@ -90,7 +90,8 @@ public class InfluencerService {
         User user = userRepository.findByUsername(username).orElseThrow();
         Influencer influencer = influencerRepository.findById(param.influencerId()).orElseThrow();
 
-        FavoriteInfluencer favorite = favoriteRepository.findByUserAndInfluencer(user, influencer)
+        FavoriteInfluencer favorite = favoriteRepository.findByUserIdAndInfluencerId(user.getId(),
+                influencer.getId())
             .orElseGet(() -> new FavoriteInfluencer(user, influencer)); // 존재하지 않으면 새로 생성
 
         favorite.updateLike(param.likes());
