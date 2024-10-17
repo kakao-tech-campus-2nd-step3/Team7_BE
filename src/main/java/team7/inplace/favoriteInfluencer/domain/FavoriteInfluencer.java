@@ -21,6 +21,7 @@ import team7.inplace.user.domain.User;
 @NoArgsConstructor(access = PROTECTED)
 @Entity
 public class FavoriteInfluencer {
+
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -33,7 +34,7 @@ public class FavoriteInfluencer {
     @JoinColumn(name = "influencer_id")
     private Influencer influencer;
     @Column
-    private boolean like = false;
+    private boolean isLiked = false;
 
     public void check(boolean check) {
         if (check) {
@@ -44,10 +45,10 @@ public class FavoriteInfluencer {
     }
 
     private void like() {
-        this.like = true;
+        this.isLiked = true;
     }
 
     private void dislike() {
-        this.like = false;
+        this.isLiked = false;
     }
 }
