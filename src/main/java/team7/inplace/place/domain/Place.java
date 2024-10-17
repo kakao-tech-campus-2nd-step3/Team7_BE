@@ -55,12 +55,16 @@ public class Place {
 
     private LocalDateTime menuUpdatedAt;
 
+    @ElementCollection
+    private List<String> menuboardphotourlList;
+
     public Place(String name, String facility, String menuImgsUrl, String category,
                  String address, String x, String y,
                  List<String> offDays,
                  List<String> openPeriods,
                  List<String> menus,
-                 LocalDateTime menuUpdatedAt) {
+                 LocalDateTime menuUpdatedAt,
+                 List<String> menuboardphotourlList) {
         this.name = name;
         this.facility = facility;
         this.menuImgUrl = menuImgsUrl;
@@ -77,5 +81,6 @@ public class Place {
                 .map(Menu::of)
                 .toList();
         this.menuUpdatedAt = menuUpdatedAt;
+        this.menuboardphotourlList = menuboardphotourlList;
     }
 }
