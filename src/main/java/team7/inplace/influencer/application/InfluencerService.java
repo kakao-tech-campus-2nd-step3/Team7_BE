@@ -42,6 +42,7 @@ public class InfluencerService {
 
         // 로그인 된 경우
         Set<Long> likedInfluencerIds = favoriteRepository.findByUserId(userId).stream()
+            .filter(FavoriteInfluencer::isLiked)
             .map(FavoriteInfluencer::getInfluencer)
             .map(Influencer::getId)
             .collect(Collectors.toSet());
@@ -89,8 +90,10 @@ public class InfluencerService {
         User user = userRepository.findByUsername(username).orElseThrow();
         Influencer influencer = influencerRepository.findById(param.influencerId()).orElseThrow();
 
-        FavoriteInfluencer favorite = new FavoriteInfluencer(user, influencer);
-        favorite.check(param.likes());
+        FavoriteInfluencer favorite = favoriteRepository.findByUserAndInfluencer(user, influencer)
+            .orElseGet(() -> new FavoriteInfluencer(user, influencer)); // 존재하지 않으면 새로 생성
+
+        favorite.updateLike(param.likes());
         favoriteRepository.save(favorite);
     }
 }
