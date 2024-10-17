@@ -63,7 +63,11 @@ class PlaceRepositoryTest {
             Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
             Arrays.asList("삼겹살|5000|false|menu.url|description",
                 "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30)
+            LocalDateTime.of(2024, 3, 28, 5, 30),
+            Arrays.asList(
+                "menuBoard1.url",
+                "menuBoard2.url"
+            )
         );
 
         Place place2 = new Place("Place 2",
@@ -75,7 +79,11 @@ class PlaceRepositoryTest {
             Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
             Arrays.asList("삼겹살|5000|false|menu.url|description",
                 "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30)
+            LocalDateTime.of(2024, 3, 28, 5, 30),
+            Arrays.asList(
+                "menuBoard1.url",
+                "menuBoard2.url"
+            )
         );
 
         Place place3 = new Place("Place 3",
@@ -87,7 +95,11 @@ class PlaceRepositoryTest {
             Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
             Arrays.asList("삼겹살|5000|false|menu.url|description",
                 "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30)
+            LocalDateTime.of(2024, 3, 28, 5, 30),
+            Arrays.asList(
+                "menuBoard1.url",
+                "menuBoard2.url"
+            )
         );
 
         Place place4 = new Place("Place 4",
@@ -99,7 +111,11 @@ class PlaceRepositoryTest {
             Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
             Arrays.asList("삼겹살|5000|false|menu.url|description",
                 "돼지찌개|7000|true|menu.url|description"),
-            LocalDateTime.of(2024, 3, 28, 5, 30)
+            LocalDateTime.of(2024, 3, 28, 5, 30),
+            Arrays.asList(
+                "menuBoard1.url",
+                "menuBoard2.url"
+            )
         );
 
         entityManager.persist(place1);
