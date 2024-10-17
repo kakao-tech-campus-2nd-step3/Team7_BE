@@ -11,6 +11,7 @@ import static org.mockito.Mockito.verify;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -82,10 +83,9 @@ public class InfluencerServiceTest {
         favoriteInfluencer1.updateLike(true);
         FavoriteInfluencer favoriteInfluencer2 = new FavoriteInfluencer(user, influencer3);
         favoriteInfluencer2.updateLike(true);
-        given(favoriteInfluencerRepository.findByUserId(userId)).willReturn(Arrays.asList(
-            favoriteInfluencer1, favoriteInfluencer2
-        ));
-        
+        given(favoriteInfluencerRepository.findLikedInfluencerIdsByUserId(userId)).willReturn(
+            Set.of(2L, 3L));
+
         List<InfluencerInfo> influencerInfoList = influencerService.getAllInfluencers();
 
         assertThat(influencerInfoList).hasSize(3);
