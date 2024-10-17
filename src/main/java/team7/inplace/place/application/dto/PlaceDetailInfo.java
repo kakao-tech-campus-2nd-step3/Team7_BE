@@ -1,5 +1,6 @@
 package team7.inplace.place.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
@@ -45,6 +46,7 @@ public record PlaceDetailInfo(
 
     public record MenuInfos(
         List<MenuInfo> menuList,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime timeExp
     ) {
 
