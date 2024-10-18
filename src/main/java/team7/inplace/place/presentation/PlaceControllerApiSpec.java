@@ -1,6 +1,8 @@
 package team7.inplace.place.presentation;
 
 import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,8 +22,7 @@ public interface PlaceControllerApiSpec {
         @RequestParam String bottomRightLatitude,
         @RequestParam(required = false) String categories,
         @RequestParam(required = false) String influencers,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size
+        @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 
     @Operation(summary = "카테고리 조회", description = "장소의 카테고리 목록을 조회합니다.")

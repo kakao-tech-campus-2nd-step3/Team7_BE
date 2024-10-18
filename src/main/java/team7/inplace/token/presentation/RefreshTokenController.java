@@ -18,7 +18,7 @@ import team7.inplace.token.application.dto.TokenCommand.ReIssued;
 
 @RestController
 @RequiredArgsConstructor
-public class RefreshTokenController {
+public class RefreshTokenController implements RefreshTokenControllerApiSpec {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenFacade refreshTokenFacade;
