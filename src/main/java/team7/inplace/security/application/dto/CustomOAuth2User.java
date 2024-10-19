@@ -13,11 +13,12 @@ import team7.inplace.user.domain.Role;
 public record CustomOAuth2User(
     String username,
     Long id,
+    String roles,
     Collection<GrantedAuthority> authorities
 ) implements OAuth2User {
 
     public CustomOAuth2User(String username, Long id, String roles) {
-        this(username, id, createAuthorities(roles));
+        this(username, id, roles, createAuthorities(roles));
     }
 
     private static Collection<GrantedAuthority> createAuthorities(String roles) {
@@ -47,13 +48,17 @@ public record CustomOAuth2User(
         return username;
     }
 
+    public String getRegistrationId() {
+        return "kakao";
+    }
+
     public static CustomOAuth2User makeExistUser(UserCommand.Info user) {
         return new CustomOAuth2User(user.username(), user.id(), user.role().getRoles());
     }
 
-    public static CustomOAuth2User makeNewUser(KakaoOAuthResponse kakaoOAuthResponse,
-        String roles) {
-        return new CustomOAuth2User(kakaoOAuthResponse.getEmail(), null, roles);
+    public static CustomOAuth2User makeNewUser(UserCommand.Info user) {
+        return new CustomOAuth2User(user.username(), user.id(),
+            Role.addRole(Role.USER, Role.FIRST_USER));
     }
 
     public boolean isFirstUser() {

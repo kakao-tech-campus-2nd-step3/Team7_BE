@@ -1,5 +1,6 @@
 package team7.inplace.security.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import team7.inplace.security.filter.AuthorizationFilter;
@@ -15,7 +16,7 @@ public class SecurityFilterConfig {
     }
 
     @Bean
-    public ExceptionHandlingFilter exceptionHandlingFilter() {
-        return new ExceptionHandlingFilter();
+    public ExceptionHandlingFilter exceptionHandlingFilter(ObjectMapper objectMapper) {
+        return new ExceptionHandlingFilter(objectMapper);
     }
 }

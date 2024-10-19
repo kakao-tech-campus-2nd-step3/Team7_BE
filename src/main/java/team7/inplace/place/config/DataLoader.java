@@ -15,76 +15,73 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        // 더미 데이터 생성
-//        Place place1 = Place.builder()
-//            .name("Place 1")
-//            .pet(false)
-//            .wifi(true)
-//            .parking(false)
-//            .fordisabled(true)
-//            .nursery(false)
-//            .smokingroom(false)
-//            .address(new Address("Address 1", "Address 2", "Address 3"))
-//            .menuImgUrl("menu.jpg")
-//            .category(Category.CAFE)
-//            .coordinate(new Coordinate("127.0", "37.0"))
-//            .timeList(Arrays.asList(
-//                new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
-//                new PlaceTime("Closing Hours", "10:00 PM", "Monday")
-//            ))
-//            .menuList(Arrays.asList(
-//                new Menu(5000L, true, "Coffee"),
-//                new Menu(7000L, false, "Cake")
-//            ))
-//            .build();
+//        Place place1 = new Place("Place 1",
+//            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+//            "menuImg.url", "카페",
+//            "Address 1|Address 2|Address 3",
+//            "10.0", "10.0",
+//            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+//            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+//            Arrays.asList("삼겹살|5000|false|menu.url|description",
+//                "돼지찌개|7000|true|menu.url|description"),
+//            LocalDateTime.of(2024, 3, 28, 5, 30),
+//            Arrays.asList(
+//                "menuBoard1.url",
+//                "menuBoard2.url"
+//            )
+//        );
 //
-//        Place place2 = Place.builder()
-//            .name("Place 2")
-//            .pet(false)
-//            .wifi(true)
-//            .parking(false)
-//            .fordisabled(true)
-//            .nursery(false)
-//            .smokingroom(false)
-//            .address(new Address("Address 1", "Address 2", "Address 3"))
-//            .menuImgUrl("menu.jpg")
-//            .category(Category.CAFE)
-//            .coordinate(new Coordinate("137.0", "10.0"))
-//            .timeList(Arrays.asList(
-//                new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
-//                new PlaceTime("Closing Hours", "10:00 PM", "Monday")
-//            ))
-//            .menuList(Arrays.asList(
-//                new Menu(5000L, true, "Coffee"),
-//                new Menu(7000L, false, "Cake")
-//            ))
-//            .build();
+//        Place place2 = new Place("Place 2",
+//            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+//            "menuImg.url", "일식",
+//            "Address 1|Address 2|Address 3",
+//            "10.0", "50.0",
+//            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+//            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+//            Arrays.asList("삼겹살|5000|false|menu.url|description",
+//                "돼지찌개|7000|true|menu.url|description"),
+//            LocalDateTime.of(2024, 3, 28, 5, 30),
+//            Arrays.asList(
+//                "menuBoard1.url",
+//                "menuBoard2.url"
+//            )
+//        );
 //
-//        Place place3 = Place.builder()
-//            .name("Place 3")
-//            .pet(false)
-//            .wifi(true)
-//            .parking(false)
-//            .fordisabled(true)
-//            .nursery(false)
-//            .smokingroom(false)
-//            .address(new Address("Address 1", "Address 2", "Address 3"))
-//            .menuImgUrl("menu.jpg")
-//            .category(Category.CAFE)
-//            .coordinate(new Coordinate("126.0", "30.0"))
-//            .timeList(Arrays.asList(
-//                new PlaceTime("Opening Hours", "9:00 AM", "Monday"),
-//                new PlaceTime("Closing Hours", "10:00 PM", "Monday")
-//            ))
-//            .menuList(Arrays.asList(
-//                new Menu(5000L, true, "Coffee"),
-//                new Menu(7000L, false, "Cake")
-//            ))
-//            .build();
+//        Place place3 = new Place("Place 3",
+//            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+//            "menuImg.url", "카페",
+//            "Address 1|Address 2|Address 3",
+//            "10.0", "100.0",
+//            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+//            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+//            Arrays.asList("삼겹살|5000|false|menu.url|description",
+//                "돼지찌개|7000|true|menu.url|description"),
+//            LocalDateTime.of(2024, 3, 28, 5, 30),
+//            Arrays.asList(
+//                "menuBoard1.url",
+//                "menuBoard2.url"
+//            )
+//        );
 //
-//        // 저장
+//        Place place4 = new Place("Place 4",
+//            "\"wifi\": true, \"pet\": false, \"parking\": false, \"forDisabled\": true, \"nursery\": false, \"smokingRoom\": false}",
+//            "menuImg.url", "일식",
+//            "Address 1|Address 2|Address 3",
+//            "50.0", "50.0",
+//            Arrays.asList("한글날|수|N", "크리스마스|수|Y"),
+//            Arrays.asList("오픈 시간|9:00 AM|월", "닫는 시간|6:00 PM|월"),
+//            Arrays.asList("삼겹살|5000|false|menu.url|description",
+//                "돼지찌개|7000|true|menu.url|description"),
+//            LocalDateTime.of(2024, 3, 28, 5, 30),
+//            Arrays.asList(
+//                "menuBoard1.url",
+//                "menuBoard2.url"
+//            )
+//        );
+//
 //        placeRepository.save(place1);
 //        placeRepository.save(place2);
 //        placeRepository.save(place3);
+//        placeRepository.save(place4);
     }
 }

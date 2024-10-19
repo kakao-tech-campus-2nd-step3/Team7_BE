@@ -1,5 +1,6 @@
 package team7.inplace.place.application.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
@@ -20,13 +21,19 @@ public record PlaceDetailInfo(
 ) {
 
     public static PlaceDetailInfo from(Place place, Influencer influencer, Video video) {
+        String influencerName = (influencer != null) ? influencer.getName() : "";
+        String videoUrl = (video != null) ? video.getVideoUrl() : "";
+
         return new PlaceDetailInfo(
-            PlaceInfo.of(place, influencer.getName()),
+            PlaceInfo.of(place, influencerName),
             facilityTree(place.getFacility()),
-            MenuInfos.of(place.getMenus()),
+            MenuInfos.of(
+                place.getMenuboardphotourlList(),
+                place.getMenus(),
+                place.getMenuUpdatedAt()),
             OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
             PlaceLikes.of(null), //추후 추가 예정
-            video.getVideoUrl()
+            videoUrl
         );
     }
 
@@ -39,23 +46,28 @@ public record PlaceDetailInfo(
         }
     }
 
-
     public record MenuInfos(
+        List<String> menuImgUrls,
         List<MenuInfo> menuList,
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime timeExp
     ) {
 
-        public static MenuInfos of(List<Menu> menus) {
+        public static MenuInfos of(
+            List<String> menuImgUrls,
+            List<Menu> menus,
+            LocalDateTime menuUpdatedAt) {
+
             List<MenuInfo> menuList = menus.stream()
-                .map(menu -> new MenuInfo(Integer.parseInt(menu.getPrice()), menu.isRecommend(),
+                .map(menu -> new MenuInfo(menu.getPrice(), menu.isRecommend(),
                     menu.getMenuName(), menu.getMenuImgUrl(), menu.getDescription()))
                 .toList();
 
-            return new MenuInfos(menuList, LocalDateTime.now());
+            return new MenuInfos(menuImgUrls, menuList, menuUpdatedAt);
         }
 
         public record MenuInfo(
-            Integer price,
+            String price,
             Boolean recommend,
             String menuName,
             String menuImgUrl,

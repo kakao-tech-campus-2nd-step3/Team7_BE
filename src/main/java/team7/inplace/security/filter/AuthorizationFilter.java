@@ -8,9 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Optional;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.filter.OncePerRequestFilter;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.security.application.dto.CustomOAuth2User;
@@ -60,7 +60,8 @@ public class AuthorizationFilter extends OncePerRequestFilter {
         Long id = jwtUtil.getId(token);
         String roles = jwtUtil.getRoles(token);
         CustomOAuth2User customOAuth2User = new CustomOAuth2User(username, id, roles);
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customOAuth2User, null);
+        Authentication authToken = new OAuth2AuthenticationToken(customOAuth2User,
+            customOAuth2User.getAuthorities(), customOAuth2User.getRegistrationId());
         SecurityContextHolder.getContext().setAuthentication(authToken);
     }
 

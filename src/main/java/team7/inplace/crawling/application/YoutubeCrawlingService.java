@@ -5,10 +5,13 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import team7.inplace.crawling.application.dto.CrawlingInfo;
 import team7.inplace.crawling.client.KakaoMapClient;
 import team7.inplace.crawling.client.YoutubeClient;
 import team7.inplace.crawling.persistence.YoutubeChannelRepository;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.ChannelErrorCode;
 
 @Slf4j
 @Service
@@ -48,6 +51,14 @@ public class YoutubeCrawlingService {
                 }).toList();
 
         return crawlInfos;
+    }
+
+    @Transactional
+    public void updateLastVideoUUID(Long influencerId, String lastVideoUUID) {
+        var youtubeChannel = youtubeChannelRepository.findYoutubeChannelByInfluencerId(influencerId)
+                .orElseThrow(() -> InplaceException.of(ChannelErrorCode.CHANNEL_NOT_FOUND));
+
+        youtubeChannel.updateLastVideoUUID(lastVideoUUID);
     }
 }
 
