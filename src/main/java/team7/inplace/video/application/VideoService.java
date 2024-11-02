@@ -3,7 +3,6 @@ package team7.inplace.video.application;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -16,6 +15,7 @@ import team7.inplace.influencer.persistence.InfluencerRepository;
 import team7.inplace.place.application.dto.PlaceForVideo;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
+import team7.inplace.video.application.command.VideoCommand;
 import team7.inplace.video.application.command.VideoCommand.Create;
 import team7.inplace.video.application.dto.VideoInfo;
 import team7.inplace.video.domain.Video;
@@ -31,18 +31,18 @@ public class VideoService {
     private final InfluencerRepository influencerRepository;
 
     public Page<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams,
-        Pageable pageable) {
+                                               Pageable pageable) {
         // Place 엔티티 조회
         Page<Place> places = placeRepository.findPlacesByDistanceAndFilters(
-            videoSearchParams.topLeftLongitude(),
-            videoSearchParams.topLeftLatitude(),
-            videoSearchParams.bottomRightLongitude(),
-            videoSearchParams.bottomRightLatitude(),
-            videoSearchParams.longitude(),
-            videoSearchParams.latitude(),
-            new ArrayList<>(),
-            new ArrayList<>(),
-            pageable
+                videoSearchParams.topLeftLongitude(),
+                videoSearchParams.topLeftLatitude(),
+                videoSearchParams.bottomRightLongitude(),
+                videoSearchParams.bottomRightLatitude(),
+                videoSearchParams.longitude(),
+                videoSearchParams.latitude(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                pageable
         );
         // 조회된 엔티티가 비어있는지 아닌지 확인
         if (places.isEmpty()) {
@@ -52,7 +52,7 @@ public class VideoService {
         List<Video> videos = new ArrayList<>();
         for (Place place : places.getContent()) {
             videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place)
-                .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND)));
+                    .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND)));
         }
         return new PageImpl<>(videos).map(this::videoToInfo);
     }
@@ -70,14 +70,14 @@ public class VideoService {
         return videos.map(this::videoToInfo);
     }
 
-    public Page<VideoInfo> getPlaceNullVideo(Pageable pageable){
+    public Page<VideoInfo> getPlaceNullVideo(Pageable pageable) {
         Page<Video> videos = videoRepository.findAllByPlaceIsNull(pageable);
         return videos.map(this::videoToInfo);
     }
 
     private VideoInfo videoToInfo(Video savedVideo) {
         Place place = savedVideo.getPlace();
-        if(Objects.isNull(place)){
+        if (Objects.isNull(place)) {
             return new VideoInfo(
                     savedVideo.getId(),
                     "장소 정보 없음",
@@ -86,21 +86,21 @@ public class VideoService {
             );
         }
         String alias = AliasUtil.makeAlias(
-            savedVideo.getInfluencer().getName(),
-            place.getCategory()
+                savedVideo.getInfluencer().getName(),
+                place.getCategory()
         );
         return new VideoInfo(
-            savedVideo.getId(),
-            alias,
-            savedVideo.getVideoUrl(),
-            PlaceForVideo.of(place.getId(), place.getName())
+                savedVideo.getId(),
+                alias,
+                savedVideo.getVideoUrl(),
+                PlaceForVideo.of(place.getId(), place.getName())
         );
     }
 
     public void createVideos(List<Create> videoCommands, List<Long> placeIds) {
         var videos = new ArrayList<Video>();
         for (int videoCommandIndex = 0; videoCommandIndex < videoCommands.size();
-            videoCommandIndex++) {
+             videoCommandIndex++) {
             Create videoCommand = videoCommands.get(videoCommandIndex);
             Long placeId = placeIds.get(videoCommandIndex);
             var influencer = influencerRepository.getReferenceById(videoCommand.influencerId());
@@ -114,6 +114,14 @@ public class VideoService {
         }
 
         videoRepository.saveAll(videos);
+    }
+
+    public void updateVideoViews(List<VideoCommand.UpdateViewCount> videoCommands) {
+        for (VideoCommand.UpdateViewCount videoCommand : videoCommands) {
+            Video video = videoRepository.findById(videoCommand.videoId())
+                    .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
+            video.updateViewCount(videoCommand.viewCount());
+        }
     }
 
     private boolean hasNoPlace(Long placeId) {

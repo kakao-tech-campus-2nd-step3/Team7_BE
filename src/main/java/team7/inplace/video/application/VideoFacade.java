@@ -33,6 +33,11 @@ public class VideoFacade {
         videoService.createVideos(videoCommands, placeIds);
     }
 
+    @Transactional
+    public void updateVideoViews(List<VideoCommand.UpdateViewCount> videoCommands) {
+        videoService.updateVideoViews(videoCommands);
+    }
+
     public Page<VideoInfo> getVideosByMyInfluencer(Pageable pageable) {
         // User 정보를 쿠키에서 추출
         Long userId = AuthorizationUtil.getUserId();

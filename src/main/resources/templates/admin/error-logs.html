@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Error Logs</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/error_logs_style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<div class="header">
+    <a href="/" class="header-link">Home</a>
+    <a href="/admin" class="header-link">Admin</a>
+</div>
+
+<h1>Error Logs</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Error URL</th>
+        <th>Error Message</th>
+        <th>Stack Trace</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="errorLog : ${errorLogs}">
+        <td th:text="${errorLog.id}"></td>
+        <td th:text="${errorLog.errorUrl}"></td>
+        <td th:text="${errorLog.errorMessage}"></td>
+        <td>
+            <button class="toggle-btn" onclick="openModal(this)" th:data-stacktrace="${errorLog.stackTrace}">View Stack
+                Trace
+            </button>
+        </td>
+        <td>
+            <button class="resolve-btn" th:onclick="'resolveErrorLog(' + ${errorLog.id} + ')'">Resolve</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- Modal Structure -->
+<div id="stackTraceModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Stack Trace</h2>
+        <pre id="stackTraceContent" class="stack-trace"></pre>
+    </div>
+</div>
+
+<script src="/js/error-logs.js"></script>
+</body>
+</html>

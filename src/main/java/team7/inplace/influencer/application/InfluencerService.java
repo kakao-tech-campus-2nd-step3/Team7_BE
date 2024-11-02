@@ -5,11 +5,11 @@ import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 import team7.inplace.favoriteInfluencer.domain.FavoriteInfluencer;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
 import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
+import team7.inplace.global.exception.code.UserErroCode;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.domain.Influencer;
@@ -77,12 +77,13 @@ public class InfluencerService {
 
     @Transactional
     public void likeToInfluencer(InfluencerLikeRequest param) {
-        String username = AuthorizationUtil.getUsername();
-        if (!StringUtils.hasText(username)) {
+        Long userId = AuthorizationUtil.getUserId();
+        if (userId == null) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
 
-        User user = userRepository.findByUsername(username).orElseThrow();
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
         Influencer influencer = influencerRepository.findById(param.influencerId()).orElseThrow();
 
         FavoriteInfluencer favorite = favoriteRepository.findByUserIdAndInfluencerId(user.getId(),

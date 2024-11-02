@@ -14,12 +14,29 @@ import org.springframework.web.client.RestTemplate;
 public class YoutubeClient {
     private static final String PLAY_LIST_ITEMS_BASE_URL = "https://www.googleapis.com/youtube/v3/playlistItems";
     private static final String PLAY_LIST_PARAMS = "?part=snippet&playlistId=%s&key=%s&maxResults=50";
+    private static final String VIDEO_DETAIL_URL = "https://www.googleapis.com/youtube/v3/videos";
+    private static final String VIDEO_DETAIL_PARAMS = "?part=statistics&id=%s&key=%s";
     private final RestTemplate restTemplate;
     private final String apiKey;
 
     public YoutubeClient(@Value("${youtube.api.key}") String apiKey, RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         this.apiKey = apiKey;
+    }
+
+    public JsonNode getVideoDetail(String videoId) {
+        String url = VIDEO_DETAIL_URL + String.format(VIDEO_DETAIL_PARAMS, videoId, apiKey);
+
+        JsonNode response = null;
+        try {
+            response = restTemplate.getForObject(url, JsonNode.class);
+        } catch (Exception e) {
+            log.error("Youtube API 호출이 실패했습니다. Video Id {}", videoId);
+        }
+
+        log.info(response.toPrettyString());
+
+        return response;
     }
 
     public List<JsonNode> getVideos(String playListId, String finalVideoUUID) {

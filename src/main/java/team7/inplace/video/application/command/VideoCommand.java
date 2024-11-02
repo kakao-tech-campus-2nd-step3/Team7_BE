@@ -22,4 +22,15 @@ public class VideoCommand {
             return Video.from(influencer, place, videoId());
         }
     }
+
+    public record UpdateViewCount(
+            Long videoId,
+            Long viewCount
+    ) {
+        public static UpdateViewCount from(JsonNode statistics, Long videoId) {
+            Long viewCount = statistics.path("viewCount").asLong();
+
+            return new UpdateViewCount(videoId, viewCount);
+        }
+    }
 }

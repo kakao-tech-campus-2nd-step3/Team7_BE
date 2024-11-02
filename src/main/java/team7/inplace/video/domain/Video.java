@@ -25,6 +25,9 @@ public class Video {
     @Column(name = "video_url", nullable = false, columnDefinition = "TEXT")
     private String videoUrl;
 
+    private Long viewCount;
+    private Long viewCountIncrease;
+
     @ManyToOne
     @JoinColumn(name = "influencer_id", nullable = false)
     private Influencer influencer;
@@ -37,6 +40,8 @@ public class Video {
         this.influencer = influencer;
         this.place = place;
         this.videoUrl = videoUrl;
+        this.viewCount = -1L;
+        this.viewCountIncrease = -1L;
     }
 
     public static Video from(Influencer influencer, Place place, String videoUrl) {
@@ -49,5 +54,16 @@ public class Video {
 
     public String getVideoUUID() {
         return videoUrl;
+    }
+
+    public void updateViewCount(Long viewCount) {
+        if (this.viewCount == -1L) {
+            this.viewCount = viewCount;
+            this.viewCountIncrease = 0L;
+            return;
+        }
+
+        this.viewCountIncrease = viewCount - this.viewCount;
+        this.viewCount = viewCount;
     }
 }
