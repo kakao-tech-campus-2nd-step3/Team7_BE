@@ -33,7 +33,7 @@ public record PlaceInfo(
         }
     }
 
-    public static PlaceInfo of(Place place, String influencerName) {
+    public static PlaceInfo of(Place place, String influencerName, boolean likes) {
         return new PlaceInfo(
             place.getId(),
             place.getName(),
@@ -43,7 +43,7 @@ public record PlaceInfo(
             place.getMenuImgUrl(),
             place.getCoordinate().getLongitude(),
             place.getCoordinate().getLatitude(),
-            null
+            likes
         );
     }
 }

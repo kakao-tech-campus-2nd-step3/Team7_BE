@@ -1,12 +1,13 @@
 package team7.inplace.video.persistence;
 
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import team7.inplace.place.domain.Place;
 import team7.inplace.video.domain.Video;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface VideoRepository extends JpaRepository<Video, Long> {
 
@@ -22,5 +23,5 @@ public interface VideoRepository extends JpaRepository<Video, Long> {
 
     List<Video> findByPlaceId(Long placeId);
 
-    boolean existsByPlaceId(Long placeId);
+    Page<Video> findVideosByOrderByViewCountIncreaseDesc(Pageable pageable);
 }

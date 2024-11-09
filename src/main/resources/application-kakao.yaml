@@ -1,3 +1,4 @@
 kakao:
   api:
     key: ${KAKAO_REST_API_KEY}
+    send-message-to-me-url: ${KAKAO_MESSAGE_TO_ME_URL}

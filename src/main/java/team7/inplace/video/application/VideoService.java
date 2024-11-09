@@ -1,8 +1,5 @@
 package team7.inplace.video.application;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,6 +19,10 @@ import team7.inplace.video.domain.Video;
 import team7.inplace.video.persistence.VideoRepository;
 import team7.inplace.video.presentation.dto.VideoSearchParams;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 @Service
 @RequiredArgsConstructor
 public class VideoService {
@@ -30,8 +31,7 @@ public class VideoService {
     private final PlaceRepository placeRepository;
     private final InfluencerRepository influencerRepository;
 
-    public Page<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams,
-                                               Pageable pageable) {
+    public Page<VideoInfo> getVideosBySurround(VideoSearchParams videoSearchParams, Pageable pageable) {
         // Place 엔티티 조회
         Page<Place> places = placeRepository.findPlacesByDistanceAndFilters(
                 videoSearchParams.topLeftLongitude(),
@@ -40,8 +40,8 @@ public class VideoService {
                 videoSearchParams.bottomRightLatitude(),
                 videoSearchParams.longitude(),
                 videoSearchParams.latitude(),
-                new ArrayList<>(),
-                new ArrayList<>(),
+                null,
+                null,
                 pageable
         );
         // 조회된 엔티티가 비어있는지 아닌지 확인
@@ -54,12 +54,20 @@ public class VideoService {
             videos.add(videoRepository.findTopByPlaceOrderByIdDesc(place)
                     .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND)));
         }
-        return new PageImpl<>(videos).map(this::videoToInfo);
+        return new PageImpl<>(videos, pageable, videos.size()).map(this::videoToInfo);
     }
 
     public Page<VideoInfo> getAllVideosDesc(Pageable pageable) {
         // id를 기준으로 내림차순 정렬하여 비디오 정보 불러오기
         Page<Video> videos = videoRepository.findAllByOrderByIdDesc(pageable);
+
+        // DTO 형식에 맞게 대입
+        return videos.map(this::videoToInfo);
+    }
+
+    public Page<VideoInfo> getCoolVideo(Pageable pageable) {
+        // 조회수 증가량을 기준으로 오름차순 정렬하여 비디오 정보 불러오기
+        Page<Video> videos = videoRepository.findVideosByOrderByViewCountIncreaseDesc(pageable);
 
         // DTO 형식에 맞게 대입
         return videos.map(this::videoToInfo);
@@ -126,5 +134,17 @@ public class VideoService {
 
     private boolean hasNoPlace(Long placeId) {
         return placeId == -1;
+    }
+
+    public void addPlaceInfo(Long videoId, Long placeId) {
+        Video video = videoRepository.findById(videoId)
+                .orElseThrow(() -> InplaceException.of(VideoErrorCode.NOT_FOUND));
+        Place place = placeRepository.findById(placeId)
+                .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
+        video.addPlace(place);
+    }
+
+    public void deleteVideo(Long videoId) {
+        videoRepository.deleteById(videoId);
     }
 }

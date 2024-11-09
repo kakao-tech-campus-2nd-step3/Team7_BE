@@ -50,7 +50,7 @@ jobs:
       # Docker Hub 이미지 푸시
       - name: docker Hub push
         run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/inplace
-
+  
   
   # 위 과정에서 푸시한 이미지를 ec2에서 풀받아서 실행시키는 과정 
   run-docker-image-on-ec2:
@@ -68,30 +68,76 @@ jobs:
       # 최신 이미지를 pull 
       - name: docker pull
         run: sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/inplace
-      
-      # 기존의 컨테이너를 중지
-      - name: docker stop container
-        run: sudo docker stop $(sudo docker ps -q) 2>/dev/null || true
+
+      # 현재 실행 중인 버전을 확인
+      - name: Check current active container
+        id: check_version
+        run: |
+          CURRENT_VERSION=$(sudo docker ps --format "{{.Names}}" | grep -oE "inplace-(blue|green)" || echo "")
+          if [[ -z "$CURRENT_VERSION" ]]; then
+            echo "No active container found"
+            echo "current_version=none" >> $GITHUB_ENV
+          else
+            CURRENT_VERSION=$(echo "$CURRENT_VERSION" | grep -oE "(blue|green)")
+            echo "Current running version is $CURRENT_VERSION"
+            echo "current_version=${CURRENT_VERSION}" >> $GITHUB_ENV
+          fi
+
+      # 다음 배포 버전을 결정
+      - name: Set next version
+        run: |
+          if [[ "${{ env.current_version }}" == "blue" ]]; then
+            NEXT_VERSION="green"
+            PORT=8081
+          else
+            NEXT_VERSION="blue"
+            PORT=8080
+          fi
+          echo "Next version to deploy is inplace-${NEXT_VERSION}"
+          echo "next_version=${NEXT_VERSION}" >> $GITHUB_ENV
+          echo "port=${PORT}" >> $GITHUB_ENV
+
+      # 기존의 동일한 컨테이너를 중지 (블루/그린 중 다음 배포 타겟에 해당하는 컨테이너)
+      - name: Stop current docker container
+        run: |
+          echo "Stopping container inplace-${{ env.next_version }}"
+          sudo docker stop inplace-${{ env.next_version }} || true
+          sudo docker rm inplace-${{ env.next_version }} || true
 
       # .env 파일 생성
       - name: Create .env file
         run: |
+          rm -f .env
           echo "${{ secrets.ENV }}" >> .env
 
-      # 브랜치에 따라 다른 환경 변수를 설정하여 컨테이너 실행
-      #      - name: docker run new container
-      #        run: |
-      #          if [ "${{ github.ref }}" == "refs/heads/Master" ]; then
-      #            sudo docker run --name inplace --rm -d -p 8080:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
-      #          elif [ "${{ github.ref }}" == "refs/heads/develop" ]; then
-      #            sudo docker run --name inplace-dev --rm -d -p 8081:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
-      #          fi
-
-      # weekly/* 브랜치 8081 포트로 설정
-      - name: docker run new container
+      # 다음 버전으로 새 컨테이너를 실행
+      - name: Run New Container on Next Version
         run: |
-          sudo docker run --name inplace-dev --rm -d -p 8081:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
+          echo "Running new container inplace-${{ env.next_version }}"
+          sudo docker run --name "inplace-${{ env.next_version }}" --rm -d -p ${{ env.port }}:8080 --env-file .env ${{ secrets.DOCKERHUB_USERNAME }}/inplace
 
+      # 로드 밸런서 타겟 그룹을 업데이트하여 트래픽을 새 컨테이너로 전환합니다.
+      - name: Update Load Balancer Target Group
+        run: |
+          TARGET_GROUP_ARN_BLUE="${{ secrets.TARGET_GROUP_ARN_8080 }}"
+          TARGET_GROUP_ARN_GREEN="${{ secrets.TARGET_GROUP_ARN_8081 }}"
+          if [[ "${{ env.next_version }}" == "blue" ]]; then
+            aws elbv2 modify-listener --listener-arn ${{ secrets.LISTENER_ARN_443 }} --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN_BLUE
+          else
+            aws elbv2 modify-listener --listener-arn ${{ secrets.LISTENER_ARN_443 }} --default-actions Type=forward,TargetGroupArn=$TARGET_GROUP_ARN_GREEN
+          fi
+
+      # 이전 컨테이너 정리
+      - name: Remove previous docker container
+        run: |
+          if [[ "${{ env.current_version }}" != "none" ]]; then 
+            echo "Removing previous container inplace-${{ env.current_version }}" 
+            sudo docker stop inplace-${{ env.current_version }} || true 
+            sudo docker rm inplace-${{ env.current_version }} || true 
+          else 
+            echo "No active container to remove" 
+          fi
+      
       # 미사용 이미지를 정리
       - name: delete old docker image
         run: sudo docker system prune -f

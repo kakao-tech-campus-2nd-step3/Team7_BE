@@ -9,7 +9,7 @@ import team7.inplace.global.exception.InplaceException;
 import team7.inplace.global.exception.code.AuthorizationErrorCode;
 import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.exception.code.ReviewErrorCode;
-import team7.inplace.global.exception.code.UserErroCode;
+import team7.inplace.global.exception.code.UserErrorCode;
 import team7.inplace.place.domain.Place;
 import team7.inplace.place.persistence.PlaceRepository;
 import team7.inplace.review.application.dto.ReviewCommand;
@@ -30,13 +30,13 @@ public class ReviewService {
 
     @Transactional
     public void createReview(Long placeId, ReviewCommand command) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
+        if (AuthorizationUtil.isNotLoginUser()) {
             throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
         }
 
+        Long userId = AuthorizationUtil.getUserId();
         User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
+            .orElseThrow(() -> InplaceException.of(UserErrorCode.NOT_FOUND));
         Place place = placeRepository.findById(placeId)
             .orElseThrow(() -> InplaceException.of(PlaceErrorCode.NOT_FOUND));
 
@@ -50,6 +50,33 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public Page<ReviewInfo> getReviews(Long placeId, Pageable pageable) {
         Page<Review> reviewPage = reviewRepository.findByPlaceId(placeId, pageable);
-        return reviewPage.map(ReviewInfo::from);
+        // 로그인 안된 경우 mine을 모두 false로 설정
+        if (AuthorizationUtil.isNotLoginUser()) {
+            return reviewPage.map(review -> ReviewInfo.from(review, false));
+        }
+
+        Long userId = AuthorizationUtil.getUserId();
+
+        return reviewPage.map(review -> {
+            boolean isMine = review.getUser().getId().equals(userId);
+            return ReviewInfo.from(review, isMine);
+        });
+    }
+
+    @Transactional
+    public void deleteReview(Long reviewId) {
+        if (AuthorizationUtil.isNotLoginUser()) {
+            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
+        }
+
+        Long userId = AuthorizationUtil.getUserId();
+        Review review = reviewRepository.findById(reviewId)
+            .orElseThrow(() -> InplaceException.of(ReviewErrorCode.NOT_FOUND));
+
+        if (!review.getUser().getId().equals(userId)) {
+            throw InplaceException.of(ReviewErrorCode.NOT_OWNER);
+        }
+
+        reviewRepository.delete(review);
     }
 }

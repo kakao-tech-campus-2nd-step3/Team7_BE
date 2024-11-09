@@ -27,7 +27,7 @@ public class YoutubeCrawlingService {
         3. 마지막 비디오 UUID를 업데이트 한다.
         4. 카카오 API를 호출해 장소 정보를 가져온다
      */
-    public List<CrawlingInfo> crawlAllVideos() {
+    public List<CrawlingInfo.VideoPlaceInfo> crawlAllVideos() {
         var youtubeChannels = youtubeChannelRepository.findAll();
 
         var crawlInfos = youtubeChannels.stream()
@@ -43,19 +43,21 @@ public class YoutubeCrawlingService {
                                 if (Objects.isNull(address)) {
                                     return null;
                                 }
-                                return kakaoMapClient.search(address, channel.getChannelType().getCode());
+                                return kakaoMapClient.searchPlaceWithAddress(address,
+                                        channel.getChannelType().getCode());
                             })
                             .toList();
 
-                    return new CrawlingInfo(channel.getInfluencerId(), videoSnippets, placeNodes);
+                    return new CrawlingInfo.VideoPlaceInfo(channel.getInfluencerId(), channel.getPlayListUUID(),
+                            videoSnippets, placeNodes);
                 }).toList();
 
         return crawlInfos;
     }
 
     @Transactional
-    public void updateLastVideoUUID(Long influencerId, String lastVideoUUID) {
-        var youtubeChannel = youtubeChannelRepository.findYoutubeChannelByInfluencerId(influencerId)
+    public void updateLastVideoUUID(String playListUUID, String lastVideoUUID) {
+        var youtubeChannel = youtubeChannelRepository.findYoutubeChannelByPlayListUUID(playListUUID)
                 .orElseThrow(() -> InplaceException.of(ChannelErrorCode.CHANNEL_NOT_FOUND));
 
         youtubeChannel.updateLastVideoUUID(lastVideoUUID);

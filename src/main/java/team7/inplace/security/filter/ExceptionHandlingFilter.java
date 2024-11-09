@@ -23,9 +23,9 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain
     ) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
@@ -35,14 +35,14 @@ public class ExceptionHandlingFilter extends OncePerRequestFilter {
     }
 
     private void setErrorResponse(
-            HttpServletResponse response,
-            InplaceException inplaceException
+        HttpServletResponse response,
+        InplaceException inplaceException
     ) throws IOException {
         log.info("ExceptionHandlingFilter.setErrorResponse");
         response.setStatus(inplaceException.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                inplaceException.getHttpStatus(), inplaceException.getMessage());
+            inplaceException.getHttpStatus(), inplaceException.getMessage());
         response.getWriter().write(objectMapper.writeValueAsString(problemDetail));
     }
 }

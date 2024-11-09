@@ -22,7 +22,6 @@ public class RefreshTokenController implements RefreshTokenControllerApiSpec {
 
     private final JwtUtil jwtUtil;
     private final RefreshTokenFacade refreshTokenFacade;
-    private final CookieUtil cookieUtil;
 
     @GetMapping("/refresh-token")
     public ResponseEntity<Void> refreshToken(@CookieValue(value = "refresh_token") Cookie cookie,
@@ -40,9 +39,9 @@ public class RefreshTokenController implements RefreshTokenControllerApiSpec {
     }
 
     private void addTokenToCookie(HttpServletResponse response, ReIssued reIssuedToken) {
-        Cookie accessTokenCookie = cookieUtil.createCookie("access_token",
+        Cookie accessTokenCookie = CookieUtil.createCookie("access_token",
             reIssuedToken.accessToken());
-        Cookie refreshTokenCookie = cookieUtil.createCookie("refresh_token",
+        Cookie refreshTokenCookie = CookieUtil.createCookie("refresh_token",
             reIssuedToken.refreshToken());
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);

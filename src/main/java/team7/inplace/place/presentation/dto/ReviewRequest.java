@@ -8,9 +8,6 @@ public record ReviewRequest(
 ) {
 
     public ReviewCommand toCommand() {
-        return new ReviewCommand(
-            this.likes(),
-            this.comments()
-        );
+        return new ReviewCommand(likes, comments);
     }
 }

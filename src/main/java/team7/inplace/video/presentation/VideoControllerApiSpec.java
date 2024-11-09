@@ -13,10 +13,11 @@ import team7.inplace.video.presentation.dto.VideoSearchParams;
 public interface VideoControllerApiSpec {
     @Operation(
             summary = "내 주변 그곳 ",
-            description = "Parameter로 입력받은 위치의 주변 장소들을 조회합니다."
+            description = "Parameter로 입력받은 위치의 주변 장소 Video를 조회합니다."
     )
     ResponseEntity<Page<VideoResponse>> readVideos(
-            @ModelAttribute VideoSearchParams searchParams,
+            @RequestParam String longitude,
+            @RequestParam String latitude,
             @PageableDefault(page = 0, size = 10) Pageable pageable
     );
 
@@ -30,7 +31,7 @@ public interface VideoControllerApiSpec {
 
     @Operation(
             summary = "쿨한 그 곳",
-            description = "조회수를 기준으로 내림차순 정렬한 Video 정보를 조회합니다."
+            description = "조회수 증가량을 기준으로 내림차순 정렬한 Video 정보를 조회합니다."
     )
     ResponseEntity<Page<VideoResponse>> readByCool(
             @PageableDefault(page = 0, size = 10) Pageable pageable
@@ -50,5 +51,13 @@ public interface VideoControllerApiSpec {
     )
     ResponseEntity<Page<VideoResponse>> readPlaceNullVideo(
             @PageableDefault(page = 0, size = 10) Pageable pageable
+    );
+
+    @Operation(
+            summary = "비디오 삭제",
+            description = "비디오를 삭제합니다."
+    )
+    ResponseEntity<Void> deleteVideo(
+            @RequestParam Long videoId
     );
 }

@@ -4,7 +4,7 @@ import jakarta.servlet.http.Cookie;
 
 public class CookieUtil {
 
-    public Cookie createCookie(String key, String value) {
+    public static Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(60 * 60);
         cookie.setPath("/");

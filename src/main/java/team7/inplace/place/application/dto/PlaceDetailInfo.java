@@ -3,6 +3,8 @@ package team7.inplace.place.application.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.LocalDateTime;
 import java.util.List;
 import team7.inplace.influencer.domain.Influencer;
@@ -20,29 +22,37 @@ public record PlaceDetailInfo(
     String videoUrl
 ) {
 
-    public static PlaceDetailInfo from(Place place, Influencer influencer, Video video) {
+    public static PlaceDetailInfo from(Place place, Influencer influencer, Video video,
+        boolean isLiked) {
         String influencerName = (influencer != null) ? influencer.getName() : "";
         String videoUrl = (video != null) ? video.getVideoUrl() : "";
 
         return new PlaceDetailInfo(
-            PlaceInfo.of(place, influencerName),
+            PlaceInfo.of(place, influencerName, isLiked),
             facilityTree(place.getFacility()),
             MenuInfos.of(
                 place.getMenuboardphotourlList(),
                 place.getMenus(),
                 place.getMenuUpdatedAt()),
             OpenHour.of(place.getOpenPeriods(), place.getOffDays()),
-            PlaceLikes.of(null), //추후 추가 예정
+            PlaceLikes.of(isLiked),
             videoUrl
         );
     }
 
     private static JsonNode facilityTree(String facility) {
         ObjectMapper objectMapper = new ObjectMapper();
+        if (facility == null || facility.isBlank()) {
+            ObjectNode noDataNode = JsonNodeFactory.instance.objectNode();
+            noDataNode.put("message", "NO DATA");
+            return noDataNode;
+        }
         try {
             return objectMapper.readTree(facility);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to parse facility JSON", e);
+            ObjectNode noDataNode = JsonNodeFactory.instance.objectNode();
+            noDataNode.put("message", "NO DATA");
+            return noDataNode;
         }
     }
 
@@ -123,7 +133,7 @@ public record PlaceDetailInfo(
             if (likes == null) {
                 return new PlaceLikes(0, 0);
             }
-            if (likes == true) {
+            if (likes) {
                 return new PlaceLikes(1, 0);
             }
             return new PlaceLikes(0, 1);

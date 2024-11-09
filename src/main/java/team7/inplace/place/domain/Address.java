@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = PROTECTED)
 @EqualsAndHashCode
 public class Address {
+
     @Column(nullable = false, length = 50)
     private String address1;
 
@@ -27,6 +28,10 @@ public class Address {
         this.address1 = address1;
         this.address2 = address2;
         this.address3 = address3;
+    }
+
+    public String toString() {
+        return address1 + " " + address2 + " " + address3;
     }
 
     public static Address of(String address) {

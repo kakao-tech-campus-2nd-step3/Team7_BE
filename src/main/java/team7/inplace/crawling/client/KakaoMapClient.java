@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import team7.inplace.crawling.client.dto.PlaceNode;
+import team7.inplace.global.exception.InplaceException;
+import team7.inplace.global.exception.code.PlaceErrorCode;
 import team7.inplace.global.kakao.config.KakaoApiProperties;
 
 @Slf4j
@@ -23,20 +25,32 @@ public class KakaoMapClient {
     private final KakaoApiProperties kakaoApiProperties;
     private final RestTemplate restTemplate;
 
-    public PlaceNode search(String address, String category) {
+    public PlaceNode searchPlaceWithAddress(String address, String category) {
         log.info("KakaoMapClient search address: {}, category: {}", address, category);
-        var locationInfo = getLocateInfo(address, category);
+        var locationInfo = searchLocateInfo(address, category);
         var placeId = locationInfo.has("documents") && locationInfo.get("documents").hasNonNull(1) ?
                 locationInfo.get("documents").get(0).get("id").asText() : null;
         if (Objects.isNull(placeId)) {
             return null;
         }
 
-        var placeInfo = getPlaceInfo(placeId);
+        var placeInfo = searchPlaceInfo(placeId);
         return PlaceNode.of(locationInfo, placeInfo);
     }
 
-    private JsonNode getLocateInfo(String address, String category) {
+    public PlaceNode searchPlaceWithPlaceId(Long placeId) {
+        var placeInfo = searchPlaceInfo(String.valueOf(placeId));
+        var placeName = placeInfo.has("basicInfo") ? placeInfo.get("basicInfo").get("placenamefull").asText() : null;
+        if (Objects.isNull(placeName)) {
+            throw InplaceException.of(PlaceErrorCode.PLACE_LOCATION_ERROR);
+        }
+
+        var locationInfo = searchLocateInfo(placeName, null);
+
+        return PlaceNode.of(locationInfo, placeInfo);
+    }
+
+    private JsonNode searchLocateInfo(String address, String category) {
         var url = KAKAO_MAP_LOCATE_SEARCH_URL + KAKAO_MAP_LOCATE_SEARCH_PARAMS.formatted(address);
         url = url + (Objects.isNull(category) ? "" : "&category_group_code=" + category);
 
@@ -48,7 +62,7 @@ public class KakaoMapClient {
         return response.getBody();
     }
 
-    private JsonNode getPlaceInfo(String placeId) {
+    private JsonNode searchPlaceInfo(String placeId) {
         var url = KAKAO_MAP_PLACE_SEARCH_URL + placeId;
 
         ResponseEntity<JsonNode> response = restTemplate.getForEntity(url, JsonNode.class);

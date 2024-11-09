@@ -22,18 +22,23 @@ public class CustomFailureHandler implements AuthenticationFailureHandler {
     }
 
     @Override
-    public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
-                                        AuthenticationException exception) throws IOException {
+    public void onAuthenticationFailure(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        AuthenticationException exception
+    ) throws IOException {
         log.info("CustomFailureHandler.onAuthenticationFailure");
         setErrorResponse(response, InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EXPIRED));
     }
 
-    private void setErrorResponse(HttpServletResponse response, InplaceException inplaceException)
-            throws IOException {
+    private void setErrorResponse(
+        HttpServletResponse response,
+        InplaceException inplaceException
+    ) throws IOException {
         response.setStatus(inplaceException.getHttpStatus().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                inplaceException.getHttpStatus(), inplaceException.getMessage());
+            inplaceException.getHttpStatus(), inplaceException.getMessage());
         response.getWriter().write(objectMapper.writeValueAsString(problemDetail));
     }
 }

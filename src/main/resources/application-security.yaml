@@ -9,7 +9,7 @@ spring:
             client-secret: ${KAKAO_CLIENT_SECRET}
             redirect-uri: ${KAKAO_REDIRECT_URI}
             authorization-grant-type: authorization_code
-            scope: profile_nickname, account_email
+            scope: profile_nickname, account_email, talk_message
             client-authentication-method: client_secret_post
         provider:
           kakao:
@@ -21,3 +21,8 @@ spring:
     secret: ${JWT_SECRET}
     access-token-expired-time: ${JWT_ACCESS_TOKEN_EXPIRED_TIME}
     refresh-token-expired-time: ${JWT_REFRESH_TOKEN_EXPIRED_TIME}
+  redirect:
+    front-end-url: ${FRONT_END_URL}
+  oauth:
+    password: ${OAUTH_PASSWORD}
+    salt: ${OAUTH_SALT}

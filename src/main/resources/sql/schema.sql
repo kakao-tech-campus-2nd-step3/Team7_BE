@@ -28,7 +28,7 @@ create table places_menuboardphotourl_list
     places_id              bigint       not null,
     menuboardphotourl_list varchar(255) null,
     constraint FKtmhlcak5ftr3ci4lkvj3u9hi4
-        foreign key (places_id) references inplace.places (id)
+        foreign key (places_id) references inplace.places (id) ON DELETE CASCADE
 );
 
 create table places_menus
@@ -40,7 +40,7 @@ create table places_menus
     menu_img_url varchar(255)     null,
     price        varchar(255)     null,
     constraint FK25iaekuierywsqcdisrunisvv
-        foreign key (places_id) references inplace.places (id)
+        foreign key (places_id) references inplace.places (id) ON DELETE CASCADE
 );
 
 create table places_off_days
@@ -50,7 +50,7 @@ create table places_off_days
     temporary_holidays varchar(255) null,
     week_and_day       varchar(255) null,
     constraint FKpepqysie7r3tcu8s0lmc491s2
-        foreign key (places_id) references inplace.places (id)
+        foreign key (places_id) references inplace.places (id) ON DELETE CASCADE
 );
 
 create table places_open_periods
@@ -60,7 +60,7 @@ create table places_open_periods
     time_name   varchar(255) null,
     timese      varchar(255) null,
     constraint FKra4w0ld7a59n8xaq03ig8kckl
-        foreign key (places_id) references inplace.places (id)
+        foreign key (places_id) references inplace.places (id) ON DELETE CASCADE
 );
 
 create table user
@@ -123,3 +123,45 @@ create table error_log
     is_resolved   bit          not null
 );
 
+create table review
+(
+    id           bigint auto_increment
+        primary key,
+    is_liked     bit          not null,
+    created_date datetime(6)  null,
+    place_id     bigint       not null,
+    user_id      bigint       not null,
+    comment      varchar(100) null,
+    constraint UKktwck3ql0eo5oss6sw8nftsbq
+        unique (user_id, place_id),
+    constraint FKfb1me8dhpyswvhgjmbvgkcti2
+        foreign key (place_id) references places (id),
+    constraint FKj8m0asijw8lfl4jxhcps8tf4y
+        foreign key (user_id) references user (id)
+);
+
+create table oauth_token
+(
+    expires_at   datetime(6)  null,
+    id           bigint auto_increment
+        primary key,
+    user_id      bigint       null,
+    access_token varchar(255) null,
+    constraint UKr56mcwhkhg1tts2riw1cifaw8
+        unique (user_id),
+    constraint FK9bq3t9xrvellgudfdm1xrore7
+        foreign key (user_id) references user (id)
+);
+
+create table liked_places
+(
+    is_liked bit    null,
+    id       bigint auto_increment
+        primary key,
+    place_id bigint null,
+    user_id  bigint null,
+    constraint FK3rej4k2wur49vvsmkvy99051h
+        foreign key (user_id) references user (id),
+    constraint FK7x24ubd2axm81hx0ggiy4l4ao
+        foreign key (place_id) references places (id)
+);

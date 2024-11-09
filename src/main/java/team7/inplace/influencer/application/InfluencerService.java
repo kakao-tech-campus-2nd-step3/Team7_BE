@@ -3,20 +3,18 @@ package team7.inplace.influencer.application;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import team7.inplace.favoriteInfluencer.domain.FavoriteInfluencer;
 import team7.inplace.favoriteInfluencer.persistent.FavoriteInfluencerRepository;
-import team7.inplace.global.exception.InplaceException;
-import team7.inplace.global.exception.code.AuthorizationErrorCode;
-import team7.inplace.global.exception.code.UserErroCode;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
+import team7.inplace.influencer.application.dto.InfluencerNameInfo;
 import team7.inplace.influencer.domain.Influencer;
 import team7.inplace.influencer.persistence.InfluencerRepository;
-import team7.inplace.influencer.presentation.dto.InfluencerLikeRequest;
 import team7.inplace.security.util.AuthorizationUtil;
-import team7.inplace.user.domain.User;
 import team7.inplace.user.persistence.UserRepository;
 
 @RequiredArgsConstructor
@@ -28,21 +26,19 @@ public class InfluencerService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    public List<InfluencerInfo> getAllInfluencers() {
-        List<Influencer> influencers = influencerRepository.findAll();
-        Long userId = AuthorizationUtil.getUserId();
+    public Page<InfluencerInfo> getAllInfluencers(Pageable pageable) {
+        Page<Influencer> influencersPage = influencerRepository.findAll(pageable);
 
         // 로그인 안된 경우, likes를 모두 false로 설정
-        if (userId == null) {
-            return influencers.stream()
-                .map(influencer -> InfluencerInfo.from(influencer, false))
-                .toList();
+        if (AuthorizationUtil.isNotLoginUser()) {
+            return influencersPage.map(influencer -> InfluencerInfo.from(influencer, false));
         }
 
         // 로그인 된 경우
+        Long userId = AuthorizationUtil.getUserId();
         Set<Long> likedInfluencerIds = favoriteRepository.findLikedInfluencerIdsByUserId(userId);
 
-        List<InfluencerInfo> influencerInfos = influencers.stream()
+        List<InfluencerInfo> influencerInfos = influencersPage.stream()
             .map(influencer -> {
                 boolean isLiked = likedInfluencerIds.contains(influencer.getId());
                 return InfluencerInfo.from(influencer, isLiked);
@@ -50,7 +46,15 @@ public class InfluencerService {
             .sorted((a, b) -> Boolean.compare(b.likes(), a.likes()))
             .toList();
 
-        return influencerInfos;
+        return new PageImpl<>(influencerInfos, pageable, influencersPage.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public List<InfluencerNameInfo> getAllInfluencerNames() {
+        List<String> names = influencerRepository.findAllInfluencerNames();
+        return names.stream()
+            .map(InfluencerNameInfo::new)
+            .toList();
     }
 
     @Transactional
@@ -73,24 +77,5 @@ public class InfluencerService {
         Influencer influencer = influencerRepository.findById(id).orElseThrow();
 
         influencerRepository.delete(influencer);
-    }
-
-    @Transactional
-    public void likeToInfluencer(InfluencerLikeRequest param) {
-        Long userId = AuthorizationUtil.getUserId();
-        if (userId == null) {
-            throw InplaceException.of(AuthorizationErrorCode.TOKEN_IS_EMPTY);
-        }
-
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> InplaceException.of(UserErroCode.NOT_FOUND));
-        Influencer influencer = influencerRepository.findById(param.influencerId()).orElseThrow();
-
-        FavoriteInfluencer favorite = favoriteRepository.findByUserIdAndInfluencerId(user.getId(),
-                influencer.getId())
-            .orElseGet(() -> new FavoriteInfluencer(user, influencer)); // 존재하지 않으면 새로 생성
-
-        favorite.updateLike(param.likes());
-        favoriteRepository.save(favorite);
     }
 }

@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.place.application.CategoryService;
 import team7.inplace.place.application.PlaceService;
+import team7.inplace.place.application.command.PlaceLikeCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesCoordinateCommand;
 import team7.inplace.place.application.command.PlacesCommand.PlacesFilterParamsCommand;
 import team7.inplace.place.application.dto.CategoryInfo;
 import team7.inplace.place.application.dto.PlaceInfo;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.place.presentation.dto.PlaceDetailResponse;
+import team7.inplace.place.presentation.dto.PlaceLikeRequest;
 import team7.inplace.place.presentation.dto.PlacesResponse;
 import team7.inplace.place.presentation.dto.ReviewRequest;
 import team7.inplace.place.presentation.dto.ReviewResponse;
@@ -84,6 +86,12 @@ public class PlaceController implements PlaceControllerApiSpec {
             placeService.getPlaceDetailInfo(placeId));
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/likes")
+    public ResponseEntity<Void> likeToPlace(@RequestBody PlaceLikeRequest param) {
+        placeService.likeToPlace(new PlaceLikeCommand(param.placeId(), param.likes()));
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/{id}/reviews")

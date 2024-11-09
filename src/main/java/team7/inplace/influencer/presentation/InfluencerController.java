@@ -2,6 +2,9 @@ package team7.inplace.influencer.presentation;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,9 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerCommand;
-import team7.inplace.influencer.application.dto.InfluencerInfo;
-import team7.inplace.influencer.presentation.dto.InfluencerLikeRequest;
-import team7.inplace.influencer.presentation.dto.InfluencerListResponse;
+import team7.inplace.influencer.presentation.dto.InfluencerNameResponse;
 import team7.inplace.influencer.presentation.dto.InfluencerRequest;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 
@@ -28,14 +29,20 @@ public class InfluencerController implements InfluencerControllerApiSpec {
     private final InfluencerService influencerService;
 
     @GetMapping()
-    public ResponseEntity<InfluencerListResponse> getAllInfluencers() {
-        List<InfluencerInfo> influencersDtoList = influencerService.getAllInfluencers();
-        List<InfluencerResponse> influencers = influencersDtoList.stream()
-            .map(InfluencerResponse::from)
-            .toList();
-        InfluencerListResponse response = new InfluencerListResponse(influencers);
+    public ResponseEntity<Page<InfluencerResponse>> getAllInfluencers(
+        @PageableDefault(page = 0, size = 10) Pageable pageable) {
+        Page<InfluencerResponse> influencers = influencerService.getAllInfluencers(pageable)
+            .map(InfluencerResponse::from);
 
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new ResponseEntity<>(influencers, HttpStatus.OK);
+    }
+
+    @GetMapping("/names")
+    public ResponseEntity<List<InfluencerNameResponse>> getAllInfluencerNames() {
+        List<InfluencerNameResponse> names = influencerService.getAllInfluencerNames().stream()
+            .map(InfluencerNameResponse::from)
+            .toList();
+        return new ResponseEntity<>(names, HttpStatus.OK);
     }
 
     @PostMapping()
@@ -66,11 +73,5 @@ public class InfluencerController implements InfluencerControllerApiSpec {
         influencerService.deleteInfluencer(id);
 
         return new ResponseEntity<>(id, HttpStatus.OK);
-    }
-
-    @PostMapping("/likes")
-    public ResponseEntity<Void> likeToInfluencer(@RequestBody InfluencerLikeRequest param) {
-        influencerService.likeToInfluencer(param);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

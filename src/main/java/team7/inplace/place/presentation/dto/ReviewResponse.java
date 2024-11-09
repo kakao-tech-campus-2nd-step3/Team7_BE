@@ -8,7 +8,8 @@ public record ReviewResponse(
     boolean likes,
     String comment,
     String userNickname,
-    Date createdDate
+    Date createdDate,
+    boolean mine
 ) {
 
     public static ReviewResponse from(ReviewInfo reviewInfo) {
@@ -17,7 +18,8 @@ public record ReviewResponse(
             reviewInfo.likes(),
             reviewInfo.comment(),
             reviewInfo.userNickname(),
-            reviewInfo.createdDate()
+            reviewInfo.createdDate(),
+            reviewInfo.mine()
         );
     }
 }

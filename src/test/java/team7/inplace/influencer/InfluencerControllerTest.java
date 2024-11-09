@@ -16,13 +16,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import team7.inplace.influencer.application.InfluencerService;
 import team7.inplace.influencer.application.dto.InfluencerInfo;
 import team7.inplace.influencer.presentation.InfluencerController;
-import team7.inplace.influencer.presentation.dto.InfluencerListResponse;
 import team7.inplace.influencer.presentation.dto.InfluencerResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,31 +44,46 @@ public class InfluencerControllerTest {
 
     @BeforeEach
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(influencerController).build();
+        PageableHandlerMethodArgumentResolver pageableArgumentResolver = new PageableHandlerMethodArgumentResolver();
+        mockMvc = MockMvcBuilders.standaloneSetup(influencerController)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .build();
         objectMapper = new ObjectMapper();
     }
 
     @Test
     public void getAllInfluencersTest() throws Exception {
-        InfluencerInfo influencerInfo1 = new InfluencerInfo(1L, "influencer1", "imgUrl1", "job1",
-            false);
-        InfluencerInfo influencerInfo2 = new InfluencerInfo(2L, "influencer2", "imgUrl2", "job2",
-            false);
-        List<InfluencerInfo> influencerInfoList = List.of(influencerInfo1, influencerInfo2);
-        given(influencerService.getAllInfluencers()).willReturn(influencerInfoList);
+        InfluencerInfo influencerInfo1 = new InfluencerInfo(1L, "influencer1",
+            "imgUrl1", "job1", false);
+        InfluencerInfo influencerInfo2 = new InfluencerInfo(2L, "influencer2",
+            "imgUrl2", "job2", false);
+
+        // Pageable 객체 생성
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // Page 객체 생성 (서비스에서 반환될 객체)
+        Page<InfluencerInfo> influencerInfoPage = new PageImpl<>(
+            List.of(influencerInfo1, influencerInfo2), pageable, 2);
+
+        // influencerService.getAllInfluencers(pageable)의 반환값을 모킹
+        given(influencerService.getAllInfluencers(pageable)).willReturn(influencerInfoPage);
 
         // 예상 json 값
-        List<InfluencerResponse> responseList = influencerInfoList.stream()
-            .map(InfluencerResponse::from)
-            .toList();
-        InfluencerListResponse expectedResponse = new InfluencerListResponse(responseList);
-        String expectedJson = objectMapper.writeValueAsString(expectedResponse);
+        Page<InfluencerResponse> responsePage = influencerInfoPage.map(InfluencerResponse::from);
+        String expectedJson = objectMapper.writeValueAsString(responsePage);
 
+        // API 호출 및 검증
         mockMvc.perform(get("/influencers")
-                .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON)
+                .param("page", "0") // 페이지 번호
+                .param("size", "10")) // 페이지 크기
             .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(content().json(expectedJson));
-        verify(influencerService, times(1)).getAllInfluencers(); // 서비스 호출 확인
+            .andExpect(status().isOk()) // HTTP 200 OK 응답 확인
+            .andExpect(content().json(expectedJson)); // JSON 응답이 예상값과 일치하는지 확인
+
+        // influencerService.getAllInfluencers(pageable) 메서드가 한 번 호출됐는지 검증
+        verify(influencerService, times(1)).getAllInfluencers(pageable);
     }
+
+
 }

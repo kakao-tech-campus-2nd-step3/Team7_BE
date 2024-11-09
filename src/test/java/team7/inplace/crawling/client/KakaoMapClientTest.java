@@ -11,18 +11,18 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 class KakaoMapClientTest {
-    
+
     @Autowired
     public KakaoMapClient KakaoMapClient;
 
     @Test
     @DisplayName("카카오 맵 주소 검색 테스트")
-    void searchAddressTest() {
+    void searchPlaceWithAddressAddressTest() {
         // given
         var address = "대구 북구 대현남로6길 25";
 
         // when
-        assertThat(KakaoMapClient.search(address, "FD6"))
+        assertThat(KakaoMapClient.searchPlaceWithAddress(address, "FD6"))
                 .isNotNull();
     }
 }

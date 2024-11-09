@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import team7.inplace.place.presentation.dto.CategoriesResponse;
 import team7.inplace.place.presentation.dto.PlaceDetailResponse;
+import team7.inplace.place.presentation.dto.PlaceLikeRequest;
 import team7.inplace.place.presentation.dto.PlacesResponse;
 import team7.inplace.place.presentation.dto.ReviewRequest;
 import team7.inplace.place.presentation.dto.ReviewResponse;
@@ -35,6 +36,11 @@ public interface PlaceControllerApiSpec {
     @Operation(summary = "장소 상세 조회", description = "장소 ID를 통해 특정 장소의 상세 정보를 조회합니다.")
     public ResponseEntity<PlaceDetailResponse> getPlaceDetail(
         @PathVariable("id") Long placeId
+    );
+
+    @Operation(summary = "장소에 좋아요 누르기", description = "userId와 placeId를 연동하여 장소에 좋아요를 표시합니다.")
+    public ResponseEntity<Void> likeToPlace(
+        @RequestBody PlaceLikeRequest param
     );
 
     @Operation(summary = "특정 장소 리뷰 추가", description = "특정 장소에 리뷰를 추가합니다. 사용자 별로 한 장소에 하나의 리뷰만 가능합니다.")

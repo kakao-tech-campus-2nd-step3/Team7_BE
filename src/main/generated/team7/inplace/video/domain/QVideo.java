@@ -30,6 +30,10 @@ public class QVideo extends EntityPathBase<Video> {
 
     public final StringPath videoUrl = createString("videoUrl");
 
+    public final NumberPath<Long> viewCount = createNumber("viewCount", Long.class);
+
+    public final NumberPath<Long> viewCountIncrease = createNumber("viewCountIncrease", Long.class);
+
     public QVideo(String variable) {
         this(Video.class, forVariable(variable), INITS);
     }

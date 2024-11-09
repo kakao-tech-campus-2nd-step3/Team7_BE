@@ -26,7 +26,7 @@ public class QFavoriteInfluencer extends EntityPathBase<FavoriteInfluencer> {
 
     public final team7.inplace.influencer.domain.QInfluencer influencer;
 
-    public final BooleanPath like = createBoolean("like");
+    public final BooleanPath isLiked = createBoolean("isLiked");
 
     public final team7.inplace.user.domain.QUser user;
 
